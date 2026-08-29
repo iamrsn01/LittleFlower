@@ -99,33 +99,27 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white text-xs py-1.5 px-4 shadow-xs hidden md:block">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             
-            {/* Left: Estd Badge & Tagline */}
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[11px] border border-white/30">
+            {/* Left: Admissions Announcement */}
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-[10px] uppercase tracking-wider border border-white/30">
                 <Flame className="w-3 h-3 text-amber-300 fill-current" />
-                Estd. 2005
+                Admissions Open
               </span>
               <span className="text-white/95 font-medium text-[11px]">
-                Admissions Open for Nursery to Grade 9 (Session 2026/27)
+                Nursery to Grade 9 (Academic Session 2026/27)
               </span>
             </div>
 
-            {/* Right: Contact & Quick Tour Link */}
+            {/* Right: Contact & Email Links */}
             <div className="flex items-center gap-5 text-white/90 text-xs font-medium">
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-amber-300" />
-                Birgunj-21, Parwanipur, Parsa
-              </span>
+              <a href="mailto:lfsparwanipur@gmail.com" className="hidden lg:flex items-center gap-1.5 hover:text-white transition-colors" title="Email Little Flower School">
+                <Mail className="w-3.5 h-3.5 text-amber-300" />
+                <span>lfsparwanipur@gmail.com</span>
+              </a>
               <a href="tel:+9779840159560" className="flex items-center gap-1.5 hover:text-white transition-colors" title="Overall Enquiry">
                 <Phone className="w-3.5 h-3.5 text-amber-300" />
                 <span>+977-9840159560</span>
               </a>
-              <button 
-                onClick={onOpenVirtualTour}
-                className="text-amber-200 hover:text-white font-bold cursor-pointer underline underline-offset-2 flex items-center gap-1"
-              >
-                <span>360° Tour</span>
-              </button>
             </div>
 
           </div>
@@ -141,12 +135,37 @@ export const Navbar: React.FC<NavbarProps> = ({
             
             {/* School Logo & Brand Name */}
             <a href="#hero" className="flex items-center gap-3 group cursor-pointer shrink-0">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0.5 bg-gradient-to-tr from-red-500 via-rose-500 to-amber-400 shadow-sm group-hover:scale-105 transition-transform shrink-0">
-                <img 
-                  src={logoImg} 
-                  alt="Little Flower Secondary School Logo" 
-                  className="w-full h-full object-contain rounded-full bg-white"
-                />
+              {/* Logo with Simple Elegant Slow-Spinning Border */}
+              <div className="relative w-11.5 h-11.5 sm:w-12.5 sm:h-12.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                {/* Clean Slow-Spinning Animated Ring (12s period) */}
+                <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] animate-spin-gentle pointer-events-none" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="simpleRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ef4444" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#ef4444" />
+                    </linearGradient>
+                  </defs>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="46"
+                    fill="none"
+                    stroke="url(#simpleRingGrad)"
+                    strokeWidth="2.5"
+                    strokeDasharray="60 30"
+                    strokeLinecap="round"
+                  />
+                </svg>
+
+                {/* Clean Logo Image Badge */}
+                <div className="relative w-10.5 h-10.5 sm:w-11.5 sm:h-11.5 rounded-full p-0.5 bg-white flex items-center justify-center z-10 shadow-xs border border-slate-100">
+                  <img 
+                    src={logoImg} 
+                    alt="Little Flower Secondary School Logo" 
+                    className="w-full h-full object-contain rounded-full"
+                  />
+                </div>
               </div>
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5">
