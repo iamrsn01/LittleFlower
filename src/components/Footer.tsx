@@ -10,6 +10,7 @@ import {
   Flame,
   Clock
 } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 interface FooterProps {
   onOpenPortal: () => void;
@@ -76,7 +77,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-red-500 via-rose-500 to-amber-400 shadow-md shrink-0">
                 <img 
-                  src="/logo.png" 
+                  src={logoImg} 
                   alt="Little Flower Secondary School Emblem" 
                   className="w-full h-full object-contain rounded-full bg-white"
                 />

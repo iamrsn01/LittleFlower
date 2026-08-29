@@ -19,6 +19,7 @@ import {
   Award,
   Layers
 } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 interface NavbarProps {
   onOpenPortal: () => void;
@@ -142,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a href="#hero" className="flex items-center gap-3 group cursor-pointer shrink-0">
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0.5 bg-gradient-to-tr from-red-500 via-rose-500 to-amber-400 shadow-sm group-hover:scale-105 transition-transform shrink-0">
                 <img 
-                  src="/logo.png" 
+                  src={logoImg} 
                   alt="Little Flower Secondary School Logo" 
                   className="w-full h-full object-contain rounded-full bg-white"
                 />

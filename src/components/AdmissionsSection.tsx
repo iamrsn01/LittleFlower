@@ -12,6 +12,7 @@ import {
   Flame
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import logoImg from '../assets/logo.png';
 
 export const AdmissionsSection: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -392,7 +393,7 @@ export const AdmissionsSection: React.FC = () => {
               <div className="max-w-md mx-auto p-6 rounded-2xl bg-white border-2 border-red-500 text-left space-y-3 shadow-xl relative">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2.5">
-                    <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+                    <img src={logoImg} alt="Logo" className="w-8 h-8 object-contain" />
                     <div>
                       <span className="text-[10px] text-slate-500 font-bold">APPLICATION CODE</span>
                       <p className="text-base font-mono font-black text-red-600">{applicationId}</p>

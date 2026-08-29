@@ -8,6 +8,7 @@ import {
   ChevronRight, 
   ChevronLeft
 } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 interface VirtualTourModalProps {
   isOpen: boolean;
@@ -64,10 +65,10 @@ export const VirtualTourModal: React.FC<VirtualTourModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-red-950 via-rose-900 to-red-950 text-white flex items-center justify-between">
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow shrink-0">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain rounded-full" />
+              <img src={logoImg} alt="Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div>
               <span className="text-base font-black tracking-wide flex items-center gap-2">

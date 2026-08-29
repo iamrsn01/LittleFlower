@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { mockStudentRecord, StudentRecord } from '../data/schoolData';
 import confetti from 'canvas-confetti';
+import logoImg from '../assets/logo.png';
 
 interface StudentPortalProps {
   isOpen: boolean;
@@ -66,7 +67,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ isOpen, onClose })
         <div className="p-5 sm:p-6 bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-white p-0.5 shadow shrink-0">
-              <img src="/logo.png" alt="Little Flower Logo" className="w-full h-full object-contain rounded-full" />
+              <img src={logoImg} alt="Little Flower Logo" className="w-full h-full object-contain rounded-full" />
             </div>
             <div>
               <div className="flex items-center gap-2">
