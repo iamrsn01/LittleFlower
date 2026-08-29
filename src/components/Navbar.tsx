@@ -116,9 +116,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <MapPin className="w-3.5 h-3.5 text-amber-300" />
                 Birgunj-21, Parwanipur, Parsa
               </span>
-              <a href="tel:+97751580123" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <a href="tel:+9779840159560" className="flex items-center gap-1.5 hover:text-white transition-colors" title="Overall Enquiry">
                 <Phone className="w-3.5 h-3.5 text-amber-300" />
-                +977 51-580123
+                <span>+977-9840159560</span>
               </a>
               <button 
                 onClick={onOpenVirtualTour}

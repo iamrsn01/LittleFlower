@@ -169,7 +169,9 @@ export const TransportSection: React.FC = () => {
                 <ShieldCheck className="w-5 h-5 text-red-600 shrink-0" />
                 <span className="font-semibold">Safe transport equipped with speed control & female care attendants</span>
               </div>
-              <span className="text-red-600 font-black font-mono shrink-0">Helpline: +977 51-580123</span>
+              <a href="tel:+977981521991" className="text-red-600 font-black font-mono shrink-0 hover:underline">
+                Transport Desk: +977 981521991
+              </a>
             </div>
 
           </div>

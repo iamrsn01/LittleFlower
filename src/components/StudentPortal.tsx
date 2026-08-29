@@ -152,6 +152,10 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ isOpen, onClose })
                   1-Click Auto Login
                 </button>
               </div>
+
+              <p className="text-[11px] text-slate-500 font-medium">
+                Need Portal / Marks assistance? IT & Exam Dept: <a href="tel:+9779801104032" className="text-red-600 font-bold hover:underline">+977-9801104032</a>
+              </p>
             </div>
           ) : (
             /* Logged-In Student Dashboard */

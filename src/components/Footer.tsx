@@ -149,11 +149,22 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
                 <MapPin className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                 <span>Birgunj-21, Parwanipur, Parsa, Nepal</span>
               </p>
-              <p className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-red-400 shrink-0" />
-                <span>+977 51-580123 / 9845128940</span>
-              </p>
-              <p className="flex items-center gap-2">
+              <div className="space-y-1 pt-1 border-t border-slate-800">
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-red-400 shrink-0" />
+                  <span><strong>Enquiry:</strong> <a href="tel:+9779840159560" className="hover:text-red-400">+977-9840159560</a></span>
+                </p>
+                <p className="flex items-center gap-2 pl-6 text-[11px] text-slate-400">
+                  <span><strong>Alt:</strong> <a href="tel:+9779865328644" className="hover:text-red-400">+977-9865328644</a></span>
+                </p>
+                <p className="flex items-center gap-2 pl-6 text-[11px] text-slate-400">
+                  <span><strong>IT & Exam:</strong> <a href="tel:+9779801104032" className="hover:text-red-400">+977-9801104032</a></span>
+                </p>
+                <p className="flex items-center gap-2 pl-6 text-[11px] text-slate-400">
+                  <span><strong>Transport:</strong> <a href="tel:+977981521991" className="hover:text-red-400">+977 981521991</a></span>
+                </p>
+              </div>
+              <p className="flex items-center gap-2 pt-1 border-t border-slate-800">
                 <Mail className="w-4 h-4 text-red-400 shrink-0" />
                 <span>info@littleflowerparsa.edu.np</span>
               </p>
