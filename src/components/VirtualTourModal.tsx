@@ -8,7 +8,7 @@ import {
   ChevronRight, 
   ChevronLeft
 } from 'lucide-react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logoBase64';
 
 interface VirtualTourModalProps {
   isOpen: boolean;

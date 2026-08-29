@@ -19,7 +19,7 @@ import {
   Award,
   Layers
 } from 'lucide-react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logoBase64';
 
 interface NavbarProps {
   onOpenPortal: () => void;

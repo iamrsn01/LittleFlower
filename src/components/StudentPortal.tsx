@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { mockStudentRecord, StudentRecord } from '../data/schoolData';
 import confetti from 'canvas-confetti';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logoBase64';
 
 interface StudentPortalProps {
   isOpen: boolean;

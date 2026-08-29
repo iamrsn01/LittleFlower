@@ -12,7 +12,7 @@ import {
   Flame
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logoBase64';
 
 export const AdmissionsSection: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
