@@ -134,12 +134,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             ? 'py-2.5 shadow-md border-b border-slate-300/80' 
             : 'py-3.5 border-b border-slate-200/80 shadow-xs'
         }`}>
-          <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-4">
+          <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-2 sm:gap-4">
             
             {/* School Logo & Brand Name */}
-            <a href="#hero" className="flex items-center gap-3 group cursor-pointer shrink-0">
+            <a href="#hero" className="flex items-center gap-2 sm:gap-3 group cursor-pointer min-w-0 shrink">
               {/* Logo with Simple Elegant Slow-Spinning Border */}
-              <div className="relative w-11.5 h-11.5 sm:w-12.5 sm:h-12.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] animate-spin-gentle pointer-events-none" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="simpleRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -160,7 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   />
                 </svg>
 
-                <div className="relative w-10.5 h-10.5 sm:w-11.5 sm:h-11.5 rounded-full p-0.5 bg-white flex items-center justify-center z-10 shadow-xs border border-slate-100">
+                <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-full p-0.5 bg-white flex items-center justify-center z-10 shadow-xs border border-slate-100">
                   <img 
                     src={logoImg} 
                     alt="Little Flower Secondary School Logo" 
@@ -168,16 +168,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   />
                 </div>
               </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 font-display leading-tight">
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:flex-nowrap">
+                  <span className="text-sm sm:text-base lg:text-lg font-black tracking-tight text-slate-900 font-display leading-tight truncate">
                     LITTLE FLOWER
                   </span>
-                  <span className="text-red-600 font-black text-[11px] uppercase bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+                  <span className="text-red-600 font-black text-[9px] sm:text-[11px] uppercase bg-red-50 px-1 sm:px-1.5 py-0.5 rounded border border-red-200 shrink-0">
                     SEC. SCHOOL
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 font-semibold tracking-wide">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 font-semibold tracking-wide truncate">
                   Birgunj-21, Parwanipur, Parsa (Estd. 2005)
                 </p>
               </div>
@@ -378,8 +378,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             </div>
 
-            {/* Right Action Group */}
-            <div className="hidden sm:flex items-center gap-2.5">
+            {/* Right Action Group - Desktop Only (>= 1024px) */}
+            <div className="hidden lg:flex items-center gap-2.5 shrink-0">
               
               {/* Quick Search Button */}
               <button
@@ -412,21 +412,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* Mobile Menu Toggle Button */}
-            <div className="flex sm:hidden items-center gap-2">
+            {/* Mobile / Tablet Controls (< 1024px) - Clean & Fixed within screen bounds */}
+            <div className="flex lg:hidden items-center gap-1.5 shrink-0">
               <button
                 onClick={onOpenSearch}
-                className="p-2 rounded-none bg-slate-50 border border-slate-200 text-slate-700"
+                className="h-[36px] w-[36px] flex items-center justify-center p-2 rounded-none bg-slate-50 hover:bg-red-50 border border-slate-300 hover:border-red-500 text-slate-700 cursor-pointer shadow-xs"
                 aria-label="Search"
+                title="Search campus info"
               >
-                <Search className="w-4 h-4" />
+                <Search className="w-4 h-4 text-red-600" />
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-none bg-slate-50 border border-slate-200 text-slate-800"
+                className="h-[36px] w-[36px] flex items-center justify-center p-2 rounded-none bg-slate-50 hover:bg-red-50 border border-slate-300 hover:border-red-500 text-slate-800 cursor-pointer shadow-xs"
                 aria-label="Toggle Menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5 text-slate-800" />}
               </button>
             </div>
 
