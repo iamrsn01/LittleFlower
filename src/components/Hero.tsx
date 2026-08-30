@@ -11,6 +11,7 @@ import {
   Camera
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
+import campusBuildingImg from '../assets/campus-building.jpg';
 
 interface HeroProps {
   onOpenAdmissions: () => void;
@@ -26,9 +27,9 @@ export const Hero: React.FC<HeroProps> = ({
   const slides = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Main Academic Campus & Assembly Courtyard',
-      location: 'Birgunj-21, Parwanipur, Parsa'
+      image: campusBuildingImg,
+      caption: 'Little Flower Secondary School — Main Academic Campus & Lush Green Ground',
+      location: 'Birgunj-21, Parwanipur, Parsa (Estd. 2005)'
     },
     {
       id: 2,

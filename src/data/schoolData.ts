@@ -629,10 +629,10 @@ export const testimonialsList: Testimonial[] = [
 export const galleryItems: GalleryItem[] = [
   {
     id: 'g-01',
-    title: 'Morning Prayer Assembly & Discipline Drill',
+    title: 'Main Academic Campus & Green Playground',
     category: 'Campus',
-    imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1000&q=80',
-    description: 'Daily morning prayer assembly, national anthem, and student moral speech in the school courtyard.'
+    imageUrl: './campus-building.jpg',
+    description: 'The scenic Little Flower Secondary School campus featuring the multi-storey academic wings and expansive green lawn.'
   },
   {
     id: 'g-02',
