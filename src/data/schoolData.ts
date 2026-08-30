@@ -268,7 +268,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Science & STEM',
     qualification: 'M.Sc. Physics (Tribhuvan University), B.Ed.',
     experience: '21+ Years in Educational Leadership',
-    email: 'principal@littleflowerparsa.edu.np',
+    email: 'principal@lfsbirgunj.edu.np',
     bio: 'Guiding Little Flower Secondary School since its inception with a vision of blending moral integrity with high academic standards in the Parsa region.',
     avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
     achievements: ['Parsa District Best Principal Award 2023', 'Over 18 Batches of 100% SEE Distinction Result']
@@ -280,7 +280,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Languages & Literature',
     qualification: 'M.A. in English & Education',
     experience: '16+ Years Experience',
-    email: 'viceprincipal@littleflowerparsa.edu.np',
+    email: 'viceprincipal@lfsbirgunj.edu.np',
     bio: 'Dedicated educator specializing in early childhood language acquisition, holistic student welfare, and progressive teaching methods.',
     avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
     achievements: ['Excellence in Primary Pedagogy Award', 'Director of Annual School Cultural Fest']
@@ -292,7 +292,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Science & STEM',
     qualification: 'M.Sc. Chemistry (Gold Medalist)',
     experience: '14+ Years Experience',
-    email: 'manoj.science@littleflowerparsa.edu.np',
+    email: 'manoj.science@lfsbirgunj.edu.np',
     bio: 'Passionate chemistry and science instructor who mentors students in experimental lab techniques and annual district science fairs.',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
     achievements: ['District Science Exhibition Chief Judge', 'Published Senior Secondary Science Guidebook']
@@ -304,7 +304,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Mathematics',
     qualification: 'M.Sc. Pure Mathematics',
     experience: '17+ Years Experience',
-    email: 'santosh.math@littleflowerparsa.edu.np',
+    email: 'santosh.math@lfsbirgunj.edu.np',
     bio: 'Specialist in higher algebra, geometry, and calculus. Known for turning complex mathematical concepts into easy intuitive steps.',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
     achievements: ['Trained over 500+ Grade 10 A+ Mathematics Achievers', 'National Vedic Math Trainer']
@@ -316,7 +316,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Computer & AI',
     qualification: 'B.E. Computer Science & IT',
     experience: '9+ Years Experience',
-    email: 'amit.ict@littleflowerparsa.edu.np',
+    email: 'amit.ict@lfsbirgunj.edu.np',
     bio: 'Leads modern computer laboratories, training students in typing, office suites, web design, and computational thinking.',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
     achievements: ['Certified Microsoft ICT Educator', 'Coach of Inter-School Coding Olympiad Team']
@@ -328,7 +328,7 @@ export const facultyMembers: FacultyMember[] = [
     department: 'Arts & Physical Ed',
     qualification: 'B.P.Ed & National Cricket Coach License',
     experience: '12+ Years Experience',
-    email: 'sports@littleflowerparsa.edu.np',
+    email: 'sports@lfsbirgunj.edu.np',
     bio: 'Inspiring discipline, athletic sportsmanship, football and cricket skills across all houses and school teams.',
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80',
     achievements: ['Led School Cricket Team to Parsa District Cup Victory 2024']
