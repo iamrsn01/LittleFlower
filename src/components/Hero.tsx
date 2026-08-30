@@ -4,11 +4,11 @@ import {
   ArrowRight, 
   Play, 
   CheckCircle2, 
-  Flame,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-  Camera
+  Flame, 
+  Users, 
+  ChevronLeft, 
+  ChevronRight, 
+  Camera 
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
 import campusBuildingImg from '../assets/campus-building.jpg';
@@ -167,7 +167,7 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* 2. INTRODUCTION CONTENT (LIGHT RED ACCENTS) */}
+      {/* 2. INTRODUCTION CONTENT (CLEAN & ELEGANT) */}
       <div className="py-16 sm:py-20 lg:py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -206,7 +206,7 @@ export const Hero: React.FC<HeroProps> = ({
 
               <button
                 onClick={onOpenPortal}
-                className="px-5 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-2xl transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-5 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Users className="w-4 h-4 text-red-600" />
                 <span>Student / Parent Portal</span>
@@ -217,7 +217,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="pt-4 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-bold text-slate-600">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Government Recognized & NEB Affiliated</span>
+                <span>Government Recognized &amp; NEB Affiliated</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-red-600" />

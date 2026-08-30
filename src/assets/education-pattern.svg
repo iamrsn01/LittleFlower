@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" fill="none">
+  <!-- Education Themed Repeating Pattern -->
+  <g stroke="#dc2626" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.22">
+    
+    <!-- 1. Graduation Cap (Top Left) -->
+    <g transform="translate(25, 25)">
+      <polygon points="20,5 38,13 20,21 2,13" fill="#dc2626" fill-opacity="0.06"/>
+      <path d="M7 16v10c0 4 6 7 13 7s13-3 13-7V16" />
+      <path d="M38 13v14c0 2 2 3 3 3" />
+      <circle cx="41" cy="30" r="1.5" fill="#dc2626"/>
+    </g>
+
+    <!-- 2. Open Book (Top Right) -->
+    <g transform="translate(145, 30)">
+      <path d="M20 28c-6-3-14-3-18 0V7c4-3 12-3 18 0 6-3 14-3 18 0v21c-4-3-12-3-18 0z" fill="#dc2626" fill-opacity="0.05"/>
+      <path d="M20 7v21" />
+      <line x1="6" y1="12" x2="16" y2="12" />
+      <line x1="6" y1="17" x2="16" y2="17" />
+      <line x1="6" y1="22" x2="14" y2="22" />
+      <line x1="24" y1="12" x2="34" y2="12" />
+      <line x1="24" y1="17" x2="34" y2="17" />
+      <line x1="24" y1="22" x2="32" y2="22" />
+    </g>
+
+    <!-- 3. Science Atom / Orbit (Bottom Left) -->
+    <g transform="translate(30, 145)">
+      <ellipse cx="20" cy="20" rx="18" ry="6" transform="rotate(30 20 20)" fill="none" />
+      <ellipse cx="20" cy="20" rx="18" ry="6" transform="rotate(-30 20 20)" fill="none" />
+      <circle cx="20" cy="20" r="3" fill="#dc2626" />
+    </g>
+
+    <!-- 4. Pencil & Ruler (Bottom Right) -->
+    <g transform="translate(150, 145)">
+      <!-- Pencil -->
+      <path d="M12 28l-6 2 2-6 16-16 4 4-16 16z" fill="#dc2626" fill-opacity="0.05"/>
+      <line x1="22" y1="10" x2="26" y2="14" />
+      <!-- Ruler -->
+      <rect x="18" y="16" width="16" height="6" transform="rotate(45 18 16)" fill="none" />
+      <line x1="23" y1="19" x2="25" y2="21" />
+      <line x1="27" y1="23" x2="29" y2="25" />
+    </g>
+
+    <!-- 5. Chemistry Flask / Beaker (Center) -->
+    <g transform="translate(95, 90)">
+      <path d="M12 4h6v6l8 14H4l8-14V4z" fill="#dc2626" fill-opacity="0.06"/>
+      <line x1="10" y1="4" x2="20" y2="4" />
+      <line x1="8" y1="20" x2="22" y2="20" />
+      <circle cx="15" cy="16" r="1.5" fill="#dc2626"/>
+      <circle cx="11" cy="19" r="1" fill="#dc2626"/>
+    </g>
+
+    <!-- 6. Education & Math Symbols -->
+    <!-- Pi (Top Center) -->
+    <g transform="translate(98, 28)">
+      <line x1="2" y1="4" x2="16" y2="4" />
+      <path d="M6 4v10" />
+      <path d="M12 4v8c0 1 1 2 2 2" />
+    </g>
+
+    <!-- Sigma (Center Right) -->
+    <g transform="translate(205, 95)">
+      <polyline points="14,4 4,4 9,10 4,16 14,16" />
+    </g>
+
+    <!-- Square Root & Alphabet (Center Left) -->
+    <g transform="translate(15, 95)">
+      <polyline points="2,10 5,10 8,16 12,4 18,4" />
+      <text x="14" y="14" font-size="8" font-family="sans-serif" font-weight="bold" fill="#dc2626" stroke="none">x</text>
+    </g>
+
+    <!-- Lightbulb of Wisdom (Bottom Center) -->
+    <g transform="translate(98, 175)">
+      <path d="M10 4a7 7 0 0 0-4 12c1 1 1 2 1 3h6c0-1 0-2 1-3a7 7 0 0 0-4-12z" fill="#dc2626" fill-opacity="0.05"/>
+      <line x1="8" y1="22" x2="12" y2="22" />
+    </g>
+
+    <!-- Star / Sparkle (Top Corner) -->
+    <g transform="translate(210, 20)">
+      <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5z" fill="#dc2626" />
+    </g>
+
+    <!-- Compass / Divider (Bottom Corner) -->
+    <g transform="translate(205, 195)">
+      <circle cx="8" cy="4" r="2" />
+      <line x1="8" y1="6" x2="3" y2="20" />
+      <line x1="8" y1="6" x2="13" y2="20" />
+      <line x1="5" y1="14" x2="11" y2="14" />
+    </g>
+
+  </g>
+</svg>

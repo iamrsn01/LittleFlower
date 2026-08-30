@@ -7,17 +7,19 @@ import {
   Sparkles, 
   Phone, 
   Mail, 
-  MapPin, 
-  ChevronDown,
-  Flame,
-  BookOpen,
-  GraduationCap,
-  Building2,
-  Camera,
-  Bus,
-  Bell,
-  Award,
-  Layers
+  ChevronDown, 
+  Flame, 
+  BookOpen, 
+  GraduationCap, 
+  Building2, 
+  Camera, 
+  Bus, 
+  Bell, 
+  Award, 
+  Layers,
+  Users,
+  Compass,
+  MessageSquareQuote
 } from 'lucide-react';
 import logoImg from '../assets/logoBase64';
 
@@ -44,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      const sections = ['hero', 'academics', 'facilities', 'faculty', 'notices', 'gallery', 'transport', 'admissions'];
+      const sections = ['hero', 'academics', 'facilities', 'faculty', 'notices', 'gallery', 'transport', 'admissions', 'testimonials'];
       const scrollPos = window.scrollY + 200;
 
       for (const section of sections) {
@@ -84,20 +86,21 @@ export const Navbar: React.FC<NavbarProps> = ({
     { title: 'Kindergarten & Pre-Primary', subtitle: 'Nursery, LKG & UKG Montessori', href: '#academics', icon: Sparkles }
   ];
 
-  const campusDropdownItems = [
-    { title: 'Science & ICT Laboratories', subtitle: 'Equipped Physics, Chemistry & Computer Labs', href: '#facilities', icon: Building2 },
-    { title: 'Faculty & Educators', subtitle: 'Meet our experienced academic faculty', href: '#faculty', icon: Award },
-    { title: 'Campus Photo Gallery', subtitle: 'Snapshots of campus life & assemblies', href: '#gallery', icon: Camera },
-    { title: 'School Bus Transit Routes', subtitle: 'Covering Parwanipur, Birgunj & Parsa', href: '#transport', icon: Bus }
+  const moreDropdownItems = [
+    { title: 'Bus Routes & Transport', subtitle: 'School bus transit network in Birgunj & Parsa', href: '#transport', icon: Bus },
+    { title: 'Campus Photo Gallery', subtitle: 'Snapshots of campus life & celebrations', href: '#gallery', icon: Camera },
+    { title: 'Campus Facilities & Labs', subtitle: 'Science, IT Labs & Sports Ground', href: '#facilities', icon: Building2 },
+    { title: 'Testimonials & FAQs', subtitle: 'Parent reviews and common inquiries', href: '#testimonials', icon: MessageSquareQuote },
+    { title: '360° Virtual Campus Tour', subtitle: 'Interactive exploration of campus facilities', onClick: onOpenVirtualTour, icon: Compass }
   ];
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-40">
         
-        {/* Top Utility Bar - Fresh Light Red */}
-        <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white text-xs py-1.5 px-4 shadow-xs hidden md:block">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Top Utility Bar - Gradient with Micro Texture */}
+        <div className="topbar-texture text-white text-xs py-1.5 shadow-xs hidden md:block border-b border-red-700/40">
+          <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between">
             
             {/* Left: Admissions Announcement */}
             <div className="flex items-center gap-2">
@@ -125,19 +128,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Main Navbar - Light White Header with Light Red Accents */}
-        <nav className={`transition-all duration-300 bg-white ${
+        {/* Main Navbar - Styled with Sophisticated Micro Texture & Frosted Glass */}
+        <nav className={`transition-all duration-300 navbar-texture backdrop-blur-md ${
           isScrolled 
-            ? 'py-2.5 shadow-md border-b border-slate-200' 
-            : 'py-3.5 border-b border-slate-100 shadow-xs'
+            ? 'py-2.5 shadow-md border-b border-slate-300/80' 
+            : 'py-3.5 border-b border-slate-200/80 shadow-xs'
         }`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-4">
             
             {/* School Logo & Brand Name */}
             <a href="#hero" className="flex items-center gap-3 group cursor-pointer shrink-0">
               {/* Logo with Simple Elegant Slow-Spinning Border */}
               <div className="relative w-11.5 h-11.5 sm:w-12.5 sm:h-12.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                {/* Clean Slow-Spinning Animated Ring (12s period) */}
                 <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] animate-spin-gentle pointer-events-none" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="simpleRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -158,7 +160,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   />
                 </svg>
 
-                {/* Clean Logo Image Badge */}
                 <div className="relative w-10.5 h-10.5 sm:w-11.5 sm:h-11.5 rounded-full p-0.5 bg-white flex items-center justify-center z-10 shadow-xs border border-slate-100">
                   <img 
                     src={logoImg} 
@@ -182,42 +183,48 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </a>
 
-            {/* Structured Navigation Menu */}
-            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {/* Structured Navigation Menu: Home -> Academics -> Team -> Notices & Events -> Admissions -> More */}
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2.5 2xl:gap-3.5">
               
-              {/* Home */}
+              {/* 1. Home */}
               <a
                 href="#hero"
-                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
                   activeSection === 'hero'
-                    ? 'text-red-600 bg-red-50 border border-red-200 font-extrabold'
-                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/50'
+                    ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
                 }`}
               >
-                Home
+                <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">Home</span>
+                {activeSection !== 'hero' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                )}
               </a>
 
-              {/* Academics Dropdown */}
+              {/* 2. Academics Dropdown */}
               <div 
-                className="relative"
+                className="relative group"
                 onMouseEnter={() => handleMouseEnter('academics')}
                 onMouseLeave={handleMouseLeave}
               >
                 <a
                   href="#academics"
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+                  className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1 overflow-hidden cursor-pointer ${
                     activeSection === 'academics'
-                      ? 'text-red-600 bg-red-50 border border-red-200 font-extrabold'
-                      : 'text-slate-700 hover:text-red-600 hover:bg-red-50/50'
+                      ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                      : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
                   }`}
                 >
-                  <span>Academics</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'academics' ? 'rotate-180 text-red-600' : 'text-slate-400'}`} />
+                  <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">Academics</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${openDropdown === 'academics' ? 'rotate-180 text-red-600' : 'text-slate-400 group-hover:text-red-600 group-hover:translate-y-0.5'}`} />
+                  {activeSection !== 'academics' && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                  )}
                 </a>
 
                 {/* Dropdown Menu */}
                 {openDropdown === 'academics' && (
-                  <div className="absolute top-full left-0 mt-1.5 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 animate-in fade-in zoom-in-95 duration-150 z-50">
+                  <div className="absolute top-full left-0 mt-1.5 w-76 bg-white/95 backdrop-blur-md border-t-2 border-t-red-600 border-x border-b border-slate-200 rounded-none shadow-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150 z-50">
                     {academicDropdownItems.map((item, idx) => {
                       const Icon = item.icon;
                       return (
@@ -225,13 +232,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                           key={idx}
                           href={item.href}
                           onClick={() => setOpenDropdown(null)}
-                          className="p-2.5 rounded-xl hover:bg-red-50/50 flex items-start gap-2.5 transition-colors group cursor-pointer"
+                          className="p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors shrink-0 mt-0.5">
+                          <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
                             <Icon className="w-4 h-4" />
                           </div>
                           <div>
-                            <p className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors">
+                            <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
                               {item.title}
                             </p>
                             <p className="text-[10px] text-slate-500 leading-tight">
@@ -245,41 +252,117 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
 
-              {/* Campus Life Dropdown */}
+              {/* 3. Team (Faculty & Leadership) */}
+              <a
+                href="#faculty"
+                className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
+                  activeSection === 'faculty'
+                    ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5 text-red-600 transition-transform duration-300 group-hover:scale-120 group-hover:-rotate-6" />
+                <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">Team</span>
+                {activeSection !== 'faculty' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                )}
+              </a>
+
+              {/* 4. Notice & Events */}
+              <a
+                href="#notices"
+                className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
+                  activeSection === 'notices'
+                    ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
+                }`}
+              >
+                <Bell className="w-3.5 h-3.5 text-red-600 transition-transform duration-300 group-hover:scale-120 group-hover:rotate-12" />
+                <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">Notice &amp; Events</span>
+                {activeSection !== 'notices' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                )}
+              </a>
+
+              {/* 5. Admissions */}
+              <a
+                href="#admissions"
+                className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
+                  activeSection === 'admissions'
+                    ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 transition-transform duration-300 group-hover:scale-120 group-hover:rotate-12" />
+                <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">Admissions</span>
+                {activeSection !== 'admissions' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                )}
+              </a>
+
+              {/* 6. More Dropdown */}
               <div 
-                className="relative"
-                onMouseEnter={() => handleMouseEnter('campus')}
+                className="relative group"
+                onMouseEnter={() => handleMouseEnter('more')}
                 onMouseLeave={handleMouseLeave}
               >
                 <button
                   type="button"
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
-                    ['facilities', 'faculty', 'gallery', 'transport'].includes(activeSection)
-                      ? 'text-red-600 bg-red-50 border border-red-200 font-extrabold'
-                      : 'text-slate-700 hover:text-red-600 hover:bg-red-50/50'
+                  className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1 overflow-hidden cursor-pointer ${
+                    ['transport', 'gallery', 'facilities', 'testimonials'].includes(activeSection)
+                      ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
+                      : 'text-slate-700 hover:text-red-600 hover:bg-red-50/40'
                   }`}
                 >
-                  <span>Campus Life</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'campus' ? 'rotate-180 text-red-600' : 'text-slate-400'}`} />
+                  <span className="relative z-10 transition-transform duration-200 group-hover:-translate-y-0.5">More</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${openDropdown === 'more' ? 'rotate-180 text-red-600' : 'text-slate-400 group-hover:text-red-600 group-hover:translate-y-0.5'}`} />
+                  {!['transport', 'gallery', 'facilities', 'testimonials'].includes(activeSection) && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
+                  )}
                 </button>
 
-                {/* Dropdown Menu */}
-                {openDropdown === 'campus' && (
-                  <div className="absolute top-full left-0 mt-1.5 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 space-y-1 animate-in fade-in zoom-in-95 duration-150 z-50">
-                    {campusDropdownItems.map((item, idx) => {
+                {/* More Dropdown Menu */}
+                {openDropdown === 'more' && (
+                  <div className="absolute top-full right-0 mt-1.5 w-76 bg-white/95 backdrop-blur-md border-t-2 border-t-red-600 border-x border-b border-slate-200 rounded-none shadow-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150 z-50">
+                    {moreDropdownItems.map((item, idx) => {
                       const Icon = item.icon;
+                      if (item.onClick) {
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setOpenDropdown(null);
+                              item.onClick?.();
+                            }}
+                            className="w-full p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer text-left"
+                          >
+                            <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
+                                {item.title}
+                              </p>
+                              <p className="text-[10px] text-slate-500 leading-tight">
+                                {item.subtitle}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      }
                       return (
                         <a
                           key={idx}
                           href={item.href}
                           onClick={() => setOpenDropdown(null)}
-                          className="p-2.5 rounded-xl hover:bg-red-50/50 flex items-start gap-2.5 transition-colors group cursor-pointer"
+                          className="p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors shrink-0 mt-0.5">
+                          <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
                             <Icon className="w-4 h-4" />
                           </div>
                           <div>
-                            <p className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors">
+                            <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
                               {item.title}
                             </p>
                             <p className="text-[10px] text-slate-500 leading-tight">
@@ -292,64 +375,40 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 )}
               </div>
-
-              {/* Notices */}
-              <a
-                href="#notices"
-                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeSection === 'notices'
-                    ? 'text-red-600 bg-red-50 border border-red-200 font-extrabold'
-                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/50'
-                }`}
-              >
-                <Bell className="w-3.5 h-3.5 text-red-600" />
-                <span>Notices & Events</span>
-              </a>
-
-              {/* Admissions */}
-              <a
-                href="#admissions"
-                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeSection === 'admissions'
-                    ? 'text-red-600 bg-red-50 border border-red-200 font-extrabold'
-                    : 'text-slate-700 hover:text-red-600 hover:bg-red-50/50'
-                }`}
-              >
-                Admissions
-              </a>
 
             </div>
 
             {/* Right Action Group */}
             <div className="hidden sm:flex items-center gap-2.5">
               
-              {/* Quick Search */}
+              {/* Quick Search Button */}
               <button
                 onClick={onOpenSearch}
-                aria-label="Quick Search"
-                className="p-2 rounded-xl text-slate-600 hover:text-red-600 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-300 transition-all cursor-pointer flex items-center gap-1.5 text-xs shadow-xs"
-                title="Search campus info (Ctrl + K)"
+                aria-label="Search"
+                className="h-[38px] px-3.5 rounded-none text-slate-700 hover:text-red-600 bg-slate-50 hover:bg-red-50/80 border border-slate-300 hover:border-red-500 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer flex items-center gap-2 text-xs font-bold shadow-xs group/search"
+                title="Search campus info"
               >
-                <Search className="w-4 h-4 text-red-600" />
-                <span className="hidden xl:inline text-[10px] text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 font-mono font-bold">⌘K</span>
+                <Search className="w-3.5 h-3.5 text-red-600 group-hover/search:scale-115 transition-transform" />
+                <span>Search</span>
               </button>
 
               {/* Student Portal Button */}
               <button
                 onClick={onOpenPortal}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-300 hover:border-red-400 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="h-[38px] px-3.5 rounded-none text-xs font-bold text-slate-700 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-300 hover:border-red-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs group/portal"
               >
-                <UserCheck className="w-3.5 h-3.5 text-red-600" />
+                <UserCheck className="w-3.5 h-3.5 text-red-600 group-hover/portal:scale-115 transition-transform" />
                 <span>Portal Login</span>
               </button>
 
-              {/* Apply Online Button - Fresh Light Red */}
+              {/* Apply Online Button */}
               <button
                 onClick={onOpenAdmissions}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md shadow-red-500/20 hover:shadow-red-500/35 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                className="relative h-[38px] px-4.5 rounded-none text-xs font-black text-white bg-red-600 hover:bg-red-500 shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center gap-1.5 cursor-pointer overflow-hidden group/apply"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Apply Online</span>
+                <span className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 -translate-x-full group-hover/apply:translate-x-[400%] transition-transform duration-700 ease-out pointer-events-none" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 group-hover/apply:rotate-12 transition-transform" />
+                <span className="relative z-10">Apply Online</span>
               </button>
             </div>
 
@@ -357,14 +416,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex sm:hidden items-center gap-2">
               <button
                 onClick={onOpenSearch}
-                className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700"
+                className="p-2 rounded-none bg-slate-50 border border-slate-200 text-slate-700"
                 aria-label="Search"
               >
                 <Search className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-800"
+                className="p-2 rounded-none bg-slate-50 border border-slate-200 text-slate-800"
                 aria-label="Toggle Menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -384,45 +443,84 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <a
                     href="#hero"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
-                    Home
+                    <span>Home</span>
                   </a>
                   <a
                     href="#academics"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
-                    Academics (Nursery-SEE)
-                  </a>
-                  <a
-                    href="#facilities"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
-                  >
-                    Facilities & Labs
+                    <span>Academics</span>
                   </a>
                   <a
                     href="#faculty"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
-                    Faculty Directory
+                    <Users className="w-3.5 h-3.5 text-red-600" />
+                    <span>Team</span>
                   </a>
                   <a
                     href="#notices"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
-                    Notices & Events
+                    <Bell className="w-3.5 h-3.5 text-red-600" />
+                    <span>Notice &amp; Events</span>
+                  </a>
+                  <a
+                    href="#admissions"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Admissions</span>
+                  </a>
+                  <a
+                    href="#gallery"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
+                  >
+                    <Camera className="w-3.5 h-3.5 text-red-600" />
+                    <span>Gallery</span>
                   </a>
                   <a
                     href="#transport"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-red-50"
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
-                    Bus Routes
+                    <Bus className="w-3.5 h-3.5 text-red-600" />
+                    <span>Bus Routes</span>
                   </a>
+                  <a
+                    href="#facilities"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-red-600" />
+                    <span>Facilities &amp; Labs</span>
+                  </a>
+                  <a
+                    href="#testimonials"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
+                  >
+                    <MessageSquareQuote className="w-3.5 h-3.5 text-red-600" />
+                    <span>FAQs &amp; Reviews</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenVirtualTour();
+                    }}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5 text-left cursor-pointer"
+                  >
+                    <Compass className="w-3.5 h-3.5 text-red-600" />
+                    <span>Virtual Tour</span>
+                  </button>
                 </div>
               </div>
 
@@ -433,17 +531,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     setMobileMenuOpen(false);
                     onOpenPortal();
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-red-50 border border-red-200 text-red-600 flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 rounded-none text-xs font-bold bg-red-50 border border-red-200 text-red-600 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <UserCheck className="w-4 h-4 text-red-600" />
-                  <span>Student & Parent Portal</span>
+                  <span>Student &amp; Parent Portal</span>
                 </button>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     onOpenAdmissions();
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white flex items-center justify-center gap-2 shadow-md shadow-red-500/25"
+                  className="w-full py-2.5 px-4 rounded-none text-xs font-bold bg-red-600 hover:bg-red-500 text-white flex items-center justify-center gap-2 shadow-md shadow-red-500/25 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
                   <span>Apply for Admission (2026/27)</span>

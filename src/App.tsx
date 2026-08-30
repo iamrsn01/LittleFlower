@@ -80,13 +80,13 @@ export function App() {
         {/* Official Notices & Upcoming Events Calendar */}
         <NoticesAndEvents />
 
-        {/* School Bus Transit Network */}
-        <TransportSection />
-
         {/* Life at Little Flower Photo Gallery & Lightbox */}
         <GallerySection
           onOpenVirtualTour={() => setIsVirtualTourOpen(true)}
         />
+
+        {/* School Bus Transit Network */}
+        <TransportSection />
 
         {/* 3-Step Online Admissions Form & Scholarship Estimator */}
         <AdmissionsSection />
