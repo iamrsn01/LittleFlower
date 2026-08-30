@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: '/LittleFlower/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/LittleFlower/' : '/',
   plugins: [
     react(),
     tailwindcss()
@@ -13,4 +13,4 @@ export default defineConfig({
     port: 3000,
     host: true
   }
-});
+}));
