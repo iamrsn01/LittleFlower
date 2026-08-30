@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/LittleFlower/' : '/',
+export default defineConfig(() => ({
+  base: process.env.VERCEL ? '/' : (process.env.GITHUB_ACTIONS ? '/LittleFlower/' : './'),
   plugins: [
     react(),
     tailwindcss()
