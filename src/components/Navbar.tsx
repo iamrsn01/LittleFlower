@@ -4,6 +4,7 @@ import {
   X, 
   Search, 
   UserCheck, 
+  ShieldCheck,
   Sparkles, 
   Phone, 
   Mail, 
@@ -16,15 +17,15 @@ import {
   Bus, 
   Bell, 
   Award, 
-  Layers,
-  Users,
-  Compass,
-  MessageSquareQuote
+  Layers, 
+  Users, 
+  Compass, 
+  MessageSquareQuote 
 } from 'lucide-react';
 import logoImg from '../assets/logoBase64';
 
 interface NavbarProps {
-  onOpenPortal: () => void;
+  onOpenPortal: (role?: 'admin' | 'teacher' | 'student' | 'teachers' | 'students') => void;
   onOpenAdmissions: () => void;
   onOpenSearch: () => void;
   onOpenVirtualTour: () => void;
@@ -98,8 +99,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       <header className="fixed top-0 left-0 right-0 z-40">
         
-        {/* Top Utility Bar - Gradient with Micro Texture */}
-        <div className="topbar-texture text-white text-xs py-1.5 shadow-xs hidden md:block border-b border-red-700/40">
+        {/* Top Utility Bar - Clean Gradient */}
+        <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white text-xs py-1.5 shadow-xs hidden md:block border-b border-red-700/40">
           <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between">
             
             {/* Left: Admissions Announcement */}
@@ -128,8 +129,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Main Navbar - Styled with Sophisticated Micro Texture & Frosted Glass */}
-        <nav className={`transition-all duration-300 navbar-texture backdrop-blur-md ${
+        {/* Main Navbar - Clean Solid Frosted Glass */}
+        <nav className={`transition-all duration-300 bg-white/95 backdrop-blur-md ${
           isScrolled 
             ? 'py-2.5 shadow-md border-b border-slate-300/80' 
             : 'py-3.5 border-b border-slate-200/80 shadow-xs'
@@ -392,14 +393,97 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>Search</span>
               </button>
 
-              {/* Student Portal Button */}
-              <button
-                onClick={onOpenPortal}
-                className="h-[38px] px-3.5 rounded-none text-xs font-bold text-slate-700 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-300 hover:border-red-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs group/portal"
+              {/* Portal Login Dropdown with Admin, Teachers, Students */}
+              <div 
+                className="relative group"
+                onMouseEnter={() => handleMouseEnter('portal')}
+                onMouseLeave={handleMouseLeave}
               >
-                <UserCheck className="w-3.5 h-3.5 text-red-600 group-hover/portal:scale-115 transition-transform" />
-                <span>Portal Login</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'portal' ? null : 'portal')}
+                  className="h-[38px] px-3.5 rounded-none text-xs font-bold text-slate-700 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-300 hover:border-red-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs group/portal"
+                >
+                  <UserCheck className="w-3.5 h-3.5 text-red-600 group-hover/portal:scale-115 transition-transform" />
+                  <span>Portal Login</span>
+                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${openDropdown === 'portal' ? 'rotate-180 text-red-600' : 'group-hover/portal:text-red-600'}`} />
+                </button>
+
+                {/* Portal Dropdown Menu List: Admin, Teacher, Student */}
+                {openDropdown === 'portal' && (
+                  <div className="absolute top-full right-0 mt-1.5 w-64 bg-white/98 backdrop-blur-md border-t-2 border-t-red-600 border-x border-b border-slate-200 shadow-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150 z-50">
+                    <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-slate-400 tracking-wider border-b border-slate-100">
+                      Select Role
+                    </div>
+
+                    {/* 1. Admin */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenDropdown(null);
+                        onOpenPortal('admin');
+                      }}
+                      className="w-full p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer text-left"
+                    >
+                      <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
+                          Admin
+                        </p>
+                        <p className="text-[10px] text-slate-500 leading-tight">
+                          School Management &amp; Principal Desk
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* 2. Teacher */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenDropdown(null);
+                        onOpenPortal('teacher');
+                      }}
+                      className="w-full p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer text-left"
+                    >
+                      <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
+                          Teacher
+                        </p>
+                        <p className="text-[10px] text-slate-500 leading-tight">
+                          Attendance &amp; Academic Staff Desk
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* 3. Student */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenDropdown(null);
+                        onOpenPortal('student');
+                      }}
+                      className="w-full p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer text-left"
+                    >
+                      <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900 group-hover/drop:text-red-600 transition-colors">
+                          Student
+                        </p>
+                        <p className="text-[10px] text-slate-500 leading-tight">
+                          Marks, Attendance &amp; Fee Dues
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Apply Online Button */}
               <button
@@ -526,17 +610,45 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenPortal();
-                  }}
-                  className="w-full py-2.5 px-4 rounded-none text-xs font-bold bg-red-50 border border-red-200 text-red-600 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <UserCheck className="w-4 h-4 text-red-600" />
-                  <span>Student &amp; Parent Portal</span>
-                </button>
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2.5">
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 px-1 tracking-wider">
+                    Select Role
+                  </span>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onOpenPortal('admin');
+                      }}
+                      className="py-2 px-2 rounded-none text-xs font-bold bg-slate-50 border border-slate-200 text-slate-800 hover:bg-red-50 hover:text-red-600 flex flex-col items-center gap-1 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-red-600" />
+                      <span>Admin</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onOpenPortal('teacher');
+                      }}
+                      className="py-2 px-2 rounded-none text-xs font-bold bg-slate-50 border border-slate-200 text-slate-800 hover:bg-red-50 hover:text-red-600 flex flex-col items-center gap-1 cursor-pointer"
+                    >
+                      <BookOpen className="w-4 h-4 text-red-600" />
+                      <span>Teacher</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onOpenPortal('student');
+                      }}
+                      className="py-2 px-2 rounded-none text-xs font-bold bg-slate-50 border border-slate-200 text-slate-800 hover:bg-red-50 hover:text-red-600 flex flex-col items-center gap-1 cursor-pointer"
+                    >
+                      <GraduationCap className="w-4 h-4 text-red-600" />
+                      <span>Student</span>
+                    </button>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);

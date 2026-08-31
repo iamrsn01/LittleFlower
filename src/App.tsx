@@ -10,14 +10,63 @@ import { GallerySection } from './components/GallerySection';
 import { AdmissionsSection } from './components/AdmissionsSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { Footer } from './components/Footer';
-import { StudentPortal } from './components/StudentPortal';
 import { VirtualTourModal } from './components/VirtualTourModal';
 import { QuickSearchModal } from './components/QuickSearchModal';
 
+// Dedicated Separate Pages
+import { AdminPortalPage } from './pages/AdminPortalPage';
+import { TeacherPortalPage } from './pages/TeacherPortalPage';
+import { StudentPortalPage } from './pages/StudentPortalPage';
+
+export type AppRoute = 'home' | 'admin' | 'teacher' | 'student';
+
 export function App() {
-  const [isPortalOpen, setIsPortalOpen] = useState(false);
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
   const [isVirtualTourOpen, setIsVirtualTourOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Parse initial route from URL Hash or Path
+  const getRouteFromUrl = (): AppRoute => {
+    const hash = window.location.hash.toLowerCase();
+    const path = window.location.pathname.toLowerCase();
+
+    if (hash.includes('admin') || path.includes('/admin')) return 'admin';
+    if (hash.includes('teacher') || path.includes('/teacher')) return 'teacher';
+    if (hash.includes('student') || path.includes('/student')) return 'student';
+    return 'home';
+  };
+
+  useEffect(() => {
+    setCurrentRoute(getRouteFromUrl());
+
+    const handleLocationChange = () => {
+      setCurrentRoute(getRouteFromUrl());
+    };
+
+    window.addEventListener('hashchange', handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleLocationChange);
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
+
+  const navigateTo = (route: AppRoute) => {
+    setCurrentRoute(route);
+    if (route === 'home') {
+      window.location.hash = '#/';
+    } else {
+      window.location.hash = `#/${route}`;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenPortal = (role: 'admin' | 'teacher' | 'student' | 'teachers' | 'students' = 'admin') => {
+    if (role === 'admin') navigateTo('admin');
+    else if (role === 'teacher' || role === 'teachers') navigateTo('teacher');
+    else navigateTo('student');
+  };
 
   // Global Keyboard shortcut for search (Ctrl + K or Cmd + K)
   useEffect(() => {
@@ -33,25 +82,79 @@ export function App() {
   }, []);
 
   const handleOpenAdmissions = () => {
-    const el = document.getElementById('admissions');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    if (currentRoute !== 'home') {
+      navigateTo('home');
+      setTimeout(() => {
+        const el = document.getElementById('admissions');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById('admissions');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   const handleSelectSearchSection = (sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    if (currentRoute !== 'home') {
+      navigateTo('home');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
+  // =========================================================================
+  // 1. DEDICATED SEPARATE PAGE: ADMIN PORTAL
+  // =========================================================================
+  if (currentRoute === 'admin') {
+    return (
+      <AdminPortalPage
+        onNavigateHome={() => navigateTo('home')}
+        onNavigateTeacher={() => navigateTo('teacher')}
+        onNavigateStudent={() => navigateTo('student')}
+      />
+    );
+  }
+
+  // =========================================================================
+  // 2. DEDICATED SEPARATE PAGE: TEACHER PORTAL
+  // =========================================================================
+  if (currentRoute === 'teacher') {
+    return (
+      <TeacherPortalPage
+        onNavigateHome={() => navigateTo('home')}
+        onNavigateAdmin={() => navigateTo('admin')}
+        onNavigateStudent={() => navigateTo('student')}
+      />
+    );
+  }
+
+  // =========================================================================
+  // 3. DEDICATED SEPARATE PAGE: STUDENT PORTAL
+  // =========================================================================
+  if (currentRoute === 'student') {
+    return (
+      <StudentPortalPage
+        onNavigateHome={() => navigateTo('home')}
+        onNavigateAdmin={() => navigateTo('admin')}
+        onNavigateTeacher={() => navigateTo('teacher')}
+      />
+    );
+  }
+
+  // =========================================================================
+  // 4. MAIN SCHOOL WEBSITE LANDING PAGE
+  // =========================================================================
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-500 selection:text-white flex flex-col font-sans">
       
       {/* Sticky Header Navbar */}
       <Navbar
-        onOpenPortal={() => setIsPortalOpen(true)}
+        onOpenPortal={handleOpenPortal}
         onOpenAdmissions={handleOpenAdmissions}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenVirtualTour={() => setIsVirtualTourOpen(true)}
@@ -59,11 +162,11 @@ export function App() {
 
       {/* Main Page Sections */}
       <main className="flex-grow">
-        {/* Hero Section with Unobstructed Slider & Light Red Introduction */}
+        {/* Hero Section with Slider & Introduction */}
         <Hero
           onOpenAdmissions={handleOpenAdmissions}
           onOpenVirtualTour={() => setIsVirtualTourOpen(true)}
-          onOpenPortal={() => setIsPortalOpen(true)}
+          onOpenPortal={() => handleOpenPortal('student')}
         />
 
         {/* Academics & Curriculum Explorer */}
@@ -97,16 +200,11 @@ export function App() {
 
       {/* Footer */}
       <Footer
-        onOpenPortal={() => setIsPortalOpen(true)}
+        onOpenPortal={() => handleOpenPortal('student')}
         onOpenAdmissions={handleOpenAdmissions}
       />
 
       {/* Interactive Modals */}
-      <StudentPortal
-        isOpen={isPortalOpen}
-        onClose={() => setIsPortalOpen(false)}
-      />
-
       <VirtualTourModal
         isOpen={isVirtualTourOpen}
         onClose={() => setIsVirtualTourOpen(false)}
@@ -119,12 +217,12 @@ export function App() {
         onSelectAction={handleSelectSearchSection}
       />
 
-      {/* Floating WhatsApp Quick Connect Button */}
+      {/* Floating WhatsApp Quick Connect Button (Desktop Only) */}
       <a
         href="https://wa.me/9779840159560?text=Hello%20Little%20Flower%20Secondary%20School,%20I%20have%20an%20inquiry."
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 flex items-center gap-2 group cursor-pointer border-2 border-white"
+        className="hidden md:flex fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 items-center gap-2 group cursor-pointer border-2 border-white"
         title="Chat on WhatsApp (+9779840159560)"
       >
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">

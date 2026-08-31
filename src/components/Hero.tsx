@@ -36,24 +36,6 @@ export const Hero: React.FC<HeroProps> = ({
       image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1800&q=85',
       caption: 'Well-Equipped Physics, Chemistry & Biology Practical Labs',
       location: 'Science & STEM Facilities'
-    },
-    {
-      id: 3,
-      image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Digital Computer & ICT Learning Centre with 40+ Workstations',
-      location: 'Computer Laboratory'
-    },
-    {
-      id: 4,
-      image: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Spacious 3.5 Bigha Green Sports Ground & Playground',
-      location: 'Athletics & Physical Fitness'
-    },
-    {
-      id: 5,
-      image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Cultural Programs, Speech Competitions & Saraswati Puja Stage',
-      location: 'Auditorium & Arts'
     }
   ];
 

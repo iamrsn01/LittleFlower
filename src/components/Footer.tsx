@@ -7,15 +7,17 @@ import {
   CheckCircle2, 
   ShieldCheck, 
   ArrowUp,
-  Flame,
-  Clock,
-  Navigation,
-  Compass
+  Flame, 
+  Clock, 
+  Navigation, 
+  Compass,
+  GraduationCap,
+  BookOpen
 } from 'lucide-react';
 import logoImg from '../assets/logoBase64';
 
 interface FooterProps {
-  onOpenPortal: () => void;
+  onOpenPortal: (role?: 'admin' | 'teacher' | 'student' | 'teachers' | 'students') => void;
   onOpenAdmissions: () => void;
 }
 
@@ -39,11 +41,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
   };
 
   return (
-    <footer className="bg-slate-900 border-t-4 border-red-500 text-slate-300 text-xs relative">
+    <footer className="bg-slate-900 border-t-4 border-red-500 text-slate-300 text-xs relative w-full">
       
-      {/* Top Banner Callout - Fresh Light Red */}
-      <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 py-8 px-4 sm:px-6 lg:px-8 text-white">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* Top Banner Callout - Matching Navbar full max-w-[1536px] width */}
+      <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 py-8 text-white w-full border-b border-red-700/40">
+        <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[11px] border border-white/30 mb-1">
               <Flame className="w-3 h-3 text-amber-300 fill-current" />
@@ -55,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
 
           <div className="flex items-center gap-3">
             <button
-              onClick={onOpenPortal}
+              onClick={() => onOpenPortal('student')}
               className="px-4 py-2.5 rounded-xl font-bold bg-white/15 hover:bg-white/25 text-white border border-white/30 transition-colors cursor-pointer"
             >
               Student Portal
@@ -70,8 +72,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
         </div>
       </div>
 
-      {/* Main Footer Body: 1/3 Map on Left & 2/3 Right Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      {/* Main Footer Body: Full Max-Width matching Navbar */}
+      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-14">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           
           {/* ================= 1/3 LEFT: CAMPUS LOCATION & INTERACTIVE MAP ================= */}
@@ -267,18 +269,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
 
             </div>
 
-            {/* ================= BOTTOM ROW: QUICK NAVIGATION (COVERING FULL 2/3 WIDTH) ================= */}
+            {/* ================= BOTTOM ROW: QUICK NAVIGATION ================= */}
             <div className="pt-6 border-t border-slate-800 space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
                   <Compass className="w-3.5 h-3.5 text-red-400" />
-                  <span>Quick Navigation & Academic Portals</span>
+                  <span>Campus Directory &amp; Dedicated Portals</span>
                 </h4>
-                <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">Direct Campus Directory</span>
+                <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">Direct Links</span>
               </div>
 
-              {/* Multi-column structured links covering 2/3 right area */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs">
+              {/* Multi-column structured links */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2.5 text-xs">
                 <a href="#hero" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> School Overview
                 </a>
@@ -286,7 +288,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
                   <span className="text-red-500">›</span> Academic Levels (SEE)
                 </a>
                 <a href="#facilities" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
-                  <span className="text-red-500">›</span> Science & IT Labs
+                  <span className="text-red-500">›</span> Science &amp; IT Labs
                 </a>
                 <a href="#faculty" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Faculty Directory
@@ -297,15 +299,27 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
                 <a href="#transport" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Bus Transport Routes
                 </a>
+                <button 
+                  onClick={() => onOpenPortal('admin')}
+                  className="hover:text-red-400 transition-colors flex items-center gap-1.5 text-left cursor-pointer"
+                >
+                  <span className="text-red-500">›</span> Admin Portal
+                </button>
+                <button 
+                  onClick={() => onOpenPortal('teacher')}
+                  className="hover:text-red-400 transition-colors flex items-center gap-1.5 text-left cursor-pointer"
+                >
+                  <span className="text-red-500">›</span> Teacher Portal
+                </button>
+                <button 
+                  onClick={() => onOpenPortal('student')}
+                  className="hover:text-red-400 transition-colors flex items-center gap-1.5 text-left cursor-pointer"
+                >
+                  <span className="text-red-500">›</span> Student Portal
+                </button>
                 <a href="#admissions" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Online Admissions
                 </a>
-                <button 
-                  onClick={onOpenPortal}
-                  className="hover:text-red-400 transition-colors flex items-center gap-1.5 text-left cursor-pointer"
-                >
-                  <span className="text-red-500">›</span> Student Portal Desk
-                </button>
               </div>
             </div>
 
