@@ -351,10 +351,7 @@ export const TeacherPortalPage: React.FC<TeacherPortalPageProps> = ({
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-          /* ============================================================ */
-          /* 2. TEACHER DASHBOARD VIEW                                    */
-          /* ============================================================ */
-          <div className="space-y-6">
+        <div className="space-y-6">
             
             {/* Teacher Profile Card */}
             <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-50/60 via-white to-red-50/50 border border-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">

@@ -339,10 +339,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
 
       {/* Main Page Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-          /* ============================================================ */
-          /* 2. ADMIN DASHBOARD VIEW                                      */
-          /* ============================================================ */
-          <div className="space-y-6">
+        <div className="space-y-6">
             
             {/* Top Admin Summary Banner */}
             <div className="p-6 rounded-3xl bg-gradient-to-r from-red-950/80 via-slate-900 to-slate-950 border border-red-900/40 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl">
