@@ -65,7 +65,7 @@ export const Hero: React.FC<HeroProps> = ({
       {/* 1. CLEAN CAMPUS PHOTO SLIDER */}
       <div className="relative w-full bg-slate-900 border-b border-slate-200">
         <div 
-          className="relative w-full h-[380px] sm:h-[460px] md:h-[540px] lg:h-[600px] overflow-hidden group"
+          className="relative w-full h-[480px] sm:h-[580px] md:h-[680px] lg:h-[760px] xl:h-[820px] overflow-hidden group"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
