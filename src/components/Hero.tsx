@@ -8,7 +8,8 @@ import {
   Users, 
   ChevronLeft, 
   ChevronRight, 
-  Camera 
+  Camera,
+  MapPin
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
 import campusBuildingImg from '../assets/campus-building.jpg';
@@ -118,28 +119,44 @@ export const Hero: React.FC<HeroProps> = ({
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Bottom Caption & Pagination Dots */}
-          <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white">
-            <div className="px-4 py-2 rounded-xl bg-black/60 backdrop-blur-md border border-white/15 max-w-xl">
-              <p className="text-xs sm:text-sm font-bold text-white leading-tight">
+          {/* Compact Centered Badge & Controls (Navbar Palette & Hover Animation) */}
+          <div className="absolute bottom-4 sm:bottom-6 left-4 right-4 z-20 flex flex-col items-center justify-center gap-2 pointer-events-none">
+            
+            {/* Sharp Navbar-Themed Card with Animated Expansion Line */}
+            <div className="group relative px-4 py-2.5 sm:px-5 sm:py-3 rounded-none bg-white/95 backdrop-blur-md border-t-2 border-t-red-600 border-x border-b border-slate-200/90 shadow-2xl text-center max-w-md mx-auto pointer-events-auto transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white hover:border-slate-300 hover:shadow-[0_20px_35px_rgba(0,0,0,0.25)] overflow-hidden cursor-pointer">
+              
+              {/* Landmark Tag with Navbar-style Hover Flip */}
+              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-red-50 border border-red-200/80 text-red-600 text-[10px] font-black tracking-widest uppercase mb-1.5 transition-all duration-200 group-hover:bg-red-600 group-hover:text-white">
+                <Sparkles className="w-2.5 h-2.5 text-amber-500 group-hover:text-amber-300" />
+                <span>Campus Landmark</span>
+              </div>
+
+              {/* Headline (Switches to red-600 on hover like Navbar links) */}
+              <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug tracking-tight transition-colors duration-200 group-hover:text-red-600 font-display">
                 {slides[currentSlide].caption}
-              </p>
-              <p className="text-[11px] text-amber-300 font-semibold">
-                {slides[currentSlide].location}
-              </p>
+              </h2>
+
+              {/* Location Tag */}
+              <div className="mt-1 flex items-center justify-center gap-1 text-[11px] text-slate-500 font-semibold tracking-wide">
+                <MapPin className="w-3 h-3 text-red-600 shrink-0 group-hover:scale-110 transition-transform" />
+                <span>{slides[currentSlide].location}</span>
+              </div>
+
+              {/* Animated Bottom Accent Line (Exact Navbar Hover Effect) */}
+              <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
             </div>
 
-            {/* Pagination Dots */}
-            <div className="flex items-center gap-2 self-center sm:self-auto bg-black/50 backdrop-blur-md px-3 py-2 rounded-full border border-white/10">
+            {/* Sharp Indicator Bars (Navbar Matching Style) */}
+            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-none border border-slate-200/90 pointer-events-auto shadow-md">
               {slides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentSlide(idx)}
                   aria-label={`Go to slide ${idx + 1}`}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                  className={`h-1.5 rounded-none transition-all duration-200 cursor-pointer hover:scale-110 ${
                     idx === currentSlide 
-                      ? 'w-7 bg-red-500 shadow' 
-                      : 'w-2.5 bg-white/60 hover:bg-white'
+                      ? 'w-6 bg-red-600 shadow-xs' 
+                      : 'w-2 bg-slate-300 hover:bg-red-400'
                   }`}
                 />
               ))}
