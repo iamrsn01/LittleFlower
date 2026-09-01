@@ -9,7 +9,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import logoImg from '../assets/logoBase64';
-import campusBuildingImg from '../assets/campus-building.jpg';
+import coverImg from '../assets/slider/cover.jpg';
 
 interface VirtualTourModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const VirtualTourModal: React.FC<VirtualTourModalProps> = ({
     {
       id: 'spot-main',
       title: 'Main Academic Building & Assembly Courtyard',
-      image: campusBuildingImg,
+      image: coverImg,
       description: 'The central academic block featuring spacious smart classrooms, administrative reception, and daily moral assembly podium.',
       highlights: ['CCTV-monitored entrance', 'Lush green flowering gardens', 'Reception & Principal Desk']
     },

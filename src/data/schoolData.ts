@@ -631,7 +631,7 @@ export const galleryItems: GalleryItem[] = [
     id: 'g-01',
     title: 'Main Academic Campus & Green Playground',
     category: 'Campus',
-    imageUrl: './campus-building.jpg',
+    imageUrl: './slider/cover.jpg',
     description: 'The scenic Little Flower Secondary School campus featuring the multi-storey academic wings and expansive green lawn.'
   },
   {

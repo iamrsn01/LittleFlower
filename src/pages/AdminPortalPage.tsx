@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { facultyMembers, schoolNotices, SchoolNotice } from '../data/schoolData';
 import logoImg from '../assets/logoBase64';
-import campusBuildingImg from '../assets/campus-building.jpg';
+import coverImg from '../assets/slider/cover.jpg';
 
 interface AdminPortalPageProps {
   onNavigateHome: () => void;
@@ -101,7 +101,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
         <div className="relative w-full lg:w-1/2 min-h-[380px] lg:min-h-screen p-8 sm:p-12 xl:p-16 flex flex-col justify-between overflow-hidden group">
           {/* Background Image */}
           <img 
-            src={campusBuildingImg} 
+            src={coverImg} 
             alt="Little Flower Secondary School Academic Campus" 
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000"
           />

@@ -12,7 +12,14 @@ import {
   MapPin
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
-import campusBuildingImg from '../assets/campus-building.jpg';
+import coverImg from '../assets/slider/cover.jpg';
+import slider1 from '../assets/slider/1.jpg';
+import slider2 from '../assets/slider/2.JPG';
+import slider3 from '../assets/slider/3.JPG';
+import slider4 from '../assets/slider/4.JPG';
+import slider5 from '../assets/slider/5.JPG';
+import slider6 from '../assets/slider/6.JPG';
+import slider7 from '../assets/slider/7.JPG';
 
 interface HeroProps {
   onOpenAdmissions: () => void;
@@ -28,15 +35,51 @@ export const Hero: React.FC<HeroProps> = ({
   const slides = [
     {
       id: 1,
-      image: campusBuildingImg,
-      caption: 'Little Flower Secondary School — Main Academic Campus & Lush Green Ground',
+      image: coverImg,
+      caption: 'Little Flower Secondary School — Welcome & Campus Overview',
       location: 'Birgunj-21, Parwanipur, Parsa (Estd. 2005)'
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Well-Equipped Physics, Chemistry & Biology Practical Labs',
-      location: 'Science & STEM Facilities'
+      image: slider1,
+      caption: 'Little Flower Secondary School — Campus Life & Student Activities',
+      location: 'Parwanipur, Parsa'
+    },
+    {
+      id: 3,
+      image: slider2,
+      caption: 'Little Flower Secondary School — Annual Event & Campus Showcase',
+      location: 'Auditorium & Parade Grounds'
+    },
+    {
+      id: 4,
+      image: slider3,
+      caption: 'Little Flower Secondary School — Student Leadership & Assembly',
+      location: 'Parwanipur, Parsa'
+    },
+    {
+      id: 5,
+      image: slider4,
+      caption: 'Little Flower Secondary School — Sports & Co-Curricular Excellence',
+      location: 'Green Playground & Sports Grounds'
+    },
+    {
+      id: 6,
+      image: slider5,
+      caption: 'Little Flower Secondary School — Cultural Festivities & Performances',
+      location: 'School Auditorium Stage'
+    },
+    {
+      id: 7,
+      image: slider6,
+      caption: 'Little Flower Secondary School — Mentorship & Graduation Honor',
+      location: 'Parwanipur, Parsa'
+    },
+    {
+      id: 8,
+      image: slider7,
+      caption: 'Little Flower Secondary School — School Community & Celebrations',
+      location: 'Parwanipur, Parsa'
     }
   ];
 
