@@ -668,6 +668,48 @@ export const galleryItems: GalleryItem[] = [
     category: 'Campus',
     imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1000&q=80',
     description: 'Our young learners enjoying toys, puzzles, and sensory play in the kindergarten play garden.'
+  },
+  {
+    id: 'g-07',
+    title: 'Marching Band & Scout Troop Championship Trophy',
+    category: 'Arts & Culture',
+    imageUrl: './scout-parade-trophy.jpg',
+    description: 'Little Flower Secondary School marchers and scout troop celebrating their inter-school championship victory trophy.'
+  },
+  {
+    id: 'g-08',
+    title: 'Student Prefects & School Captains Flag Bearers',
+    category: 'Sports',
+    imageUrl: './student-council-captains.jpg',
+    description: 'Student leaders and prefects during morning assembly parade and flag hoisting ceremony.'
+  },
+  {
+    id: 'g-09',
+    title: 'Farewell Fiesta 2082 — Senior Graduation Group',
+    category: 'Arts & Culture',
+    imageUrl: './farewell-group-2082.jpg',
+    description: 'Students and faculty members celebrating Farewell Fiesta 2082 on the main auditorium stage.'
+  },
+  {
+    id: 'g-10',
+    title: 'Farewell Fiesta 2082 — Faculty & Administration Honour',
+    category: 'Campus',
+    imageUrl: './farewell-teachers-2082.jpg',
+    description: 'School principal, sisters, and teaching staff receiving honors during Farewell Fiesta 2082.'
+  },
+  {
+    id: 'g-11',
+    title: 'Inter-House Cultural Fest 2082 — Ethnic Folk Dance',
+    category: 'Arts & Culture',
+    imageUrl: './cultural-fest-ethnic-dance.jpg',
+    description: 'Students performing vibrant traditional ethnic folk dance during the Inter-House Cultural Fest 2082.'
+  },
+  {
+    id: 'g-12',
+    title: 'Inter-House Cultural Fest 2082 — Traditional Saree Performance',
+    category: 'Arts & Culture',
+    imageUrl: './cultural-fest-saree-dance.jpg',
+    description: 'Senior students performing traditional Nepalese dance on stage during Cultural Fest 2082.'
   }
 ];
 

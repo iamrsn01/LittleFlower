@@ -13,6 +13,11 @@ import {
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
 import campusBuildingImg from '../assets/campus-building.jpg';
+import scoutParadeImg from '../assets/scout-parade-trophy.jpg';
+import studentCaptainsImg from '../assets/student-council-captains.jpg';
+import culturalFestDanceImg from '../assets/cultural-fest-ethnic-dance.jpg';
+import farewellGroupImg from '../assets/farewell-group-2082.jpg';
+import culturalFestSareeImg from '../assets/cultural-fest-saree-dance.jpg';
 
 interface HeroProps {
   onOpenAdmissions: () => void;
@@ -34,9 +39,33 @@ export const Hero: React.FC<HeroProps> = ({
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1800&q=85',
-      caption: 'Well-Equipped Physics, Chemistry & Biology Practical Labs',
-      location: 'Science & STEM Facilities'
+      image: scoutParadeImg,
+      caption: 'Little Flower Marching Band & Scout Troop — Championship Trophy Winners',
+      location: 'Inter-School Parade & Co-Curricular Excellence'
+    },
+    {
+      id: 3,
+      image: studentCaptainsImg,
+      caption: 'Student Prefects & School Captains — Leadership & Assembly Discipline',
+      location: 'School Student Council & Flag Bearers'
+    },
+    {
+      id: 4,
+      image: culturalFestDanceImg,
+      caption: 'Inter-House Cultural Fest 2082 — Ethnic Folk Dance Performance',
+      location: 'Stage Auditorium & Cultural Heritage Showcase'
+    },
+    {
+      id: 5,
+      image: farewellGroupImg,
+      caption: 'Farewell Fiesta 2082 — Senior Secondary Batch Celebration',
+      location: 'Main Auditorium Stage & Mentorship Ceremony'
+    },
+    {
+      id: 6,
+      image: culturalFestSareeImg,
+      caption: 'Inter-House Cultural Fest 2082 — Traditional Nepalese Dance',
+      location: 'Arts & Cultural Heritage Showcase'
     }
   ];
 
