@@ -12,6 +12,7 @@ import {
   MapPin
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
+import { AboutSection } from './AboutSection';
 import coverImg from '../assets/slider/cover.jpg';
 import slider1 from '../assets/slider/1.jpg';
 import slider2 from '../assets/slider/2.JPG';
@@ -209,76 +210,12 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* 2. INTRODUCTION CONTENT (CLEAN & ELEGANT) */}
-      <div className="py-16 sm:py-20 lg:py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-4xl mx-auto space-y-6">
-            
-            {/* Primary Headline */}
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] font-display">
-              Welcome to <span className="text-red-600">Little Flower</span> Secondary School
-            </h1>
-
-            {/* Introduction Description */}
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
-              Dedicated to delivering quality foundational to secondary education in Birgunj-21, Parwanipur, Parsa. We provide modern science laboratories, high-speed computer education, disciplined mentorship, and consistent 100% SEE Board pass results.
-            </p>
-
-            {/* Action CTAs */}
-            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-              <button
-                onClick={onOpenAdmissions}
-                className="px-6 py-3.5 rounded-2xl font-bold text-sm sm:text-base text-white bg-red-600 hover:bg-red-500 shadow-lg shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Apply for Admission (2026/27)</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={onOpenVirtualTour}
-                className="px-6 py-3.5 rounded-2xl font-bold text-sm sm:text-base text-slate-800 bg-slate-50 hover:bg-red-50 border border-slate-300 hover:border-red-400 hover:text-red-600 shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2"
-              >
-                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                  <Play className="w-3 h-3 fill-current ml-0.5" />
-                </div>
-                <span>Campus Walkthrough</span>
-              </button>
-
-              <button
-                onClick={onOpenPortal}
-                className="px-5 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <Users className="w-4 h-4 text-red-600" />
-                <span>Student / Parent Portal</span>
-              </button>
-            </div>
-
-            {/* Trust Highlights */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-bold text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Government Recognized &amp; NEB Affiliated</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-red-600" />
-                <span>100% SEE Board Pass Rate</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-600" />
-                <span>Merit Scholarships Available</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-slate-700" />
-                <span>3.5 Bigha Green Campus</span>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
+      {/* 2. WELCOME & ABOUT SCHOOL: HERITAGE, VISION, MISSION & SPOTLIGHT */}
+      <AboutSection
+        onOpenAdmissions={onOpenAdmissions}
+        onOpenVirtualTour={onOpenVirtualTour}
+        onOpenPortal={() => onOpenPortal('student')}
+      />
 
       {/* 3. METRICS & STATISTICS BAR */}
       <div className="border-y border-slate-200 bg-slate-50 shadow-xs">

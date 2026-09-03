@@ -151,16 +151,16 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                 <p className="text-[11px] text-slate-300">SEE Board Pass</p>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-                <p className="text-lg font-black text-white">1,420+</p>
+                <p className="text-lg font-black text-white">1,200+</p>
                 <p className="text-[11px] text-slate-300">Enrolled Students</p>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-                <p className="text-lg font-black text-white">48</p>
+                <p className="text-lg font-black text-white">52+</p>
                 <p className="text-[11px] text-slate-300">Faculty Mentors</p>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-                <p className="text-lg font-black text-white">3.5 Bigha</p>
-                <p className="text-[11px] text-slate-300">Green Campus</p>
+                <p className="text-sm font-black text-white leading-tight">Green Haven</p>
+                <p className="text-[11px] text-slate-300">for Learning</p>
               </div>
             </div>
           </div>
@@ -375,7 +375,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-1 shadow-md">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Enrolled Students</span>
-                <p className="text-3xl font-black text-white">1,420</p>
+                <p className="text-3xl font-black text-white">1,200+</p>
                 <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" /> +12% YoY Growth
                 </span>
@@ -383,7 +383,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
 
               <div className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-1 shadow-md">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active Faculty Members</span>
-                <p className="text-3xl font-black text-white">48</p>
+                <p className="text-3xl font-black text-white">52+</p>
                 <span className="text-[10px] text-slate-400 font-medium">All STEM &amp; Arts Staffed</span>
               </div>
 

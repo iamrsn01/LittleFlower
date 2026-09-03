@@ -369,12 +369,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                       <span className="text-[10px] uppercase font-bold text-slate-500">Total Enrolled</span>
-                      <p className="text-2xl font-black text-slate-900">1,420</p>
+                      <p className="text-2xl font-black text-slate-900">1,200+</p>
                       <span className="text-[10px] text-emerald-600 font-bold">+12% vs Last Year</span>
                     </div>
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                       <span className="text-[10px] uppercase font-bold text-slate-500">Active Teachers</span>
-                      <p className="text-2xl font-black text-slate-900">48</p>
+                      <p className="text-2xl font-black text-slate-900">52+</p>
                       <span className="text-[10px] text-slate-500 font-medium">All Sections Staffed</span>
                     </div>
                     <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 space-y-1">

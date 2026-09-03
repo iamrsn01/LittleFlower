@@ -32,7 +32,7 @@ export const FacilitiesSection: React.FC = () => {
             Modern Facilities for Holistic Growth
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Our 3.5 Bigha campus in Parwanipur, Parsa features dedicated science practical labs, a high-speed computer centre, open sports grounds, and spacious assembly auditoriums.
+            A Green Haven for Learning in Parwanipur, Parsa, featuring dedicated science practical labs, a high-speed computer centre, open sports grounds, and spacious assembly auditoriums.
           </p>
         </div>
 

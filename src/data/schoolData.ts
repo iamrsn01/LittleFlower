@@ -134,9 +134,9 @@ export interface GalleryItem {
 export const schoolStats = [
   { label: 'SEE Board Pass Rate', value: '100%', subtext: 'Distinction & First Division Legacy' },
   { label: 'Educational Legacy', value: '20+ Yrs', subtext: 'Serving Parsa & Madhesh since 2005' },
-  { label: 'Active Students', value: '1,400+', subtext: 'From Nursery to Secondary Level' },
-  { label: 'Qualified Teachers', value: '48+', subtext: 'Experienced & Caring Mentors' },
-  { label: 'Campus Land Area', value: '3.5 Bigha', subtext: 'Lush Green, Secure Campus' }
+  { label: 'Active Students', value: '1,200+', subtext: 'From Nursery to Secondary Level' },
+  { label: 'Qualified Teachers', value: '52+', subtext: 'Experienced & Caring Mentors' },
+  { label: 'A Green Haven for Learning', value: 'Eco Haven', subtext: 'Lush Green, Serene & Secure Campus' }
 ];
 
 export const academicLevels: AcademicLevel[] = [
