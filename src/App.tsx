@@ -37,7 +37,24 @@ export function App() {
   };
 
   useEffect(() => {
-    setCurrentRoute(getRouteFromUrl());
+    // Disable browser's automatic scroll restoration so page opens reliably at the top
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    const route = getRouteFromUrl();
+    setCurrentRoute(route);
+
+    // If on home landing page, always ensure we hold on the top navbar & slider
+    if (route === 'home') {
+      window.scrollTo(0, 0);
+      const hash = window.location.hash;
+      // If there's an anchor like #academics in the URL, remove it cleanly so it never auto-scrolls down
+      if (hash && !hash.includes('admin') && !hash.includes('teacher') && !hash.includes('student')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.scrollTo(0, 0);
+      }
+    }
 
     const handleLocationChange = () => {
       setCurrentRoute(getRouteFromUrl());

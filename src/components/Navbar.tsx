@@ -80,6 +80,21 @@ export const Navbar: React.FC<NavbarProps> = ({
     }, 150);
   };
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      const navOffset = 76;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: Math.max(0, elementPosition - navOffset),
+        behavior: 'smooth'
+      });
+    }
+    setOpenDropdown(null);
+    setMobileMenuOpen(false);
+  };
+
   const academicDropdownItems = [
     { title: 'Secondary School (SEE)', subtitle: 'Grades 9 & 10 (NEB Curriculum)', href: '#academics', icon: GraduationCap },
     { title: 'Lower Secondary (BLE)', subtitle: 'Grades 6 to 8 Core Curriculum', href: '#academics', icon: BookOpen },
@@ -190,6 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* 1. Home */}
               <a
                 href="#hero"
+                onClick={(e) => scrollToSection(e, 'hero')}
                 className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
                   activeSection === 'hero'
                     ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
@@ -210,6 +226,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <a
                   href="#academics"
+                  onClick={(e) => scrollToSection(e, 'academics')}
                   className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1 overflow-hidden cursor-pointer ${
                     activeSection === 'academics'
                       ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
@@ -232,7 +249,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <a
                           key={idx}
                           href={item.href}
-                          onClick={() => setOpenDropdown(null)}
+                          onClick={(e) => scrollToSection(e, 'academics')}
                           className="p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer"
                         >
                           <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
@@ -256,6 +273,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* 3. Team (Faculty & Leadership) */}
               <a
                 href="#faculty"
+                onClick={(e) => scrollToSection(e, 'faculty')}
                 className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
                   activeSection === 'faculty'
                     ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
@@ -272,6 +290,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* 4. Notice & Events */}
               <a
                 href="#notices"
+                onClick={(e) => scrollToSection(e, 'notices')}
                 className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
                   activeSection === 'notices'
                     ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
@@ -288,6 +307,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* 5. Admissions */}
               <a
                 href="#admissions"
+                onClick={(e) => scrollToSection(e, 'admissions')}
                 className={`relative px-3.5 py-2 rounded-none text-xs font-bold transition-all duration-300 flex items-center gap-1.5 overflow-hidden group cursor-pointer ${
                   activeSection === 'admissions'
                     ? 'text-red-600 bg-red-50/90 font-extrabold border-b-2 border-red-600 shadow-xs'
@@ -352,11 +372,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                           </button>
                         );
                       }
+                      const targetId = item.href ? item.href.replace('#', '') : '';
                       return (
                         <a
                           key={idx}
                           href={item.href}
-                          onClick={() => setOpenDropdown(null)}
+                          onClick={(e) => targetId ? scrollToSection(e, targetId) : setOpenDropdown(null)}
                           className="p-2.5 rounded-none hover:bg-red-50/80 hover:border-l-3 hover:border-red-600 flex items-start gap-2.5 transition-all duration-200 group/drop cursor-pointer"
                         >
                           <div className="w-8 h-8 rounded-none bg-red-50 border border-red-100 flex items-center justify-center text-red-600 group-hover/drop:bg-red-600 group-hover/drop:text-white group-hover/drop:scale-105 transition-all duration-200 shrink-0 mt-0.5">
@@ -527,21 +548,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="grid grid-cols-2 gap-1.5 pt-1">
                   <a
                     href="#hero"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'hero')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <span>Home</span>
                   </a>
                   <a
                     href="#academics"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'academics')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <span>Academics</span>
                   </a>
                   <a
                     href="#faculty"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'faculty')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Users className="w-3.5 h-3.5 text-red-600" />
@@ -549,7 +570,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#notices"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'notices')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Bell className="w-3.5 h-3.5 text-red-600" />
@@ -557,7 +578,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#admissions"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'admissions')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -565,7 +586,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#gallery"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'gallery')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Camera className="w-3.5 h-3.5 text-red-600" />
@@ -573,7 +594,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#transport"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'transport')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Bus className="w-3.5 h-3.5 text-red-600" />
@@ -581,7 +602,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#facilities"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'facilities')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <Building2 className="w-3.5 h-3.5 text-red-600" />
@@ -589,7 +610,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </a>
                   <a
                     href="#testimonials"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, 'testimonials')}
                     className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5"
                   >
                     <MessageSquareQuote className="w-3.5 h-3.5 text-red-600" />
