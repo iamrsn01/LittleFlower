@@ -63,15 +63,26 @@ export const FacilitiesSection: React.FC = () => {
 
   const currentItem: Facility = filteredFacilities[currentIndex] || filteredFacilities[0] || facilitiesList[0];
 
-  // Auto scroll active thumbnail into view
+  const isInitialMount = useRef(true);
+
+  // Auto scroll active thumbnail into view within the horizontal strip ONLY (without scrolling window)
   useEffect(() => {
-    if (thumbnailScrollRef.current) {
-      const activeThumb = thumbnailScrollRef.current.children[currentIndex] as HTMLElement;
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const container = thumbnailScrollRef.current;
+    if (container) {
+      const activeThumb = container.children[currentIndex] as HTMLElement;
       if (activeThumb) {
-        activeThumb.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center'
+        const thumbLeft = activeThumb.offsetLeft;
+        const thumbWidth = activeThumb.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        const targetScrollLeft = thumbLeft - (containerWidth / 2) + (thumbWidth / 2);
+
+        container.scrollTo({
+          left: Math.max(0, targetScrollLeft),
+          behavior: 'smooth'
         });
       }
     }
