@@ -2,6 +2,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" = \"gh-pages\" ] && exit 0 || exit 1",
   "outputDirectory": "dist",
   "rewrites": [
     {

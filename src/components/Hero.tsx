@@ -110,7 +110,7 @@ export const Hero: React.FC<HeroProps> = ({
       {/* 1. CLEAN CAMPUS PHOTO SLIDER */}
       <div className="relative w-full bg-slate-900 border-b border-slate-200">
         <div 
-          className="relative w-full h-[480px] sm:h-[580px] md:h-[680px] lg:h-[760px] xl:h-[820px] overflow-hidden group"
+          className="relative w-full h-[280px] xs:h-[320px] sm:h-[580px] md:h-[680px] lg:h-[760px] xl:h-[820px] overflow-hidden group"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
@@ -131,79 +131,89 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
           ))}
 
-          {/* Top-Left: Category Badge */}
-          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-black text-red-600 shadow-md flex items-center gap-1.5 border border-red-100">
-              <Camera className="w-3.5 h-3.5 text-red-600" />
-              <span>Campus Preview</span>
-            </span>
+          {/* Top-Left: Modern Glass Category Pill */}
+          <div className="absolute top-2 left-2 sm:top-6 sm:left-6 z-20 flex items-center gap-2">
+            <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-xl bg-slate-950/65 border border-white/15 text-white shadow-xl flex items-center gap-1.5 sm:gap-2">
+              <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-red-500"></span>
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold tracking-wide text-white">Campus Showcase</span>
+            </div>
           </div>
 
-          {/* Top-Right: Slide Counter */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
-            <span className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-xs font-mono font-bold text-white border border-white/20 shadow">
-              {currentSlide + 1} / {slides.length}
-            </span>
+          {/* Top-Right: Modern Glass Quick Info Pill */}
+          <div className="absolute top-2 right-2 sm:top-6 sm:right-6 z-20">
+            <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-xl bg-slate-950/65 border border-white/15 text-white/90 shadow-xl flex items-center gap-1.5">
+              <span className="text-[9px] sm:text-xs font-mono font-medium tracking-wider text-slate-300">
+                Estd. 2005 • Parsa
+              </span>
+            </div>
           </div>
 
-          {/* Previous & Next Buttons */}
+          {/* Previous & Next Floating Glass Arrows */}
           <button
             onClick={handlePrev}
             aria-label="Previous Slide"
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 hover:bg-white text-slate-900 hover:text-red-600 border border-slate-200 shadow-xl transition-all cursor-pointer hover:scale-110"
+            className="absolute left-1.5 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-1.5 sm:p-3.5 rounded-full backdrop-blur-xl bg-slate-950/50 hover:bg-red-600 text-white/90 hover:text-white border border-white/15 hover:border-red-500 shadow-2xl transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95 group"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5 transition-transform group-hover:-translate-x-0.5" />
           </button>
 
           <button
             onClick={handleNext}
             aria-label="Next Slide"
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 hover:bg-white text-slate-900 hover:text-red-600 border border-slate-200 shadow-xl transition-all cursor-pointer hover:scale-110"
+            className="absolute right-1.5 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-1.5 sm:p-3.5 rounded-full backdrop-blur-xl bg-slate-950/50 hover:bg-red-600 text-white/90 hover:text-white border border-white/15 hover:border-red-500 shadow-2xl transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95 group"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5" />
           </button>
 
-          {/* Compact Centered Badge & Controls (Navbar Palette & Hover Animation) */}
-          <div className="absolute bottom-4 sm:bottom-6 left-4 right-4 z-20 flex flex-col items-center justify-center gap-2 pointer-events-none">
-            
-            {/* Sharp Navbar-Themed Card with Animated Expansion Line */}
-            <div className="group relative px-4 py-2.5 sm:px-5 sm:py-3 rounded-none bg-white/95 backdrop-blur-md border-t-2 border-t-red-600 border-x border-b border-slate-200/90 shadow-2xl text-center max-w-md mx-auto pointer-events-auto transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white hover:border-slate-300 hover:shadow-[0_20px_35px_rgba(0,0,0,0.25)] overflow-hidden cursor-pointer">
+          {/* Modern Floating Cinematic HUD Deck */}
+          <div className="absolute bottom-2 sm:bottom-6 left-2 right-2 sm:left-6 sm:right-6 z-20 flex flex-col items-center pointer-events-none">
+            <div className="pointer-events-auto backdrop-blur-2xl bg-slate-950/80 border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-[0_12px_35px_rgba(0,0,0,0.6)] w-full max-w-[310px] xs:max-w-[340px] sm:max-w-lg transition-all duration-300 hover:border-red-500/50 hover:bg-slate-950/90 group">
               
-              {/* Landmark Tag with Navbar-style Hover Flip */}
-              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-red-50 border border-red-200/80 text-red-600 text-[10px] font-black tracking-widest uppercase mb-1.5 transition-all duration-200 group-hover:bg-red-600 group-hover:text-white">
-                <Sparkles className="w-2.5 h-2.5 text-amber-500 group-hover:text-amber-300" />
-                <span>Campus Landmark</span>
+              {/* Header: Tag + Location */}
+              <div className="flex items-center justify-between gap-2 mb-1 sm:mb-2">
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-[9px] sm:text-xs font-bold tracking-wider uppercase">
+                  <Sparkles className="w-2.5 h-2.5 text-amber-400" />
+                  <span>Campus Landmark</span>
+                </div>
+
+                <div className="flex items-center gap-1 text-[9px] sm:text-xs text-slate-300 font-medium">
+                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400 shrink-0" />
+                  <span className="truncate max-w-[130px] sm:max-w-[220px]">{slides[currentSlide].location}</span>
+                </div>
               </div>
 
-              {/* Headline (Switches to red-600 on hover like Navbar links) */}
-              <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug tracking-tight transition-colors duration-200 group-hover:text-red-600 font-display">
+              {/* Title / Caption */}
+              <h2 className="text-[11px] sm:text-sm md:text-base font-bold text-white leading-snug tracking-tight font-display mb-1.5 sm:mb-2.5 line-clamp-1 sm:line-clamp-none group-hover:text-rose-100 transition-colors">
                 {slides[currentSlide].caption}
               </h2>
 
-              {/* Location Tag */}
-              <div className="mt-1 flex items-center justify-center gap-1 text-[11px] text-slate-500 font-semibold tracking-wide">
-                <MapPin className="w-3 h-3 text-red-600 shrink-0 group-hover:scale-110 transition-transform" />
-                <span>{slides[currentSlide].location}</span>
+              {/* Seamless Bottom Progress Track & Counter */}
+              <div className="flex items-center justify-between gap-2.5 sm:gap-3 pt-1.5 sm:pt-2 border-t border-white/10">
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-1">
+                  {slides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        idx === currentSlide
+                          ? 'flex-[2.5] bg-gradient-to-r from-red-500 via-rose-500 to-red-400 shadow-[0_0_8px_rgba(239,68,68,0.7)]'
+                          : 'flex-1 bg-white/20 hover:bg-white/40'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <div className="text-[9px] sm:text-xs font-mono font-bold text-slate-400 shrink-0 pl-1">
+                  <span className="text-white font-black">{String(currentSlide + 1).padStart(2, '0')}</span>
+                  <span className="text-slate-500 mx-0.5">/</span>
+                  <span>{String(slides.length).padStart(2, '0')}</span>
+                </div>
               </div>
 
-              {/* Animated Bottom Accent Line (Exact Navbar Hover Effect) */}
-              <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out" />
-            </div>
-
-            {/* Sharp Indicator Bars (Navbar Matching Style) */}
-            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-none border border-slate-200/90 pointer-events-auto shadow-md">
-              {slides.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  aria-label={`Go to slide ${idx + 1}`}
-                  className={`h-1.5 rounded-none transition-all duration-200 cursor-pointer hover:scale-110 ${
-                    idx === currentSlide 
-                      ? 'w-6 bg-red-600 shadow-xs' 
-                      : 'w-2 bg-slate-300 hover:bg-red-400'
-                  }`}
-                />
-              ))}
             </div>
           </div>
 
