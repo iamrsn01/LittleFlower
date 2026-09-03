@@ -26,14 +26,33 @@ export interface FacultyMember {
   achievements: string[];
 }
 
+export interface CampusBlock {
+  id: string;
+  name: string;
+  tagline: string;
+  type: 'academic' | 'stem' | 'sports' | 'arts' | 'junior' | 'services';
+  floors: string;
+  coords: { x: number; y: number; width?: number; height?: number };
+  facilitiesCount: number;
+  description: string;
+  highlights: string[];
+  color: string;
+}
+
 export interface Facility {
   id: string;
   name: string;
-  category: 'Laboratories' | 'Sports & Fitness' | 'Academics' | 'Arts & Culture' | 'Campus Life';
+  category: 'Laboratories' | 'Sports & Fitness' | 'Academics' | 'Arts & Culture' | 'Campus Life' | 'Services & Health';
   description: string;
   imageUrl: string;
   highlights: string[];
   capacity: string;
+  block?: string;
+  blockId?: string;
+  floor?: string;
+  mapCoords?: { x: number; y: number };
+  equipment?: string[];
+  safetyFeatures?: string[];
 }
 
 export interface SchoolNotice {
@@ -129,6 +148,10 @@ export interface GalleryItem {
   category: 'STEM & Labs' | 'Sports' | 'Arts & Culture' | 'Campus' | 'Events';
   imageUrl: string;
   description: string;
+  featured?: boolean;
+  aspect?: 'square' | 'portrait' | 'landscape' | 'wide';
+  tag?: string;
+  year?: string;
 }
 
 export const schoolStats = [
@@ -335,6 +358,93 @@ export const facultyMembers: FacultyMember[] = [
   }
 ];
 
+export const campusBlocks: CampusBlock[] = [
+  {
+    id: 'block-a',
+    name: 'Block A: Main Academic & Admin Wing',
+    tagline: 'Principal Desk, Reception & Smart Classrooms',
+    type: 'academic',
+    floors: '3-Story Academic Wing',
+    coords: { x: 18, y: 24, width: 28, height: 26 },
+    facilitiesCount: 4,
+    description: 'The primary multi-storey educational wing housing administration, admissions reception, modern audio-visual smart classrooms, and wellness station.',
+    highlights: ['CCTV Monitored Corridors', 'Admissions Helpdesk', 'First Aid Clinic', 'Smart Projection Classrooms'],
+    color: '#3b82f6' // Blue
+  },
+  {
+    id: 'block-b',
+    name: 'Block B: STEM & Innovation Centre',
+    tagline: 'Physics, Chemistry, Bio & High-Tech ICT Labs',
+    type: 'stem',
+    floors: '2-Story Innovation Wing',
+    coords: { x: 54, y: 20, width: 30, height: 25 },
+    facilitiesCount: 3,
+    description: 'Dedicated science research and technological development block with safety fume extraction, optical microscopes, and high-speed computer terminals.',
+    highlights: ['40+ High-Performance PCs', 'Titration Workstations', 'Robotics & Maker Corner', 'Fiber Internet Gateway'],
+    color: '#ef4444' // Red
+  },
+  {
+    id: 'block-c',
+    name: 'Block C: Knowledge & Library Wing',
+    tagline: 'Saraswati Library & Academic Archives',
+    type: 'arts',
+    floors: '2-Story Cultural Wing',
+    coords: { x: 56, y: 52, width: 28, height: 24 },
+    facilitiesCount: 2,
+    description: 'Quiet academic haven for book lovers and research scholars, boasting over 12,000 reference books, encyclopedias, and national periodicals.',
+    highlights: ['12,000+ Physical Books', 'Digital E-Catalog', 'Quiet Study Pods', 'Periodical Reading Lounge'],
+    color: '#10b981' // Emerald
+  },
+  {
+    id: 'block-d',
+    name: 'Block D: Pre-Primary & Junior Pavilion',
+    tagline: 'Kindergarten, Playgroup & Joyful Activity Room',
+    type: 'junior',
+    floors: 'Ground Floor Child-Safe Zone',
+    coords: { x: 18, y: 55, width: 26, height: 22 },
+    facilitiesCount: 2,
+    description: 'Vibrant early-childhood learning pavilion surrounded by green gardens, featuring foam safety flooring, educational toys, and story circles.',
+    highlights: ['Foam-padded activity zone', 'Montessori learning materials', 'Dedicated child care attendants', 'Indoor slides & swings'],
+    color: '#06b6d4' // Cyan
+  },
+  {
+    id: 'zone-e',
+    name: 'Zone E: Sports Arena & Athletic Grounds',
+    tagline: 'Cricket Pitch, Football Ground & 100m Track',
+    type: 'sports',
+    floors: 'Spacious Outdoor Green Arena',
+    coords: { x: 14, y: 82, width: 72, height: 16 },
+    facilitiesCount: 3,
+    description: 'Expansive lush green campus turf accommodating inter-house football matches, cricket nets, volleyball courts, and annual athletics championships.',
+    highlights: ['Full cricket pitch', 'Volleyball & badminton court', '100m sprint tracks', '600-capacity spectator lawn'],
+    color: '#22c55e' // Green
+  },
+  {
+    id: 'zone-f',
+    name: 'Zone F: Central Assembly & Cultural Stage',
+    tagline: 'Morning Assembly Courtyard & Cultural Podium',
+    type: 'arts',
+    floors: 'Covered Central Courtyard',
+    coords: { x: 44, y: 44, width: 14, height: 15 },
+    facilitiesCount: 1,
+    description: 'Centrally located open-air covered pavilion for morning moral assemblies, student leadership speeches, and cultural Saraswati Puja festivities.',
+    highlights: ['800-student gathering capacity', 'Acoustic sound system', 'Weather-proof shade canopy', 'Ceremonial flag podium'],
+    color: '#8b5cf6' // Purple
+  },
+  {
+    id: 'zone-g',
+    name: 'Zone G: Transit Bay, RO Water & Security',
+    tagline: 'School Bus Fleet, Guardhouse & RO Purified Water',
+    type: 'services',
+    floors: 'Campus Gate & Utility Station',
+    coords: { x: 2, y: 26, width: 12, height: 50 },
+    facilitiesCount: 3,
+    description: 'Safety and transit gateway featuring gated security check-in, dedicated bus boarding zones, and an industrial RO water filtration plant.',
+    highlights: ['Fleet of GPS school buses', '24/7 Security guard post', 'Multi-stage RO water plant', 'CCTV central monitoring'],
+    color: '#f59e0b' // Amber
+  }
+];
+
 export const facilitiesList: Facility[] = [
   {
     id: 'science-labs',
@@ -343,16 +453,28 @@ export const facilitiesList: Facility[] = [
     description: 'Fully equipped separate laboratory spaces for Physics, Chemistry, and Biology with high-grade optical microscopes, glassware, and reagent stations for practical demonstrations.',
     imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1000&q=80',
     highlights: ['Separate Physics & Bio practical stations', 'Safety eyewash and fire safety equipped', 'Individual experimental kits'],
-    capacity: '50 Students'
+    capacity: '50 Students',
+    block: 'Block B: STEM Innovation Centre',
+    blockId: 'block-b',
+    floor: '1st & 2nd Floor',
+    mapCoords: { x: 62, y: 28 },
+    equipment: ['Optical Binocular Microscopes', 'Chemical Fume Extraction', 'Physics Optics Benches', 'Biological Specimen Slides'],
+    safetyFeatures: ['Eye-wash stations', 'Chemical spill neutralization kits', 'Class-B fire extinguishers', 'Lab coats & safety goggles']
   },
   {
     id: 'computer-lab',
-    name: 'Modern High-Speed Computer Lab',
+    name: 'Modern High-Speed Computer & ICT Lab',
     category: 'Laboratories',
     description: 'Air-conditioned digital computer facility with 40+ networked high-speed PCs, fiber broadband internet, UPS power backup, and modern ICT learning suites.',
     imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1000&q=80',
     highlights: ['40+ High-performance workstations', 'High-speed fiber connectivity', 'Interactive projector screen'],
-    capacity: '45 Students'
+    capacity: '45 Students',
+    block: 'Block B: STEM Innovation Centre',
+    blockId: 'block-b',
+    floor: 'Ground Floor',
+    mapCoords: { x: 74, y: 32 },
+    equipment: ['Intel Core Workstations', 'Dedicated Gigabit LAN Switch', 'Full-Room Inverter Backup', 'Smart Classroom Projector'],
+    safetyFeatures: ['Insulated anti-static flooring', 'CCTV real-time surveillance', 'Ergonomic seating postures', 'Filtered Internet firewall']
   },
   {
     id: 'school-library',
@@ -361,16 +483,28 @@ export const facilitiesList: Facility[] = [
     description: 'Calm reading environment housing more than 12,000 reference textbooks, encyclopedias, children literature, newspapers, and national educational journals.',
     imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1000&q=80',
     highlights: ['12,000+ Books in Nepali, English & Hindi', 'Daily national dailies & periodicals', 'Comfortable reading desks'],
-    capacity: '80 Students'
+    capacity: '80 Students',
+    block: 'Block C: Knowledge & Library Wing',
+    blockId: 'block-c',
+    floor: '1st Floor',
+    mapCoords: { x: 70, y: 64 },
+    equipment: ['12,000+ Bound Reference Books', 'Digital Library Index System', 'Encyclopaedia Britannica', 'Academic SEE Question Banks'],
+    safetyFeatures: ['Silent study acoustic isolation', 'Filtered natural daylighting', 'Fire detector & extinguisher', 'Library card tracking']
   },
   {
     id: 'sports-ground',
-    name: 'Spacious Sports Arena & Playground',
+    name: 'Spacious Sports Arena & Athletic Grounds',
     category: 'Sports & Fitness',
     description: 'Expansive open ground for cricket, football, volleyball, badminton courts, and 100m sprint tracks with permanent spectator stands.',
     imageUrl: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1000&q=80',
     highlights: ['Cricket pitch & football goalposts', 'Volleyball & badminton court', 'Annual sports festival grounds'],
-    capacity: '600 Spectators'
+    capacity: '600 Spectators',
+    block: 'Zone E: Sports Arena & Athletic Grounds',
+    blockId: 'zone-e',
+    floor: 'Open-Air Ground',
+    mapCoords: { x: 50, y: 88 },
+    equipment: ['Standard Cricket Match Matting', 'Regulation Football Goalposts', 'Volleyball Net & Posts', 'Athletics Hurdles & Javelins'],
+    safetyFeatures: ['Level natural grass turf', 'On-field sports first aid kit', 'Physical instructor supervision', 'Boundary safety fencing']
   },
   {
     id: 'assembly-hall',
@@ -379,7 +513,13 @@ export const facilitiesList: Facility[] = [
     description: 'Covered central assembly auditorium for daily prayer assemblies, Saraswati Puja celebrations, speech contests, and cultural dance dramas.',
     imageUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1000&q=80',
     highlights: ['Large acoustic stage & sound system', 'Covered weather protection', 'Daily moral assembly podium'],
-    capacity: '800 Students'
+    capacity: '800 Students',
+    block: 'Zone F: Central Assembly & Cultural Stage',
+    blockId: 'zone-f',
+    floor: 'Central Ground Courtyard',
+    mapCoords: { x: 50, y: 50 },
+    equipment: ['Surround PA Sound System', 'Wireless Microphones & Podiums', 'Acoustic Backdrops', 'Stage Lighting Array'],
+    safetyFeatures: ['Covered UV/Rain canopy', 'Multiple emergency exit lanes', 'Non-slip stage platform', 'First-aid stand-by']
   },
   {
     id: 'kindergarten-playzone',
@@ -388,7 +528,73 @@ export const facilitiesList: Facility[] = [
     description: 'Vibrant play area with slides, swings, soft foam play mats, educational toys, and colorful learning charts for Kindergarten children.',
     imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1000&q=80',
     highlights: ['Child-safe non-toxic play gear', 'Slides, swings & see-saws', 'Dedicated female attendants'],
-    capacity: '60 Children'
+    capacity: '60 Children',
+    block: 'Block D: Pre-Primary Pavilion',
+    blockId: 'block-d',
+    floor: 'Ground Floor',
+    mapCoords: { x: 30, y: 66 },
+    equipment: ['Soft Foam Play Mats', 'Montessori Sensory Blocks', 'Mini Slide & Swing Units', 'Educational Wall Toys'],
+    safetyFeatures: ['Rounded edge furniture', 'Anti-slip foam carpeting', 'Constant caregiver supervision', 'Sanitized toy bins']
+  },
+  {
+    id: 'smart-classrooms',
+    name: 'Audio-Visual Smart Classrooms',
+    category: 'Academics',
+    description: 'Digitally enhanced learning environments featuring audio-visual projection, interactive presentations, ergonomic student benches, and natural cross-ventilation.',
+    imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80',
+    highlights: ['High-lumen digital projectors', 'Ergonomic dual-seating desks', 'Cross-ventilated airy rooms'],
+    capacity: '40 per Section',
+    block: 'Block A: Main Academic Wing',
+    blockId: 'block-a',
+    floor: '1st & 2nd Floor',
+    mapCoords: { x: 32, y: 34 },
+    equipment: ['Digital Overhead Projector', 'Motorized Projection Screens', 'Whiteboards & Greenboards', 'Audio Speaker Set'],
+    safetyFeatures: ['Dual wide egress doors', 'CCTV monitoring', 'Generous natural light', 'Fire safety exit staircases']
+  },
+  {
+    id: 'medical-bay',
+    name: 'First Aid Clinic & Health Station',
+    category: 'Services & Health',
+    description: 'Dedicated first-aid and student wellness room staffed with basic medical supplies, examination beds, and immediate access for emergency response.',
+    imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80',
+    highlights: ['Patient examination bed', 'First-aid emergency kit', 'Trained nurse on duty'],
+    capacity: 'Individual Care',
+    block: 'Block A: Main Academic Wing',
+    blockId: 'block-a',
+    floor: 'Ground Floor (Near Reception)',
+    mapCoords: { x: 22, y: 40 },
+    equipment: ['Digital Thermometers & BP Monitor', 'Oxygen Cylinder Unit', 'Wheelchair & Stretcher', 'Sterilized Dressing Kits'],
+    safetyFeatures: ['Hospital tie-up within 10 mins', 'Emergency phone dispatch', 'Sanitized environment', 'Medication consent logs']
+  },
+  {
+    id: 'transport-terminal',
+    name: 'School Bus Transit Fleet & Bay',
+    category: 'Services & Health',
+    description: 'Safe fleet of yellow school buses connecting Birgunj, Parwanipur, Gandak, Pipra, and surrounding districts with trained drivers and helpers.',
+    imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1000&q=80',
+    highlights: ['GPS-tracked bus routes', 'Experienced drivers & conductors', 'Door-to-door safety monitoring'],
+    capacity: '800+ Daily Commuters',
+    block: 'Zone G: Transit Bay & Security',
+    blockId: 'zone-g',
+    floor: 'West Parking Bay',
+    mapCoords: { x: 8, y: 55 },
+    equipment: ['Dedicated Fleet of Yellow Buses', 'GPS Tracking Transponders', 'First Aid Boxes Onboard', 'Emergency Speed Limiters'],
+    safetyFeatures: ['Female bus attendants for young children', 'Daily maintenance checklist', 'Dedicated bus turnaround bay', 'Direct dispatcher line']
+  },
+  {
+    id: 'purified-water',
+    name: 'Industrial RO Drinking Water Plant',
+    category: 'Services & Health',
+    description: 'Multi-stage reverse osmosis (RO) drinking water filtration plant and contactless hygienic cooling dispensers spread across all campus floors.',
+    imageUrl: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=1000&q=80',
+    highlights: ['Multi-stage RO + UV purification', 'Stainless steel cooling dispensers', 'Weekly water quality testing'],
+    capacity: 'Campus-wide Supply',
+    block: 'Zone G: Transit Bay & Security',
+    blockId: 'zone-g',
+    floor: 'Utility Zone & All Building Levels',
+    mapCoords: { x: 10, y: 35 },
+    equipment: ['Commercial RO Filtration Membrane', 'UV Germicidal Disinfection Unit', 'High-Volume SS Water Chillers', 'TDS Monitoring Meters'],
+    safetyFeatures: ['Certified potable laboratory tests', 'Regular filter changes', 'Touch-free push taps', 'Non-slip drainage trenches']
   }
 ];
 
@@ -632,42 +838,92 @@ export const galleryItems: GalleryItem[] = [
     title: 'Main Academic Campus & Green Playground',
     category: 'Campus',
     imageUrl: './slider/cover.jpg',
-    description: 'The scenic Little Flower Secondary School campus featuring the multi-storey academic wings and expansive green lawn.'
+    description: 'The scenic Little Flower Secondary School campus featuring the multi-storey academic wings and expansive green lawn.',
+    featured: true,
+    aspect: 'wide',
+    tag: 'Campus View',
+    year: '2025'
   },
   {
     id: 'g-02',
     title: 'Annual Inter-House Sports & 100m Sprint',
     category: 'Sports',
     imageUrl: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1000&q=80',
-    description: 'Students competing in the annual sports meet on the spacious green playground.'
+    description: 'Students competing with great enthusiasm in the annual sports meet on our expansive green athletic ground.',
+    aspect: 'portrait',
+    tag: 'Athletics',
+    year: '2025'
   },
   {
     id: 'g-03',
     title: 'Science Practical & Chemistry Titration Lab',
     category: 'STEM & Labs',
     imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1000&q=80',
-    description: 'Senior secondary students conducting acid-base titration and biological cell slide inspections.'
+    description: 'Senior secondary students conducting acid-base titration and biological cell slide inspections with modern laboratory apparatus.',
+    aspect: 'square',
+    tag: 'Science Lab',
+    year: '2025'
   },
   {
     id: 'g-04',
     title: 'Computer Lab Practical & Typing Practice',
     category: 'STEM & Labs',
     imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1000&q=80',
-    description: 'Students practicing logic, basic programming, and typing speed in our digital computer facility.'
+    description: 'Students practicing logic, basic programming, and typing speed in our high-speed digital computer facility.',
+    aspect: 'landscape',
+    tag: 'IT Lab',
+    year: '2025'
   },
   {
     id: 'g-05',
-    title: 'Saraswati Puja Cultural Dance & Drama',
+    title: 'Saraswati Puja Cultural Dance & Musical Drama',
     category: 'Arts & Culture',
     imageUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1000&q=80',
-    description: 'Traditional and cultural performance staged during annual celebrations by Little Flower students.'
+    description: 'Traditional and cultural dance performance staged during annual celebrations and Saraswati Puja by Little Flower students.',
+    featured: true,
+    aspect: 'portrait',
+    tag: 'Celebration',
+    year: '2025'
   },
   {
     id: 'g-06',
     title: 'Kindergarten Joyful Learning & Play Area',
     category: 'Campus',
     imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1000&q=80',
-    description: 'Our young learners enjoying toys, puzzles, and sensory play in the kindergarten play garden.'
+    description: 'Our young pre-primary learners enjoying educational toys, puzzles, and sensory play in the kindergarten activity room.',
+    aspect: 'square',
+    tag: 'Pre-Primary',
+    year: '2025'
+  },
+  {
+    id: 'g-07',
+    title: 'Robotics & STEM Exhibition Project Display',
+    category: 'STEM & Labs',
+    imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1000&q=80',
+    description: 'Young innovators showcasing hands-on robotics models and science fair projects during the Annual Science Exhibition.',
+    aspect: 'landscape',
+    tag: 'Innovation',
+    year: '2025'
+  },
+  {
+    id: 'g-08',
+    title: 'Inter-School Football Championship Match',
+    category: 'Sports',
+    imageUrl: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=1000&q=80',
+    description: 'School football team demonstrating teamwork, discipline, and spirited play in regional school tournament matches.',
+    aspect: 'square',
+    tag: 'Football',
+    year: '2025'
+  },
+  {
+    id: 'g-09',
+    title: 'Annual Graduation & Academic Excellence Awards',
+    category: 'Events',
+    imageUrl: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1000&q=80',
+    description: 'Felicitating board exam toppers and outstanding performers at the annual convocation and prize distribution ceremony.',
+    aspect: 'wide',
+    tag: 'Awards',
+    year: '2025'
   }
 ];
 
