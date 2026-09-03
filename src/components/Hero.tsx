@@ -214,7 +214,7 @@ export const Hero: React.FC<HeroProps> = ({
       <AboutSection
         onOpenAdmissions={onOpenAdmissions}
         onOpenVirtualTour={onOpenVirtualTour}
-        onOpenPortal={() => onOpenPortal('student')}
+        onOpenPortal={onOpenPortal}
       />
 
       {/* 3. METRICS & STATISTICS BAR */}
