@@ -38,7 +38,10 @@ import {
   Check,
   Award,
   Mail,
-  Phone
+  Phone,
+  Save,
+  GripVertical,
+  Loader2
 } from 'lucide-react';
 import { useSchoolData, HeroSlide } from '../context/SchoolDataContext';
 import { SchoolNotice, GalleryItem, FacultyMember } from '../data/schoolData';
@@ -65,6 +68,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     updateSlide,
     deleteSlide,
     reorderSlides,
+    saveSlideOrder,
     addGalleryItem,
     updateGalleryItem,
     deleteGalleryItem,
@@ -254,6 +258,43 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     });
     setEditingSlide(null);
     showToast('Slider slide updated successfully!');
+  };
+
+  // Drag-and-Drop & Priority Reorder State
+  const [draggedSlideIdx, setDraggedSlideIdx] = useState<number | null>(null);
+  const [dragOverSlideIdx, setDragOverSlideIdx] = useState<number | null>(null);
+  const [slideOrderStatus, setSlideOrderStatus] = useState<'idle' | 'unsaved' | 'saving' | 'saved'>('idle');
+  const slideOrderDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleReorder = (fromIdx: number, toIdx: number) => {
+    if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || fromIdx >= heroSlides.length || toIdx >= heroSlides.length) return;
+    const updated = reorderSlides(fromIdx, toIdx);
+    setSlideOrderStatus('unsaved');
+
+    // Auto-save after 2 seconds of inactivity so changes are never lost
+    if (slideOrderDebounceRef.current) clearTimeout(slideOrderDebounceRef.current);
+    slideOrderDebounceRef.current = setTimeout(async () => {
+      setSlideOrderStatus('saving');
+      const ok = await saveSlideOrder(updated);
+      setSlideOrderStatus(ok ? 'saved' : 'idle');
+      if (ok) {
+        showToast('Slide priority automatically saved & synced to cloud!');
+      }
+    }, 2000);
+  };
+
+  const handleManualSaveSlideOrder = async () => {
+    if (slideOrderDebounceRef.current) clearTimeout(slideOrderDebounceRef.current);
+    setSlideOrderStatus('saving');
+    const ok = await saveSlideOrder();
+    if (ok) {
+      setSlideOrderStatus('saved');
+      showToast('✓ Slide priority order saved & synced to Supabase cloud!');
+      setTimeout(() => setSlideOrderStatus('idle'), 3500);
+    } else {
+      setSlideOrderStatus('unsaved');
+      showToast('Could not sync to cloud. Saved locally.', 'error');
+    }
   };
 
   // =========================================================================
@@ -1008,19 +1049,95 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
           {activeTab === 'slider' && (
             <div className="space-y-6">
               
-              {/* Header with Add Button */}
+              {/* Header with Save Order and Add Button */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-base font-black text-white">Hero Banner Slider Manager</h3>
-                  <p className="text-xs text-slate-400">Add, edit, reorder, or remove images displayed in the main top homepage carousel.</p>
+                  <p className="text-xs text-slate-400">Add, edit, reorder priority, or remove images displayed in the main top homepage carousel.</p>
                 </div>
-                <button
-                  onClick={() => setIsAddingSlide(true)}
-                  className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-red-600/30 cursor-pointer self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Slide</span>
-                </button>
+                <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                  {/* Save Slide Order Button */}
+                  <button
+                    onClick={handleManualSaveSlideOrder}
+                    disabled={slideOrderStatus === 'saving'}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer ${
+                      slideOrderStatus === 'unsaved'
+                        ? 'bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-400 ring-offset-2 ring-offset-slate-900 animate-pulse'
+                        : slideOrderStatus === 'saving'
+                        ? 'bg-slate-700 text-slate-300 cursor-wait'
+                        : slideOrderStatus === 'saved'
+                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/50'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                    }`}
+                    title="Save current priority order of slider images"
+                  >
+                    {slideOrderStatus === 'saving' ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                        <span>Saving Priority...</span>
+                      </>
+                    ) : slideOrderStatus === 'saved' ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        <span>Order Saved!</span>
+                      </>
+                    ) : slideOrderStatus === 'unsaved' ? (
+                      <>
+                        <Save className="w-4 h-4 text-white" />
+                        <span>Save New Order (Unsaved)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 text-emerald-400" />
+                        <span>Save Slide Order</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setIsAddingSlide(true)}
+                    className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-red-600/30 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Slide</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Priority & Reorder Guidance Banner */}
+              <div className="p-3.5 rounded-2xl bg-slate-800/90 border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 shrink-0">
+                    <GripVertical className="w-4 h-4" />
+                  </span>
+                  <div>
+                    <span className="font-bold text-white block">Priority & Reorder Control</span>
+                    <span className="text-slate-400 text-[11px]">
+                      Drag slides by the grip handle (⋮⋮) or click <strong>↑</strong> and <strong>↓</strong> to change priority. <strong>Slide #1</strong> displays first on the homepage.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {slideOrderStatus === 'unsaved' && (
+                    <span className="text-[11px] font-bold text-amber-400 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                      Unsaved Order Changes
+                    </span>
+                  )}
+                  <button
+                    onClick={handleManualSaveSlideOrder}
+                    disabled={slideOrderStatus === 'saving'}
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/30 cursor-pointer disabled:opacity-50"
+                  >
+                    {slideOrderStatus === 'saving' ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Save className="w-3.5 h-3.5" />
+                    )}
+                    <span>{slideOrderStatus === 'saving' ? 'Saving...' : 'Save Order Now'}</span>
+                  </button>
+                </div>
               </div>
 
               {/* Add New Slide Form / Drawer */}
@@ -1135,79 +1252,130 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                 </form>
               )}
 
-              {/* Slider Slides List */}
+              {/* Slider Slides List with Drag & Drop */}
               <div className="space-y-3">
-                {heroSlides.map((slide, index) => (
-                  <div
-                    key={slide.id}
-                    className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md hover:border-slate-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      {/* Reorder Up/Down */}
-                      <div className="flex flex-col gap-1">
-                        <button
-                          onClick={() => index > 0 && reorderSlides(index, index - 1)}
-                          disabled={index === 0}
-                          className="p-1 rounded bg-slate-900 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                          title="Move Up"
-                        >
-                          <ArrowUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => index < heroSlides.length - 1 && reorderSlides(index, index + 1)}
-                          disabled={index === heroSlides.length - 1}
-                          className="p-1 rounded bg-slate-900 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                          title="Move Down"
-                        >
-                          <ArrowDown className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                {heroSlides.map((slide, index) => {
+                  const isDragging = draggedSlideIdx === index;
+                  const isDragOver = dragOverSlideIdx === index;
+                  return (
+                    <div
+                      key={slide.id}
+                      draggable={true}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('text/plain', String(index));
+                        setDraggedSlideIdx(index);
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        if (dragOverSlideIdx !== index) {
+                          setDragOverSlideIdx(index);
+                        }
+                      }}
+                      onDragLeave={() => {
+                        if (dragOverSlideIdx === index) {
+                          setDragOverSlideIdx(null);
+                        }
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (draggedSlideIdx !== null && draggedSlideIdx !== index) {
+                          handleReorder(draggedSlideIdx, index);
+                        }
+                        setDraggedSlideIdx(null);
+                        setDragOverSlideIdx(null);
+                      }}
+                      onDragEnd={() => {
+                        setDraggedSlideIdx(null);
+                        setDragOverSlideIdx(null);
+                      }}
+                      className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md ${
+                        isDragging
+                          ? 'opacity-40 border-dashed border-red-500 bg-slate-900 scale-[0.99]'
+                          : isDragOver
+                          ? 'border-emerald-500 bg-slate-800/95 ring-2 ring-emerald-500/50 scale-[1.01]'
+                          : 'bg-slate-800/80 border-slate-700 hover:border-slate-600'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                        {/* Drag Handle & Up/Down Buttons */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <div 
+                            className="p-1.5 sm:p-2 rounded-xl bg-slate-900/90 text-slate-400 hover:text-white cursor-grab active:cursor-grabbing border border-slate-700/60"
+                            title="Drag up or down to reorder priority"
+                          >
+                            <GripVertical className="w-4 h-4" />
+                          </div>
 
-                      {/* Thumbnail */}
-                      <img
-                        src={slide.image}
-                        alt={slide.caption}
-                        className="w-24 h-16 sm:w-32 sm:h-20 rounded-xl object-cover border border-slate-700 shrink-0 bg-slate-950"
-                      />
-
-                      {/* Information */}
-                      <div className="space-y-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-600/20 text-red-400 border border-red-500/30">
-                            Slide #{index + 1}
-                          </span>
-                          <span className="text-xs text-slate-400">{slide.location}</span>
+                          <div className="flex flex-col gap-1">
+                            <button
+                              onClick={() => handleReorder(index, index - 1)}
+                              disabled={index === 0}
+                              className="p-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white disabled:opacity-25 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                              title="Move Up (Increase Priority)"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleReorder(index, index + 1)}
+                              disabled={index === heroSlides.length - 1}
+                              className="p-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white disabled:opacity-25 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                              title="Move Down (Decrease Priority)"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                        <h4 className="text-sm font-bold text-white leading-snug">{slide.caption}</h4>
+
+                        {/* Thumbnail */}
+                        <img
+                          src={slide.image}
+                          alt={slide.caption}
+                          className="w-20 h-14 sm:w-28 sm:h-18 rounded-xl object-cover border border-slate-700 shrink-0 bg-slate-950"
+                        />
+
+                        {/* Information */}
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
+                              index === 0
+                                ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/40'
+                                : 'bg-red-600/20 text-red-400 border-red-500/30'
+                            }`}>
+                              {index === 0 ? '★ Slide #1 (Top Priority)' : `Priority #${index + 1}`}
+                            </span>
+                            <span className="text-xs text-slate-400 truncate">{slide.location}</span>
+                          </div>
+                          <h4 className="text-sm font-bold text-white leading-snug truncate sm:whitespace-normal">{slide.caption}</h4>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                        <button
+                          onClick={() => setEditingSlide(slide)}
+                          className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (heroSlides.length <= 1) {
+                              showToast('Cannot delete the only slide in the hero carousel', 'error');
+                              return;
+                            }
+                            deleteSlide(slide.id);
+                            showToast('Slide deleted');
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold flex items-center gap-1 border border-rose-800/40 cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete</span>
+                        </button>
                       </div>
                     </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-                      <button
-                        onClick={() => setEditingSlide(slide)}
-                        className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (heroSlides.length <= 1) {
-                            showToast('Cannot delete the only slide in the hero carousel', 'error');
-                            return;
-                          }
-                          deleteSlide(slide.id);
-                          showToast('Slide deleted');
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold flex items-center gap-1 border border-rose-800/40 cursor-pointer transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Delete</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Edit Slide Modal */}

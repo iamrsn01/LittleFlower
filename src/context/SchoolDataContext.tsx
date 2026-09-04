@@ -104,7 +104,8 @@ interface SchoolDataContextType {
   addSlide: (slide: Omit<HeroSlide, 'id'>) => Promise<void>;
   updateSlide: (id: string | number, slide: Partial<HeroSlide>) => Promise<void>;
   deleteSlide: (id: string | number) => Promise<void>;
-  reorderSlides: (startIndex: number, endIndex: number) => void;
+  reorderSlides: (startIndex: number, endIndex: number) => HeroSlide[];
+  saveSlideOrder: (customSlides?: HeroSlide[]) => Promise<boolean>;
 
   // Gallery CRUD
   addGalleryItem: (item: Omit<GalleryItem, 'id'>) => Promise<void>;
@@ -444,13 +445,37 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
-  const reorderSlides = (startIndex: number, endIndex: number) => {
+  const reorderSlides = (startIndex: number, endIndex: number): HeroSlide[] => {
+    let updated: HeroSlide[] = [];
     setHeroSlides(prev => {
       const result = Array.from(prev);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
+      updated = result;
       return result;
     });
+    return updated;
+  };
+
+  const saveSlideOrder = async (customSlides?: HeroSlide[]): Promise<boolean> => {
+    const listToSave = customSlides || heroSlides;
+    try {
+      localStorage.setItem(STORAGE_KEY + '_slides', JSON.stringify(listToSave));
+      if (supabase) {
+        const now = Date.now();
+        for (let i = 0; i < listToSave.length; i++) {
+          const timestamp = new Date(now - i * 1000).toISOString();
+          await supabase
+            .from('hero_slides')
+            .update({ created_at: timestamp })
+            .eq('id', String(listToSave[i].id));
+        }
+      }
+      return true;
+    } catch (err) {
+      console.error('Error saving slide order to Supabase:', err);
+      return false;
+    }
   };
 
   // ==========================================
@@ -702,6 +727,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateSlide,
         deleteSlide,
         reorderSlides,
+        saveSlideOrder,
         addGalleryItem,
         updateGalleryItem,
         deleteGalleryItem,
