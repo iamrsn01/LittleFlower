@@ -76,8 +76,18 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     deleteFacultyMember,
     resetToDefaults,
     exportDataJSON,
-    importDataJSON
+    importDataJSON,
+    isSupabaseConnected,
+    supabaseUrl,
+    connectSupabase,
+    disconnectSupabase,
+    syncAllToSupabase
   } = useSchoolData();
+
+  // Supabase Connection Form State
+  const [sbInputUrl, setSbInputUrl] = useState(supabaseUrl || '');
+  const [sbInputKey, setSbInputKey] = useState('');
+  const [isSyncingSupabase, setIsSyncingSupabase] = useState(false);
 
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -153,6 +163,32 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     setNewSecurityPass('');
     setConfirmSecurityPass('');
     showToast('Administrator security password updated successfully!');
+  };
+
+  // Supabase Cloud Connection Handlers
+  const handleConnectSupabase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sbInputUrl.trim() || !sbInputKey.trim()) {
+      showToast('Please enter both Supabase Project URL and Anon Key', 'error');
+      return;
+    }
+    const success = await connectSupabase(sbInputUrl.trim(), sbInputKey.trim());
+    if (success) {
+      showToast('Connecting to Supabase Cloud Database...');
+    } else {
+      showToast('Failed to connect. Ensure URL starts with https://', 'error');
+    }
+  };
+
+  const handlePushAllToSupabase = async () => {
+    setIsSyncingSupabase(true);
+    const success = await syncAllToSupabase();
+    setIsSyncingSupabase(false);
+    if (success) {
+      showToast('All current school content pushed to Supabase Cloud!');
+    } else {
+      showToast('Sync failed. Ensure tables are created in Supabase SQL editor.', 'error');
+    }
   };
 
   // Helper: File to Base64
@@ -2412,6 +2448,96 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Supabase Cloud Database Connection */}
+              <div className="p-6 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-4 shadow-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                      <ExternalLink className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-bold text-white">Supabase Cloud Database Sync</h4>
+                        {isSupabaseConnected ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            CONNECTED
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                            LOCAL STORAGE ONLY
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        Connect your Supabase project to enable global real-time synchronization across all devices and visitors.
+                      </p>
+                    </div>
+                  </div>
+
+                  {isSupabaseConnected && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handlePushAllToSupabase}
+                        disabled={isSyncingSupabase}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
+                      >
+                        {isSyncingSupabase ? 'Syncing...' : 'Push Local Content to Cloud'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={disconnectSupabase}
+                        className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-bold cursor-pointer"
+                      >
+                        Disconnect
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {!isSupabaseConnected && (
+                  <form onSubmit={handleConnectSupabase} className="space-y-3 pt-2 border-t border-slate-700/60">
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Supabase Project URL</label>
+                        <input
+                          type="text"
+                          value={sbInputUrl}
+                          onChange={(e) => setSbInputUrl(e.target.value)}
+                          placeholder="https://xyzcompany.supabase.co"
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono focus:border-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Supabase Anon Public Key</label>
+                        <input
+                          type="password"
+                          value={sbInputKey}
+                          onChange={(e) => setSbInputKey(e.target.value)}
+                          placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <p className="text-[11px] text-slate-400">
+                        Run the SQL schema located in <strong className="text-emerald-400 font-mono">docs/supabase_schema.sql</strong> in your Supabase SQL Editor first.
+                      </p>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all shrink-0"
+                      >
+                        Connect &amp; Activate Cloud Sync
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
 
               {/* Security & Password Management */}
