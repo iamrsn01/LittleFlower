@@ -18,9 +18,12 @@ import { AdminPortalPage } from './pages/AdminPortalPage';
 import { TeacherPortalPage } from './pages/TeacherPortalPage';
 import { StudentPortalPage } from './pages/StudentPortalPage';
 
+// Central School Data Store
+import { SchoolDataProvider } from './context/SchoolDataContext';
+
 export type AppRoute = 'home' | 'admin' | 'teacher' | 'student';
 
-export function App() {
+function AppContent() {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
   const [isVirtualTourOpen, setIsVirtualTourOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -251,6 +254,14 @@ export function App() {
       </a>
 
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <SchoolDataProvider>
+      <AppContent />
+    </SchoolDataProvider>
   );
 }
 

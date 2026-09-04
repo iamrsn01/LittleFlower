@@ -10,9 +10,11 @@ import {
   CheckCircle2,
   Phone
 } from 'lucide-react';
-import { facultyMembers, FacultyMember } from '../data/schoolData';
+import { FacultyMember } from '../data/schoolData';
+import { useSchoolData } from '../context/SchoolDataContext';
 
 export const FacultySection: React.FC = () => {
+  const { facultyMembers } = useSchoolData();
   const [selectedDept, setSelectedDept] = useState<string>('All');
   const [activeFaculty, setActiveFaculty] = useState<FacultyMember | null>(null);
   const [messageSent, setMessageSent] = useState<boolean>(false);

@@ -20,13 +20,15 @@ import {
   Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { galleryItems, GalleryItem } from '../data/schoolData';
+import { GalleryItem } from '../data/schoolData';
+import { useSchoolData } from '../context/SchoolDataContext';
 
 interface GallerySectionProps {
   onOpenVirtualTour: () => void;
 }
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenVirtualTour }) => {
+  const { galleryItems } = useSchoolData();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [layoutMode, setLayoutMode] = useState<'masonry' | 'grid'>('masonry');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -273,8 +275,8 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenVirtualTou
             layout
             className={
               layoutMode === 'masonry'
-                ? 'grid sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[280px]'
-                : 'grid sm:grid-cols-2 lg:grid-cols-3 gap-6'
+                ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4.5 auto-rows-[160px] sm:auto-rows-[185px] md:auto-rows-[205px]'
+                : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4.5'
             }
           >
             <AnimatePresence>
@@ -285,7 +287,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenVirtualTou
                 const isPortrait = item.aspect === 'portrait';
 
                 const masonryClasses = layoutMode === 'masonry'
-                  ? `${isFeatured ? 'sm:col-span-2 row-span-2' : isPortrait ? 'row-span-2' : isWide ? 'sm:col-span-2' : 'row-span-1'}`
+                  ? `${isFeatured ? 'col-span-2 row-span-2' : isPortrait ? 'row-span-2' : isWide ? 'col-span-2 row-span-1' : 'col-span-1 row-span-1'}`
                   : 'aspect-[4/3]';
 
                 return (
@@ -297,7 +299,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenVirtualTou
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.35, ease: 'easeOut' }}
                     onClick={() => setLightboxIndex(idx)}
-                    className={`group relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-200/90 cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${masonryClasses}`}
+                    className={`group relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/90 cursor-pointer shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${masonryClasses}`}
                   >
                     {/* Background Image with Zoom Effect */}
                     <img
@@ -311,44 +313,44 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenVirtualTou
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-black/10 opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
 
                     {/* Top Floating Chips */}
-                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                      <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 rounded-xl text-[11px] font-bold backdrop-blur-md bg-white/90 text-slate-900 shadow-sm border border-white/40 flex items-center gap-1.5">
+                    <div className="absolute top-2.5 left-2.5 right-2.5 sm:top-3 sm:left-3 sm:right-3 flex items-center justify-between z-10">
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold backdrop-blur-md bg-white/90 text-slate-900 shadow-xs border border-white/40 flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                           {item.category}
                         </span>
                         {item.tag && (
-                          <span className="hidden sm:inline-flex px-2.5 py-1 rounded-xl text-[10px] font-semibold backdrop-blur-md bg-black/40 text-rose-100 border border-white/20">
+                          <span className="hidden sm:inline-flex px-2 py-0.5 rounded-lg text-[9px] font-semibold backdrop-blur-md bg-black/40 text-rose-100 border border-white/20">
                             #{item.tag}
                           </span>
                         )}
                       </div>
 
                       {/* Zoom Icon Button */}
-                      <div className="w-9 h-9 rounded-2xl backdrop-blur-md bg-white/20 text-white border border-white/30 flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-red-600 group-hover:border-red-500 group-hover:scale-110 transition-all duration-300 shadow-lg">
-                        <Maximize2 className="w-4 h-4" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl backdrop-blur-md bg-white/20 text-white border border-white/30 flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-red-600 group-hover:border-red-500 group-hover:scale-110 transition-all duration-300 shadow-md">
+                        <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       </div>
                     </div>
 
                     {/* Bottom Content / Caption Reveal */}
-                    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 z-10 space-y-2 flex flex-col justify-end">
-                      <div className="transform transition-transform duration-300 group-hover:-translate-y-1">
-                        <h3 className="text-base sm:text-lg font-bold text-white leading-snug drop-shadow-sm line-clamp-2">
+                    <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 z-10 space-y-1 sm:space-y-1.5 flex flex-col justify-end">
+                      <div className="transform transition-transform duration-300 group-hover:-translate-y-0.5">
+                        <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-sm line-clamp-1">
                           {item.title}
                         </h3>
-                        <p className="text-xs text-rose-100/90 mt-1 line-clamp-2 opacity-80 group-hover:opacity-100 transition-opacity duration-300 font-medium">
+                        <p className="text-[10px] sm:text-xs text-rose-100/90 mt-0.5 line-clamp-1 sm:line-clamp-2 opacity-85 group-hover:opacity-100 transition-opacity duration-300 font-medium">
                           {item.description}
                         </p>
                       </div>
 
                       {/* Quick Meta Row on Hover */}
-                      <div className="flex items-center justify-between pt-2 border-t border-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-[11px] text-white/70 font-mono">
-                          Little Flower Archives
+                      <div className="flex items-center justify-between pt-1 sm:pt-1.5 border-t border-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-[9px] sm:text-[10px] text-white/70 font-mono">
+                          Little Flower
                         </span>
-                        <span className="text-[11px] font-bold text-rose-300 flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          <span>View Fullscreen</span>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-rose-300 flex items-center gap-1">
+                          <Eye className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span>View Full</span>
                         </span>
                       </div>
                     </div>

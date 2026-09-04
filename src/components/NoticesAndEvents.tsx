@@ -13,9 +13,11 @@ import {
   Sparkles,
   Users
 } from 'lucide-react';
-import { schoolNotices, upcomingEvents, SchoolNotice, SchoolEvent } from '../data/schoolData';
+import { upcomingEvents, SchoolNotice, SchoolEvent } from '../data/schoolData';
+import { useSchoolData } from '../context/SchoolDataContext';
 
 export const NoticesAndEvents: React.FC = () => {
+  const { schoolNotices } = useSchoolData();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedNotice, setSelectedNotice] = useState<SchoolNotice | null>(null);

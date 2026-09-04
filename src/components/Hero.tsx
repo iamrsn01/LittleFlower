@@ -17,14 +17,7 @@ import {
 } from 'lucide-react';
 import { schoolStats } from '../data/schoolData';
 import { AboutSection } from './AboutSection';
-import coverImg from '../assets/slider/cover.jpg';
-import slider1 from '../assets/slider/1.jpg';
-import slider2 from '../assets/slider/2.JPG';
-import slider3 from '../assets/slider/3.JPG';
-import slider4 from '../assets/slider/4.JPG';
-import slider5 from '../assets/slider/5.JPG';
-import slider6 from '../assets/slider/6.JPG';
-import slider7 from '../assets/slider/7.JPG';
+import { useSchoolData, defaultHeroSlides } from '../context/SchoolDataContext';
 
 const StudentDoodle: React.FC = () => (
   <svg 
@@ -83,75 +76,33 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenVirtualTour,
   onOpenPortal
 }) => {
-  const slides = [
-    {
-      id: 1,
-      image: coverImg,
-      caption: 'Little Flower Secondary School — Welcome & Campus Overview',
-      location: 'Birgunj-21, Parwanipur, Parsa (Estd. 2005)'
-    },
-    {
-      id: 2,
-      image: slider1,
-      caption: 'Little Flower Secondary School — Campus Life & Student Activities',
-      location: 'Parwanipur, Parsa'
-    },
-    {
-      id: 3,
-      image: slider2,
-      caption: 'Little Flower Secondary School — Annual Event & Campus Showcase',
-      location: 'Auditorium & Parade Grounds'
-    },
-    {
-      id: 4,
-      image: slider3,
-      caption: 'Little Flower Secondary School — Student Leadership & Assembly',
-      location: 'Parwanipur, Parsa'
-    },
-    {
-      id: 5,
-      image: slider4,
-      caption: 'Little Flower Secondary School — Sports & Co-Curricular Excellence',
-      location: 'Green Playground & Sports Grounds'
-    },
-    {
-      id: 6,
-      image: slider5,
-      caption: 'Little Flower Secondary School — Cultural Festivities & Performances',
-      location: 'School Auditorium Stage'
-    },
-    {
-      id: 7,
-      image: slider6,
-      caption: 'Little Flower Secondary School — Mentorship & Graduation Honor',
-      location: 'Parwanipur, Parsa'
-    },
-    {
-      id: 8,
-      image: slider7,
-      caption: 'Little Flower Secondary School — School Community & Celebrations',
-      location: 'Parwanipur, Parsa'
-    }
-  ];
+  const { heroSlides } = useSchoolData();
+  const slides = useMemo(() => {
+    const active = heroSlides && heroSlides.length > 0 ? heroSlides.filter(s => s.isActive !== false) : defaultHeroSlides;
+    return active.length > 0 ? active : defaultHeroSlides;
+  }, [heroSlides]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Safe slide index ensuring bounds safety
+  const safeSlideIndex = currentSlide >= slides.length ? 0 : currentSlide;
 
   // Auto advance every 4.5 seconds
   useEffect(() => {
     if (!isAutoPlaying) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+      setCurrentSlide((prev) => (prev >= slides.length - 1 ? 0 : prev + 1));
     }, 4500);
     return () => clearInterval(timer);
   }, [isAutoPlaying, slides.length]);
 
   const handlePrev = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev <= 0 ? slides.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev >= slides.length - 1 ? 0 : prev + 1));
   };
 
   // Measurement ref and dynamic unified trajectory
@@ -258,7 +209,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div
               key={slide.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                idx === safeSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
               <img 
@@ -320,13 +271,13 @@ export const Hero: React.FC<HeroProps> = ({
 
                 <div className="flex items-center gap-1 text-[9px] sm:text-xs text-slate-300 font-medium">
                   <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400 shrink-0" />
-                  <span className="truncate max-w-[130px] sm:max-w-[220px]">{slides[currentSlide].location}</span>
+                  <span className="truncate max-w-[130px] sm:max-w-[220px]">{slides[safeSlideIndex]?.location || ''}</span>
                 </div>
               </div>
 
               {/* Title / Caption */}
               <h2 className="text-[11px] sm:text-sm md:text-base font-bold text-white leading-snug tracking-tight font-display mb-1.5 sm:mb-2.5 line-clamp-1 sm:line-clamp-none group-hover:text-rose-100 transition-colors">
-                {slides[currentSlide].caption}
+                {slides[safeSlideIndex]?.caption || ''}
               </h2>
 
               {/* Seamless Bottom Progress Track & Counter */}
@@ -338,7 +289,7 @@ export const Hero: React.FC<HeroProps> = ({
                       onClick={() => setCurrentSlide(idx)}
                       aria-label={`Go to slide ${idx + 1}`}
                       className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        idx === currentSlide
+                        idx === safeSlideIndex
                           ? 'flex-[2.5] bg-gradient-to-r from-red-500 via-rose-500 to-red-400 shadow-[0_0_8px_rgba(239,68,68,0.7)]'
                           : 'flex-1 bg-white/20 hover:bg-white/40'
                       }`}
@@ -347,7 +298,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
 
                 <div className="text-[9px] sm:text-xs font-mono font-bold text-slate-400 shrink-0 pl-1">
-                  <span className="text-white font-black">{String(currentSlide + 1).padStart(2, '0')}</span>
+                  <span className="text-white font-black">{String(safeSlideIndex + 1).padStart(2, '0')}</span>
                   <span className="text-slate-500 mx-0.5">/</span>
                   <span>{String(slides.length).padStart(2, '0')}</span>
                 </div>

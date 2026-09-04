@@ -285,46 +285,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 </button>
               </form>
 
-              {/* Quick Demo Switcher Buttons */}
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Quick Demo Login Shortcuts:</p>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('admin')}
-                    className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
-                      selectedRole === 'admin'
-                        ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-red-50 hover:text-red-600'
-                    }`}
-                  >
-                    Admin
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('teachers')}
-                    className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
-                      selectedRole === 'teachers'
-                        ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-red-50 hover:text-red-600'
-                    }`}
-                  >
-                    Teacher
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('students')}
-                    className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
-                      selectedRole === 'students'
-                        ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-red-50 hover:text-red-600'
-                    }`}
-                  >
-                    Student
-                  </button>
-                </div>
-              </div>
-
               <p className="text-[11px] text-slate-500 font-medium">
                 Need Portal Assistance? School Helpdesk: <a href="tel:+9779840159560" className="text-red-600 font-bold hover:underline">+977-9840159560</a>
               </p>
