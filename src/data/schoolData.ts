@@ -16,14 +16,14 @@ export interface AcademicLevel {
 export interface FacultyMember {
   id: string;
   name: string;
-  role: string;
+  role: string; // Designation
   department: 'Science & STEM' | 'Mathematics' | 'Computer & AI' | 'Languages & Literature' | 'Social Sciences' | 'Arts & Physical Ed';
-  qualification: string;
-  experience: string;
   email: string;
-  bio: string;
-  avatarUrl: string;
-  achievements: string[];
+  avatarUrl?: string;
+  qualification?: string;
+  experience?: string;
+  bio?: string;
+  achievements?: string[];
 }
 
 export interface CampusBlock {

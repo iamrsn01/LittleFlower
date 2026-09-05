@@ -429,22 +429,14 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     name: string;
     role: string;
     department: 'Science & STEM' | 'Mathematics' | 'Computer & AI' | 'Languages & Literature' | 'Social Sciences' | 'Arts & Physical Ed';
-    qualification: string;
-    experience: string;
     email: string;
-    bio: string;
     avatarUrl: string;
-    achievementsStr: string;
   }>({
     name: '',
     role: '',
     department: 'Science & STEM',
-    qualification: '',
-    experience: '',
     email: '',
-    bio: '',
-    avatarUrl: '',
-    achievementsStr: ''
+    avatarUrl: ''
   });
   const facultyFileInputRef = useRef<HTMLInputElement>(null);
   const editFacultyFileInputRef = useRef<HTMLInputElement>(null);
@@ -455,35 +447,28 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
       showToast('Please enter faculty name and designation', 'error');
       return;
     }
-    const achievements = newFacultyData.achievementsStr
-      ? newFacultyData.achievementsStr.split(',').map(s => s.trim()).filter(Boolean)
-      : ['Dedicated Little Flower Educator'];
 
     addFacultyMember({
-      name: newFacultyData.name,
-      role: newFacultyData.role,
+      name: newFacultyData.name.trim(),
+      role: newFacultyData.role.trim(),
       department: newFacultyData.department,
-      qualification: newFacultyData.qualification || 'Experienced Faculty',
-      experience: newFacultyData.experience || 'Experienced',
-      email: newFacultyData.email || 'faculty@lfsbirgunj.edu.np',
-      bio: newFacultyData.bio || `${newFacultyData.name} is a valued mentor at Little Flower Secondary School.`,
-      avatarUrl: newFacultyData.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-      achievements
+      email: newFacultyData.email.trim() || `${newFacultyData.name.toLowerCase().replace(/\s+/g, '.')}@lfsbirgunj.edu.np`,
+      avatarUrl: newFacultyData.avatarUrl.trim() || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      qualification: '',
+      experience: '',
+      bio: '',
+      achievements: []
     });
 
     setNewFacultyData({
       name: '',
       role: '',
       department: 'Science & STEM',
-      qualification: '',
-      experience: '',
       email: '',
-      bio: '',
-      avatarUrl: '',
-      achievementsStr: ''
+      avatarUrl: ''
     });
     setIsAddingFaculty(false);
-    showToast('New faculty mentor added to directory!');
+    showToast('New team member added to directory!');
   };
 
   const handleSaveEditFaculty = (e: React.FormEvent) => {
@@ -2145,21 +2130,21 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
               {/* Header with Add Button */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-black text-white">Staff &amp; Faculty Directory Manager</h3>
-                  <p className="text-xs text-slate-400">Manage institutional educators, Head of Departments (HODs), credentials, and subject assignments.</p>
+                  <h3 className="text-base font-black text-white">Team &amp; Faculty Directory Manager</h3>
+                  <p className="text-xs text-slate-400">Manage school team members, departments, designations, and contact emails.</p>
                 </div>
                 <button
                   onClick={() => setIsAddingFaculty(true)}
                   className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-red-600/30 cursor-pointer self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Faculty Member</span>
+                  <span>Add Member</span>
                 </button>
               </div>
 
               {/* Department Filter Tabs */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                {['All', 'Science & STEM', 'Mathematics', 'Computer & AI', 'Languages & Literature', 'Arts & Physical Ed'].map((dept) => (
+                {['All', 'Science & STEM', 'Mathematics', 'Computer & AI', 'Languages & Literature', 'Social Sciences', 'Arts & Physical Ed'].map((dept) => (
                   <button
                     key={dept}
                     onClick={() => setFacultyDeptFilter(dept)}
@@ -2174,13 +2159,13 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                 ))}
               </div>
 
-              {/* Add Faculty Form / Drawer */}
+              {/* Add Faculty Form */}
               {isAddingFaculty && (
                 <form onSubmit={handleCreateFaculty} className="p-6 rounded-2xl bg-slate-800 border-2 border-blue-500/50 space-y-4 shadow-xl">
                   <div className="flex items-center justify-between border-b border-slate-700 pb-3">
                     <h4 className="text-sm font-bold text-white flex items-center gap-2">
                       <Users className="w-4 h-4 text-blue-400" />
-                      <span>Register New Faculty Mentor</span>
+                      <span>Register New Team Member</span>
                     </h4>
                     <button
                       type="button"
@@ -2201,84 +2186,61 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                           onChange={(e) => setNewFacultyData({ ...newFacultyData, name: e.target.value })}
                           placeholder="e.g. Dr. Rajesh Kumar Sharma"
                           required
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold focus:border-blue-500 outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Designation / Role</label>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Designation</label>
                         <input
                           type="text"
                           value={newFacultyData.role}
                           onChange={(e) => setNewFacultyData({ ...newFacultyData, role: e.target.value })}
                           placeholder="e.g. Head of Department — Physics"
                           required
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-blue-500 outline-none"
                         />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Department</label>
-                          <select
-                            value={newFacultyData.department}
-                            onChange={(e) => setNewFacultyData({ ...newFacultyData, department: e.target.value as any })}
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold"
-                          >
-                            <option value="Science & STEM">Science &amp; STEM</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Computer & AI">Computer &amp; AI</option>
-                            <option value="Languages & Literature">Languages &amp; Literature</option>
-                            <option value="Social Sciences">Social Sciences</option>
-                            <option value="Arts & Physical Ed">Arts &amp; Physical Ed</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Experience</label>
-                          <input
-                            type="text"
-                            value={newFacultyData.experience}
-                            onChange={(e) => setNewFacultyData({ ...newFacultyData, experience: e.target.value })}
-                            placeholder="e.g. 14+ Years Experience"
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                          />
-                        </div>
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Academic Qualification</label>
-                        <input
-                          type="text"
-                          value={newFacultyData.qualification}
-                          onChange={(e) => setNewFacultyData({ ...newFacultyData, qualification: e.target.value })}
-                          placeholder="e.g. M.Sc. Physics (Tribhuvan University), B.Ed."
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                        />
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Department</label>
+                        <select
+                          value={newFacultyData.department}
+                          onChange={(e) => setNewFacultyData({ ...newFacultyData, department: e.target.value as any })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold focus:border-blue-500 outline-none"
+                        >
+                          <option value="Science & STEM">Science &amp; STEM</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Computer & AI">Computer &amp; AI</option>
+                          <option value="Languages & Literature">Languages &amp; Literature</option>
+                          <option value="Social Sciences">Social Sciences</option>
+                          <option value="Arts & Physical Ed">Arts &amp; Physical Ed</option>
+                        </select>
                       </div>
                     </div>
 
                     <div className="space-y-3">
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Official Email Address</label>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Email Address</label>
                         <input
                           type="email"
                           value={newFacultyData.email}
                           onChange={(e) => setNewFacultyData({ ...newFacultyData, email: e.target.value })}
                           placeholder="e.g. rajesh.physics@lfsbirgunj.edu.np"
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono"
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono focus:border-blue-500 outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Photo Avatar (File Upload or URL)</label>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Photo Avatar (Optional URL or Upload)</label>
                         <div className="flex gap-2">
                           <input
                             type="text"
                             value={newFacultyData.avatarUrl}
                             onChange={(e) => setNewFacultyData({ ...newFacultyData, avatarUrl: e.target.value })}
-                            placeholder="Paste photo URL or upload"
-                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
+                            placeholder="Paste photo URL or click upload"
+                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-blue-500 outline-none"
                           />
                           <button
                             type="button"
@@ -2303,29 +2265,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                         </div>
                       </div>
 
-                      <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Short Biography &amp; Pedagogy</label>
-                        <textarea
-                          rows={2}
-                          value={newFacultyData.bio}
-                          onChange={(e) => setNewFacultyData({ ...newFacultyData, bio: e.target.value })}
-                          placeholder="Brief description of teaching methodology and mentorship..."
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Key Achievements (comma-separated)</label>
-                        <input
-                          type="text"
-                          value={newFacultyData.achievementsStr}
-                          onChange={(e) => setNewFacultyData({ ...newFacultyData, achievementsStr: e.target.value })}
-                          placeholder="e.g. Best Teacher Parsa 2024, 100% SEE A+ Result"
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                        />
-                      </div>
-
-                      <div className="pt-2 flex items-center justify-end gap-3">
+                      <div className="pt-4 flex items-center justify-end gap-3">
                         <button
                           type="button"
                           onClick={() => setIsAddingFaculty(false)}
@@ -2338,7 +2278,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                           className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5"
                         >
                           <Check className="w-4 h-4" />
-                          <span>Register Faculty</span>
+                          <span>Add Member</span>
                         </button>
                       </div>
                     </div>
@@ -2346,7 +2286,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                 </form>
               )}
 
-              {/* Faculty Cards Grid */}
+              {/* Simplified Faculty Cards Grid: Name, Department, Designation, Email */}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {facultyMembers
                   .filter(f => facultyDeptFilter === 'All' || f.department === facultyDeptFilter)
@@ -2356,41 +2296,47 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                       className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex flex-col justify-between gap-3 shadow-md hover:border-slate-500 transition-colors"
                     >
                       <div className="flex items-start gap-3.5">
-                        <img
-                          src={fac.avatarUrl}
-                          alt={fac.name}
-                          className="w-14 h-14 rounded-2xl object-cover border border-slate-600 shrink-0 bg-slate-950"
-                        />
-                        <div className="space-y-0.5 min-w-0 flex-1">
-                          <h4 className="text-xs font-bold text-white truncate">{fac.name}</h4>
-                          <p className="text-[11px] text-red-400 font-semibold truncate">{fac.role}</p>
-                          <p className="text-[10px] text-slate-300">{fac.department}</p>
-                          <p className="text-[10px] text-slate-500 font-mono truncate">{fac.email}</p>
+                        <div className="w-13 h-13 rounded-xl overflow-hidden border border-slate-700 shrink-0 bg-slate-950 flex items-center justify-center">
+                          {fac.avatarUrl ? (
+                            <img
+                              src={fac.avatarUrl}
+                              alt={fac.name}
+                              className="w-full h-full object-cover object-top"
+                            />
+                          ) : (
+                            <span className="text-slate-400 font-bold text-sm">{fac.name.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <span className="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-slate-700 text-blue-300 border border-slate-600 truncate max-w-full">
+                            {fac.department}
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-bold text-white truncate" title={fac.name}>{fac.name}</h4>
+                          <p className="text-[11px] text-red-400 font-semibold truncate" title={fac.role}>{fac.role}</p>
                         </div>
                       </div>
 
-                      <div className="text-[11px] text-slate-400 border-t border-slate-700/60 pt-2 space-y-1">
-                        <p className="line-clamp-2 italic text-slate-300">"{fac.bio}"</p>
-                        <p className="text-[10px] text-slate-500 font-medium">🎓 {fac.qualification}</p>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between">
-                        <span className="text-[10px] font-mono text-emerald-400">{fac.experience}</span>
-                        <div className="flex items-center gap-1">
+                      {/* Email and Action Buttons */}
+                      <div className="pt-2.5 border-t border-slate-700/60 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5 min-w-0 text-slate-400 text-[11px] font-mono truncate" title={fac.email}>
+                          <Mail className="w-3 h-3 text-slate-500 shrink-0" />
+                          <span className="truncate">{fac.email}</span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
                           <button
                             onClick={() => setEditingFaculty(fac)}
                             className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-amber-400 cursor-pointer"
-                            title="Edit Faculty"
+                            title="Edit Member"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => {
                               deleteFacultyMember(fac.id);
-                              showToast('Faculty member removed');
+                              showToast('Member removed from directory');
                             }}
                             className="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-rose-400 border border-rose-800/40 cursor-pointer"
-                            title="Delete Faculty"
+                            title="Delete Member"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -2400,14 +2346,14 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                   ))}
               </div>
 
-              {/* Edit Faculty Modal */}
+              {/* Edit Faculty Modal: Basic details only */}
               {editingFaculty && (
                 <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                  <form onSubmit={handleSaveEditFaculty} className="max-w-lg w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl">
+                  <form onSubmit={handleSaveEditFaculty} className="max-w-md w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <h4 className="text-sm font-bold text-white flex items-center gap-2">
                         <Edit3 className="w-4 h-4 text-amber-400" />
-                        <span>Edit Faculty Member</span>
+                        <span>Edit Team Member</span>
                       </h4>
                       <button
                         type="button"
@@ -2420,72 +2366,51 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
 
                     <div className="space-y-3">
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Name</label>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
                         <input
                           type="text"
                           value={editingFaculty.name}
                           onChange={(e) => setEditingFaculty({ ...editingFaculty, name: e.target.value })}
                           required
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold focus:border-blue-500 outline-none"
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Designation / Role</label>
-                          <input
-                            type="text"
-                            value={editingFaculty.role}
-                            onChange={(e) => setEditingFaculty({ ...editingFaculty, role: e.target.value })}
-                            required
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Department</label>
-                          <select
-                            value={editingFaculty.department}
-                            onChange={(e) => setEditingFaculty({ ...editingFaculty, department: e.target.value as any })}
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold"
-                          >
-                            <option value="Science & STEM">Science &amp; STEM</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Computer & AI">Computer &amp; AI</option>
-                            <option value="Languages & Literature">Languages &amp; Literature</option>
-                            <option value="Social Sciences">Social Sciences</option>
-                            <option value="Arts & Physical Ed">Arts &amp; Physical Ed</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Qualification</label>
-                          <input
-                            type="text"
-                            value={editingFaculty.qualification}
-                            onChange={(e) => setEditingFaculty({ ...editingFaculty, qualification: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs font-bold text-slate-300 block mb-1">Experience</label>
-                          <input
-                            type="text"
-                            value={editingFaculty.experience}
-                            onChange={(e) => setEditingFaculty({ ...editingFaculty, experience: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                          />
-                        </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Designation</label>
+                        <input
+                          type="text"
+                          value={editingFaculty.role}
+                          onChange={(e) => setEditingFaculty({ ...editingFaculty, role: e.target.value })}
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-blue-500 outline-none"
+                        />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Email</label>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Department</label>
+                        <select
+                          value={editingFaculty.department}
+                          onChange={(e) => setEditingFaculty({ ...editingFaculty, department: e.target.value as any })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-bold focus:border-blue-500 outline-none"
+                        >
+                          <option value="Science & STEM">Science &amp; STEM</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Computer & AI">Computer &amp; AI</option>
+                          <option value="Languages & Literature">Languages &amp; Literature</option>
+                          <option value="Social Sciences">Social Sciences</option>
+                          <option value="Arts & Physical Ed">Arts &amp; Physical Ed</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Email Address</label>
                         <input
                           type="email"
                           value={editingFaculty.email}
                           onChange={(e) => setEditingFaculty({ ...editingFaculty, email: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono"
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white font-mono focus:border-blue-500 outline-none"
                         />
                       </div>
 
@@ -2494,9 +2419,10 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                         <div className="flex gap-2">
                           <input
                             type="text"
-                            value={editingFaculty.avatarUrl}
+                            value={editingFaculty.avatarUrl || ''}
                             onChange={(e) => setEditingFaculty({ ...editingFaculty, avatarUrl: e.target.value })}
-                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
+                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-blue-500 outline-none"
+                            placeholder="Image URL"
                           />
                           <button
                             type="button"
@@ -2518,16 +2444,6 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                             }}
                           />
                         </div>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-300 block mb-1">Bio</label>
-                        <textarea
-                          rows={2}
-                          value={editingFaculty.bio}
-                          onChange={(e) => setEditingFaculty({ ...editingFaculty, bio: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white"
-                        />
                       </div>
                     </div>
 
