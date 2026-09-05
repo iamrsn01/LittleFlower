@@ -665,6 +665,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
         onOpenPortal={onNavigatePortal}
         onOpenAdmissions={onOpenAdmissions}
         onNavigateHome={onNavigateHome}
+        hideAdmissionsBanner={true}
         onOpenVacancy={() => {
           const el = document.getElementById('openings');
           if (el) el.scrollIntoView({ behavior: 'smooth' });

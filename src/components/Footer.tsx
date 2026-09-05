@@ -21,13 +21,15 @@ interface FooterProps {
   onOpenAdmissions: () => void;
   onNavigateHome?: () => void;
   onOpenVacancy?: () => void;
+  hideAdmissionsBanner?: boolean;
 }
 
 export const Footer: React.FC<FooterProps> = ({ 
   onOpenPortal, 
   onOpenAdmissions, 
   onNavigateHome,
-  onOpenVacancy 
+  onOpenVacancy,
+  hideAdmissionsBanner = false
 }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -72,33 +74,35 @@ export const Footer: React.FC<FooterProps> = ({
     <footer className="bg-slate-900 border-t-4 border-red-500 text-slate-300 text-xs relative w-full">
       
       {/* Top Banner Callout - Matching Navbar full max-w-[1536px] width */}
-      <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 py-8 text-white w-full border-b border-red-700/40">
-        <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[11px] border border-white/30 mb-1">
-              <Flame className="w-3 h-3 text-amber-300 fill-current" />
-              Estd. 2005 • Birgunj-21, Parwanipur, Parsa
+      {!hideAdmissionsBanner && (
+        <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 py-8 text-white w-full border-b border-red-700/40">
+          <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center md:text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[11px] border border-white/30 mb-1">
+                <Flame className="w-3 h-3 text-amber-300 fill-current" />
+                Estd. 2005 • Birgunj-21, Parwanipur, Parsa
+              </div>
+              <h4 className="text-base sm:text-lg font-black text-white">Enroll at Little Flower Secondary School Today</h4>
+              <p className="text-rose-100 text-xs font-medium">Admissions open for Nursery to Grade 9 for Academic Session 2026/27 in Parwanipur, Parsa.</p>
             </div>
-            <h4 className="text-base sm:text-lg font-black text-white">Enroll at Little Flower Secondary School Today</h4>
-            <p className="text-rose-100 text-xs font-medium">Admissions open for Nursery to Grade 9 for Academic Session 2026/27 in Parwanipur, Parsa.</p>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onOpenPortal('student')}
-              className="px-4 py-2.5 rounded-xl font-bold bg-white/15 hover:bg-white/25 text-white border border-white/30 transition-colors cursor-pointer"
-            >
-              Student Portal
-            </button>
-            <button
-              onClick={onOpenAdmissions}
-              className="px-5 py-2.5 rounded-xl font-black bg-white hover:bg-slate-100 text-red-600 transition-all shadow-lg cursor-pointer"
-            >
-              Apply Online
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => onOpenPortal('student')}
+                className="px-4 py-2.5 rounded-xl font-bold bg-white/15 hover:bg-white/25 text-white border border-white/30 transition-colors cursor-pointer"
+              >
+                Student Portal
+              </button>
+              <button
+                onClick={onOpenAdmissions}
+                className="px-5 py-2.5 rounded-xl font-black bg-white hover:bg-slate-100 text-red-600 transition-all shadow-lg cursor-pointer"
+              >
+                Apply Online
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Footer Body: Full Max-Width matching Navbar */}
       <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-14">
