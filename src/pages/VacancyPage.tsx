@@ -1,23 +1,23 @@
 import React, { useState, useRef } from 'react';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  GraduationCap, 
-  Clock, 
-  ArrowRight, 
-  Upload, 
-  X, 
-  Check, 
-  CheckCircle2, 
-  Briefcase, 
-  Send, 
-  FileText, 
-  Sparkles, 
-  Users, 
-  BookOpen, 
-  FlaskConical, 
-  Monitor, 
+import {
+  Phone,
+  Mail,
+  MapPin,
+  GraduationCap,
+  Clock,
+  ArrowRight,
+  Upload,
+  X,
+  Check,
+  CheckCircle2,
+  Briefcase,
+  Send,
+  FileText,
+  Sparkles,
+  Users,
+  BookOpen,
+  FlaskConical,
+  Monitor,
   HeartHandshake,
   Laptop,
   Award,
@@ -26,7 +26,13 @@ import {
   Flame,
   ArrowUpRight,
   ArrowLeft,
-  Calendar
+  Calendar,
+  Copy,
+  Printer,
+  MessageCircle,
+  Loader2,
+  Download,
+  ExternalLink
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import coverImg from '../assets/slider/cover.jpg';
@@ -42,14 +48,14 @@ interface VacancyPageProps {
   onOpenVirtualTour: () => void;
 }
 
-export const VacancyPage: React.FC<VacancyPageProps> = ({ 
+export const VacancyPage: React.FC<VacancyPageProps> = ({
   onNavigateHome,
   onNavigatePortal,
   onOpenAdmissions,
   onOpenSearch,
   onOpenVirtualTour
 }) => {
-  const { vacancies } = useSchoolData();
+  const { vacancies, submitJobApplication } = useSchoolData();
   const activeVacancies = vacancies.filter(v => v.isActive !== false);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -57,7 +63,17 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
   const [isApplyingModalOpen, setIsApplyingModalOpen] = useState<boolean>(false);
   const [isWhyWorkModalOpen, setIsWhyWorkModalOpen] = useState<boolean>(false);
   const [appliedPositionTitle, setAppliedPositionTitle] = useState<string>('');
-  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submittedApp, setSubmittedApp] = useState<{
+    ref: string;
+    fullName: string;
+    position: string;
+    phone: string;
+    email: string;
+    qualification: string;
+    experience: string;
+  } | null>(null);
+  const [copiedRef, setCopiedRef] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -68,7 +84,8 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
     qualification: '',
     experience: '',
     message: '',
-    resumeName: ''
+    resumeName: '',
+    resumeDataUrl: ''
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,7 +100,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
   const filteredPositions = activeVacancies.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const query = searchQuery.toLowerCase().trim();
-    const matchesQuery = !query || 
+    const matchesQuery = !query ||
       p.title.toLowerCase().includes(query) ||
       p.description.toLowerCase().includes(query) ||
       p.qualification.toLowerCase().includes(query) ||
@@ -108,35 +125,83 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
         showToast('Maximum file size is 5MB.');
         return;
       }
-      setFormData(prev => ({ ...prev, resumeName: file.name }));
-      showToast(`Selected: ${file.name}`);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData(prev => ({
+          ...prev,
+          resumeName: file.name,
+          resumeDataUrl: typeof reader.result === 'string' ? reader.result : ''
+        }));
+        showToast(`Selected CV: ${file.name}`);
+      };
+      reader.onerror = () => {
+        setFormData(prev => ({ ...prev, resumeName: file.name }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmitApplication = (e: React.FormEvent) => {
+  const handleSubmitApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName.trim() || !formData.phone.trim() || !formData.email.trim()) {
-      showToast('Please fill all required fields.');
+      showToast('Please fill all required fields (Name, Phone, Email).');
       return;
     }
 
-    const ref = `LFS-JOB-${Math.floor(1000 + Math.random() * 9000)}`;
-    setSubmittedRef(ref);
-
+    setIsSubmitting(true);
     try {
-      confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
-    } catch {}
+      const position = appliedPositionTitle || 'Faculty Position';
+      const ref = await submitJobApplication({
+        positionTitle: position,
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        qualification: formData.qualification.trim() || 'Not specified',
+        experience: formData.experience.trim() || 'Not specified',
+        message: formData.message.trim(),
+        resumeName: formData.resumeName || undefined,
+        resumeDataUrl: formData.resumeDataUrl || undefined
+      });
 
-    setIsApplyingModalOpen(false);
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      qualification: '',
-      experience: '',
-      message: '',
-      resumeName: ''
-    });
+      setSubmittedApp({
+        ref,
+        fullName: formData.fullName.trim(),
+        position,
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        qualification: formData.qualification.trim(),
+        experience: formData.experience.trim()
+      });
+
+      try {
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.55 } });
+      } catch { }
+
+      setIsApplyingModalOpen(false);
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        qualification: '',
+        experience: '',
+        message: '',
+        resumeName: '',
+        resumeDataUrl: ''
+      });
+      showToast('Application successfully registered!');
+    } catch (err) {
+      console.error(err);
+      showToast('Could not submit application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCopyRef = (refText: string) => {
+    navigator.clipboard.writeText(refText);
+    setCopiedRef(true);
+    showToast('Reference Number copied to clipboard!');
+    setTimeout(() => setCopiedRef(false), 2500);
   };
 
   const renderIcon = (type: string) => {
@@ -160,7 +225,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans selection:bg-red-600 selection:text-white">
-      
+
       {/* Toast Alert */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 px-4 py-3 bg-slate-900 text-white rounded-xl shadow-2xl border border-red-500/40 text-xs font-bold flex items-center gap-2 animate-in fade-in">
@@ -175,22 +240,22 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
         onOpenAdmissions={onOpenAdmissions}
         onOpenSearch={onOpenSearch}
         onOpenVirtualTour={onOpenVirtualTour}
-        onOpenVacancy={() => {}}
+        onOpenVacancy={() => { }}
         onNavigateHome={onNavigateHome}
       />
 
       {/* 3. HERO SHOWCASE SECTION (Executive Editorial Split Showcase) */}
       <section className="relative bg-gradient-to-b from-rose-50/50 via-white to-slate-50/70 py-12 sm:py-16 lg:py-20 px-4 sm:px-8 overflow-hidden border-b border-slate-200/80">
-        
+
         {/* Subtle decorative ambient glow circles */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-100/50 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute top-1/2 right-0 w-80 h-80 bg-rose-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          
+
           {/* Left Column: Heading, Value Proposition & Actions */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            
+
             {/* Eyebrow Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-red-200 shadow-xs text-red-700 text-xs font-bold uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
@@ -272,9 +337,9 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-4 border-white shadow-2xl bg-slate-900 group">
               {/* Campus Building Image */}
-              <img 
-                src={coverImg} 
-                alt="Little Flower Secondary School Campus" 
+              <img
+                src={coverImg}
+                alt="Little Flower Secondary School Campus"
                 className="w-full h-72 sm:h-96 object-cover group-hover:scale-104 transition-transform duration-700"
               />
 
@@ -318,7 +383,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
       {/* 4. MAIN BODY CONTAINER */}
       <main id="openings" className="max-w-6xl mx-auto px-4 sm:px-8 py-10 sm:py-12 w-full flex-grow space-y-8">
-        
+
         {/* Section Header with "Why Work With Us?" Action on the Right (Matching Reference Image) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="border-l-4 border-red-600 pl-3.5">
@@ -366,24 +431,22 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
         {/* Category Filter Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar">
           {categories.map((cat) => {
-            const count = cat === 'All' 
-              ? activeVacancies.length 
+            const count = cat === 'All'
+              ? activeVacancies.length
               : activeVacancies.filter(p => p.category === cat).length;
             const isSelected = selectedCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  isSelected
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${isSelected
                     ? 'bg-red-600 text-white shadow-sm shadow-red-600/25 border border-red-600'
                     : 'bg-white text-slate-700 hover:text-red-600 hover:bg-red-50/50 border border-slate-200'
-                }`}
+                  }`}
               >
                 <span>{cat}</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                  isSelected ? 'bg-red-700 text-white' : 'bg-slate-100 text-slate-500'
-                }`}>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${isSelected ? 'bg-red-700 text-white' : 'bg-slate-100 text-slate-500'
+                  }`}>
                   {count}
                 </span>
               </button>
@@ -411,7 +474,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
             </div>
           ) : (
             filteredPositions.map((job) => (
-              <div 
+              <div
                 key={job.id}
                 className="bg-white border border-slate-200 hover:border-red-400 rounded-2xl p-5 sm:p-6 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6 group"
               >
@@ -443,7 +506,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
                 {/* Middle & Right Group: Meta Specs + Actions */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between md:justify-end gap-5 shrink-0 md:pl-6 md:border-l md:border-slate-100">
-                  
+
                   {/* 3 Meta specs with icons */}
                   <div className="space-y-1.5 text-xs text-slate-600 min-w-[210px]">
                     <div className="flex items-center gap-2">
@@ -486,7 +549,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
           {/* 6. "Don't see the right role?" Card (Matching Reference in Red Theme) */}
           <div className="bg-gradient-to-r from-red-50/70 via-rose-50/40 to-white border border-red-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            
+
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-red-200 shadow-xs flex items-center justify-center shrink-0">
                 <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-red-600" />
@@ -522,7 +585,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
           </div>
 
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row items-center justify-between gap-8">
-            
+
             {/* 4 Checkmarks list */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold text-slate-700 flex-1 w-full">
               <div className="flex items-start gap-2.5">
@@ -563,7 +626,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
       {/* 8. CALL TO ACTION BANNER (Vibrant Little Flower Red Gradient) */}
       <section className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white py-6 px-4 sm:px-8 mt-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          
+
           <div className="flex items-center gap-3.5 text-center sm:text-left">
             <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center shrink-0 border border-white/30 shadow-xs">
               <Mail className="w-5 h-5 text-white" />
@@ -610,11 +673,11 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
       {/* MODAL 1: JOB DETAILS MODAL */}
       {selectedJob && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
           onClick={() => setSelectedJob(null)}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150 my-8 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
@@ -766,7 +829,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
       {/* MODAL 2: APPLICATION / SEND YOUR CV FORM */}
       {isApplyingModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div 
+          <div
             className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
@@ -872,9 +935,21 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
                 </div>
               </div>
 
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 block mb-1">Cover Note / Remarks (Optional)</label>
+                <textarea
+                  rows={2}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  placeholder="Share a brief statement about your teaching background, subject mastery, or availability..."
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 focus:outline-none focus:border-red-600 resize-none"
+                />
+              </div>
+
               <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                 <button
                   type="button"
+                  disabled={isSubmitting}
                   onClick={() => setIsApplyingModalOpen(false)}
                   className="px-4 py-2 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 cursor-pointer"
                 >
@@ -882,9 +957,20 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer shadow-sm shadow-red-600/20"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer shadow-sm shadow-red-600/20 flex items-center gap-1.5 disabled:opacity-60 transition-all"
                 >
-                  Submit Application
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Registering Application...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Submit Application</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -895,7 +981,7 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
       {/* MODAL 3: WHY WORK WITH US? */}
       {isWhyWorkModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div 
+          <div
             className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
@@ -963,24 +1049,95 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
       )}
 
       {/* MODAL 4: SUBMISSION CONFIRMATION */}
-      {submittedRef && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-3 shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-6 h-6" />
+      {submittedApp && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setSubmittedApp(null)}
+        >
+          <div 
+            className="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl relative my-8 animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-xs">
+              <CheckCircle2 className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-slate-900">Application Submitted!</h3>
-            <p className="text-xs text-slate-500">
-              Reference Number: <strong className="text-red-600 font-mono">{submittedRef}</strong>
+
+            <div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                Application Successfully Logged
+              </span>
+              <h3 className="text-lg font-black text-slate-900 mt-1">Thank You, {submittedApp.fullName}!</h3>
+              <p className="text-xs text-slate-500">Your application for <strong>{submittedApp.position}</strong> has been registered in the Little Flower recruitment desk.</p>
+            </div>
+
+            {/* Reference ID Card with Copy Action */}
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tracking Reference ID</span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyRef(submittedApp.ref)}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white border border-slate-200 hover:border-red-300 text-slate-700 hover:text-red-600 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                >
+                  {copiedRef ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      <span className="text-emerald-700">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3 text-slate-500" />
+                      <span>Copy ID</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <p className="text-base font-black text-red-600 font-mono tracking-wide">{submittedApp.ref}</p>
+              <div className="pt-2 border-t border-slate-200/70 grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                <div>
+                  <span className="text-slate-400 block text-[10px]">Contact Phone</span>
+                  <span className="font-semibold">{submittedApp.phone}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px]">Contact Email</span>
+                  <span className="font-semibold truncate block">{submittedApp.email}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions: WhatsApp Help Desk & Print Slip */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <a
+                href={`https://wa.me/9779800000000?text=${encodeURIComponent(
+                  `Hello Little Flower School Administration, I have submitted an online application for the "${submittedApp.position}" vacancy. My Reference Tracking ID is ${submittedApp.ref}. Thank you! - ${submittedApp.fullName}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer hover:scale-102"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>WhatsApp Desk</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 border border-slate-200 transition-colors cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5 text-slate-500" />
+                <span>Print Slip</span>
+              </button>
+            </div>
+
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Shortlisted candidates will be notified via phone and email within 3 to 7 working days for an on-campus teaching demo.
             </p>
-            <p className="text-[11.5px] text-slate-600">
-              Thank you for applying. Shortlisted applicants will be contacted by our academic desk for a demo session.
-            </p>
+
             <button
-              onClick={() => setSubmittedRef(null)}
-              className="w-full py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 cursor-pointer"
+              onClick={() => setSubmittedApp(null)}
+              className="w-full py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 cursor-pointer transition-colors shadow-md"
             >
-              Continue
+              Back to Career Openings
             </button>
           </div>
         </div>

@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { 
-  galleryItems as defaultGalleryItems, 
-  schoolNotices as defaultSchoolNotices, 
-  facultyMembers as defaultFacultyMembers, 
+import {
+  galleryItems as defaultGalleryItems,
+  schoolNotices as defaultSchoolNotices,
+  facultyMembers as defaultFacultyMembers,
   facilitiesList as defaultFacilitiesList,
-  GalleryItem, 
-  SchoolNotice, 
+  GalleryItem,
+  SchoolNotice,
   FacultyMember,
   Facility
 } from '../data/schoolData';
@@ -102,6 +102,22 @@ export interface VacancyPosition {
   requirements: string[];
   isActive?: boolean;
   deadline?: string;
+}
+
+export interface JobApplication {
+  id: string;
+  refNumber: string;
+  positionTitle: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  qualification: string;
+  experience: string;
+  message?: string;
+  resumeName?: string;
+  resumeDataUrl?: string;
+  status: 'Pending' | 'Reviewing' | 'Shortlisted' | 'Rejected';
+  appliedAt: string;
 }
 
 export const defaultVacancies: VacancyPosition[] = [
@@ -294,6 +310,12 @@ interface SchoolDataContextType {
   deleteVacancy: (id: string) => Promise<void>;
   toggleVacancyActive: (id: string) => Promise<void>;
 
+  // Job Applications
+  jobApplications: JobApplication[];
+  submitJobApplication: (app: Omit<JobApplication, 'id' | 'refNumber' | 'status' | 'appliedAt'>) => Promise<string>;
+  updateApplicationStatus: (id: string, status: JobApplication['status']) => Promise<void>;
+  deleteJobApplication: (id: string) => Promise<void>;
+
   // Global Management
   resetToDefaults: () => void;
   exportDataJSON: () => string;
@@ -366,6 +388,45 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.error('Error loading vacancies from storage:', e);
     }
     return defaultVacancies;
+  });
+
+  const [jobApplications, setJobApplications] = useState<JobApplication[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY + '_job_applications');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading applications from storage:', e);
+    }
+    return [
+      {
+        id: 'app-1',
+        refNumber: 'LFS-JOB-2081-4821',
+        positionTitle: 'Computer Teacher',
+        fullName: 'Bikash Chaudhary',
+        email: 'bikash.chaudhary@gmail.com',
+        phone: '9845012345',
+        qualification: 'B.Sc. CSIT',
+        experience: '2 Years Secondary Level',
+        message: 'Passionate about coding curriculum and interactive labs.',
+        resumeName: 'Bikash_Chaudhary_CV.pdf',
+        status: 'Reviewing',
+        appliedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: 'app-2',
+        refNumber: 'LFS-JOB-2081-8319',
+        positionTitle: 'English Teacher',
+        fullName: 'Pratima Shrestha',
+        email: 'pratima.shrestha@outlook.com',
+        phone: '9812345678',
+        qualification: 'M.A. in English Literature',
+        experience: '3+ Years Teaching Experience',
+        message: 'Experienced in high school grammar, literature, and student elocution.',
+        resumeName: 'Pratima_Shrestha_Resume.docx',
+        status: 'Pending',
+        appliedAt: new Date().toISOString()
+      }
+    ];
   });
 
   // Fetch Cloud Data from Supabase if active
@@ -495,6 +556,30 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         })));
       }
 
+      // 7. Job Applications
+      const { data: apps, error: appsErr } = await supabase
+        .from('job_applications')
+        .select('*')
+        .order('applied_at', { ascending: false });
+
+      if (!appsErr && apps && apps.length > 0) {
+        setJobApplications(apps.map(a => ({
+          id: a.id,
+          refNumber: a.ref_number || a.id,
+          positionTitle: a.position_title,
+          fullName: a.full_name,
+          email: a.email,
+          phone: a.phone,
+          qualification: a.qualification || '',
+          experience: a.experience || '',
+          message: a.message || '',
+          resumeName: a.resume_name || '',
+          resumeDataUrl: a.resume_data_url || '',
+          status: a.status || 'Pending',
+          appliedAt: a.applied_at || new Date().toISOString()
+        })));
+      }
+
       setIsSupabaseConnected(true);
     } catch (e) {
       console.warn('Supabase fetch failed, using local storage:', e);
@@ -555,6 +640,14 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.warn('Could not save vacancies to localStorage:', e);
     }
   }, [vacancies]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY + '_job_applications', JSON.stringify(jobApplications));
+    } catch (e) {
+      console.warn('Could not save job applications to localStorage:', e);
+    }
+  }, [jobApplications]);
 
   // Connect or disconnect Supabase dynamically from UI
   const connectSupabase = async (url: string, key: string): Promise<boolean> => {
@@ -1100,6 +1193,70 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   // ==========================================
+  // JOB APPLICATIONS METHODS
+  // ==========================================
+  const submitJobApplication = async (app: Omit<JobApplication, 'id' | 'refNumber' | 'status' | 'appliedAt'>): Promise<string> => {
+    const id = `app-${Date.now()}`;
+    const year = 2081;
+    const refNumber = `LFS-JOB-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newApplication: JobApplication = {
+      ...app,
+      id,
+      refNumber,
+      status: 'Pending',
+      appliedAt: new Date().toISOString()
+    };
+
+    setJobApplications(prev => [newApplication, ...prev]);
+
+    if (supabase) {
+      try {
+        await supabase.from('job_applications').insert({
+          id,
+          ref_number: refNumber,
+          position_title: app.positionTitle,
+          full_name: app.fullName,
+          email: app.email,
+          phone: app.phone,
+          qualification: app.qualification,
+          experience: app.experience,
+          message: app.message,
+          resume_name: app.resumeName,
+          resume_data_url: app.resumeDataUrl,
+          status: 'Pending',
+          applied_at: newApplication.appliedAt
+        });
+      } catch (e) {
+        console.warn('Supabase application insert fallback:', e);
+      }
+    }
+
+    return refNumber;
+  };
+
+  const updateApplicationStatus = async (id: string, status: JobApplication['status']) => {
+    setJobApplications(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+    if (supabase) {
+      try {
+        await supabase.from('job_applications').update({ status }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase application status update fallback:', e);
+      }
+    }
+  };
+
+  const deleteJobApplication = async (id: string) => {
+    setJobApplications(prev => prev.filter(a => a.id !== id));
+    if (supabase) {
+      try {
+        await supabase.from('job_applications').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase application delete fallback:', e);
+      }
+    }
+  };
+
+  // ==========================================
   // GLOBAL RESET & EXPORT/IMPORT
   // ==========================================
   const resetToDefaults = () => {
@@ -1109,6 +1266,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setFacultyMembers(defaultFacultyMembers);
     setFacilities(defaultFacilitiesList);
     setVacancies(defaultVacancies);
+    setJobApplications([]);
     try {
       localStorage.removeItem(STORAGE_KEY + '_slides');
       localStorage.removeItem(STORAGE_KEY + '_gallery');
@@ -1116,6 +1274,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       localStorage.removeItem(STORAGE_KEY + '_faculty');
       localStorage.removeItem(STORAGE_KEY + '_facilities');
       localStorage.removeItem(STORAGE_KEY + '_vacancies');
+      localStorage.removeItem(STORAGE_KEY + '_job_applications');
     } catch (e) {
       console.warn('Error clearing storage:', e);
     }
@@ -1131,7 +1290,8 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       schoolNotices,
       facultyMembers,
       facilities,
-      vacancies
+      vacancies,
+      jobApplications
     };
     return JSON.stringify(backup, null, 2);
   };
@@ -1145,6 +1305,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (data.facultyMembers && Array.isArray(data.facultyMembers)) setFacultyMembers(data.facultyMembers);
       if (data.facilities && Array.isArray(data.facilities)) setFacilities(data.facilities);
       if (data.vacancies && Array.isArray(data.vacancies)) setVacancies(data.vacancies);
+      if (data.jobApplications && Array.isArray(data.jobApplications)) setJobApplications(data.jobApplications);
       return true;
     } catch (e) {
       console.error('Failed to parse imported JSON:', e);
@@ -1161,6 +1322,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         facultyMembers,
         facilities,
         vacancies,
+        jobApplications,
         isSupabaseConnected,
         supabaseUrl: supabaseConfig.url,
         connectSupabase,
@@ -1187,6 +1349,9 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateVacancy,
         deleteVacancy,
         toggleVacancyActive,
+        submitJobApplication,
+        updateApplicationStatus,
+        deleteJobApplication,
         resetToDefaults,
         exportDataJSON,
         importDataJSON

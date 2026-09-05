@@ -68,6 +68,9 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     facultyMembers,
     facilities,
     vacancies,
+    jobApplications,
+    updateApplicationStatus,
+    deleteJobApplication,
     addSlide,
     updateSlide,
     deleteSlide,
@@ -571,7 +574,40 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
   const [vacancyCategoryFilter, setVacancyCategoryFilter] = useState('All');
   const [vacancyStatusFilter, setVacancyStatusFilter] = useState<'All' | 'Active' | 'Paused'>('All');
   const [vacancySearch, setVacancySearch] = useState('');
+  const [vacancySubTab, setVacancySubTab] = useState<'openings' | 'applications'>('openings');
+  const [appSearch, setAppSearch] = useState('');
+  const [appStatusFilter, setAppStatusFilter] = useState<'All' | 'Pending' | 'Reviewing' | 'Shortlisted' | 'Rejected'>('All');
+  const [appPositionFilter, setAppPositionFilter] = useState('All');
   const [isAddingVacancy, setIsAddingVacancy] = useState(false);
+
+  const handleExportApplicationsCSV = () => {
+    if (jobApplications.length === 0) {
+      showToast('No applications to export', 'error');
+      return;
+    }
+    const headers = ['Reference ID', 'Position', 'Applicant Name', 'Email', 'Phone', 'Qualification', 'Experience', 'Status', 'Date Applied'];
+    const rows = jobApplications.map(a => [
+      a.refNumber,
+      `"${a.positionTitle.replace(/"/g, '""')}"`,
+      `"${a.fullName.replace(/"/g, '""')}"`,
+      a.email,
+      a.phone,
+      `"${a.qualification.replace(/"/g, '""')}"`,
+      `"${a.experience.replace(/"/g, '""')}"`,
+      a.status,
+      new Date(a.appliedAt).toLocaleDateString()
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `LFS_Job_Applications_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Applications exported to CSV!');
+  };
   const [editingVacancy, setEditingVacancy] = useState<{
     id: string;
     title: string;
@@ -2249,8 +2285,49 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                 </div>
               </div>
 
-              {/* Filters Bar: Status Tabs, Category Chips, Search */}
-              <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+              {/* Subtabs Toggle: Openings vs Received Applications */}
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                <button
+                  type="button"
+                  onClick={() => setVacancySubTab('openings')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    vacancySubTab === 'openings'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Briefcase className="w-3.5 h-3.5" />
+                  <span>Job Openings</span>
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-950/60 text-slate-200 font-mono">
+                    {vacancies.length}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setVacancySubTab('applications')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    vacancySubTab === 'applications'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Candidate Applications</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                    jobApplications.filter(a => a.status === 'Pending').length > 0
+                      ? 'bg-emerald-500 text-white shadow-xs'
+                      : 'bg-slate-950/60 text-slate-300'
+                  }`}>
+                    {jobApplications.length}
+                  </span>
+                </button>
+              </div>
+
+              {vacancySubTab === 'openings' && (
+                <div className="space-y-6">
+                  {/* Filters Bar: Status Tabs, Category Chips, Search */}
+                  <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -2746,6 +2823,204 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                     );
                   })}
               </div>
+            </div>
+          )}
+
+              {/* APPLICATIONS DASHBOARD */}
+              {vacancySubTab === 'applications' && (
+                <div className="space-y-4">
+                  {/* Filter & Search Bar */}
+                  <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto flex-1">
+                      <div className="relative w-full sm:w-64">
+                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          value={appSearch}
+                          onChange={(e) => setAppSearch(e.target.value)}
+                          placeholder="Search candidate, phone, Ref ID..."
+                          className="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                        />
+                      </div>
+
+                      {/* Status Tabs */}
+                      <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-700 overflow-x-auto w-full sm:w-auto">
+                        {(['All', 'Pending', 'Reviewing', 'Shortlisted', 'Rejected'] as const).map((st) => {
+                          const count = st === 'All' ? jobApplications.length : jobApplications.filter(a => a.status === st).length;
+                          return (
+                            <button
+                              key={st}
+                              type="button"
+                              onClick={() => setAppStatusFilter(st)}
+                              className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                                appStatusFilter === st
+                                  ? 'bg-purple-600 text-white shadow-xs'
+                                  : 'text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              <span>{st}</span>
+                              <span className="text-[10px] opacity-75">({count})</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleExportApplicationsCSV}
+                      className="px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0"
+                      title="Export all applications to CSV file"
+                    >
+                      <Download className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Export CSV</span>
+                    </button>
+                  </div>
+
+                  {/* Candidate Applications List */}
+                  {jobApplications.filter(app => {
+                    const matchesStatus = appStatusFilter === 'All' || app.status === appStatusFilter;
+                    const q = appSearch.toLowerCase().trim();
+                    const matchesQ = !q ||
+                      app.fullName.toLowerCase().includes(q) ||
+                      app.positionTitle.toLowerCase().includes(q) ||
+                      app.phone.includes(q) ||
+                      app.email.toLowerCase().includes(q) ||
+                      app.refNumber.toLowerCase().includes(q);
+                    return matchesStatus && matchesQ;
+                  }).length === 0 ? (
+                    <div className="p-12 text-center bg-slate-800/60 rounded-3xl border border-slate-700 space-y-3">
+                      <Users className="w-10 h-10 text-slate-500 mx-auto" />
+                      <h4 className="text-base font-bold text-white">No candidate applications found</h4>
+                      <p className="text-xs text-slate-400">Applications submitted from the public website career openings will appear here instantly.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {jobApplications
+                        .filter(app => {
+                          const matchesStatus = appStatusFilter === 'All' || app.status === appStatusFilter;
+                          const q = appSearch.toLowerCase().trim();
+                          const matchesQ = !q ||
+                            app.fullName.toLowerCase().includes(q) ||
+                            app.positionTitle.toLowerCase().includes(q) ||
+                            app.phone.includes(q) ||
+                            app.email.toLowerCase().includes(q) ||
+                            app.refNumber.toLowerCase().includes(q);
+                          return matchesStatus && matchesQ;
+                        })
+                        .map((app) => (
+                          <div key={app.id} className="p-4 sm:p-5 rounded-2xl bg-slate-800/90 border border-slate-700 flex flex-col md:flex-row md:items-start justify-between gap-4 shadow-md hover:border-slate-600 transition-all">
+                            <div className="space-y-2 min-w-0 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono text-xs font-bold text-purple-300 px-2 py-0.5 rounded bg-purple-950/60 border border-purple-800/50">
+                                  {app.refNumber}
+                                </span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-slate-200">
+                                  Applied for: {app.positionTitle}
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                                  app.status === 'Shortlisted' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                  app.status === 'Reviewing' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' :
+                                  app.status === 'Rejected' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                                  'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                }`}>
+                                  ● {app.status}
+                                </span>
+                                <span className="text-[10px] text-slate-400 ml-auto">
+                                  {new Date(app.appliedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                              </div>
+
+                              <div>
+                                <h4 className="text-base font-black text-white">{app.fullName}</h4>
+                                <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5 flex-wrap">
+                                  <a href={`tel:${app.phone}`} className="hover:text-purple-300 flex items-center gap-1 font-mono">
+                                    <Phone className="w-3 h-3 text-purple-400" />
+                                    <span>{app.phone}</span>
+                                  </a>
+                                  <span>•</span>
+                                  <a href={`mailto:${app.email}`} className="hover:text-purple-300 flex items-center gap-1">
+                                    <Mail className="w-3 h-3 text-purple-400" />
+                                    <span>{app.email}</span>
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="grid sm:grid-cols-2 gap-2 text-xs bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/60 text-slate-300">
+                                <div>
+                                  <span className="text-slate-400 text-[10px] block">Qualification</span>
+                                  <span className="font-semibold text-white">{app.qualification || 'Not specified'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400 text-[10px] block">Experience</span>
+                                  <span className="font-semibold text-white">{app.experience || 'Not specified'}</span>
+                                </div>
+                                {app.message && (
+                                  <div className="sm:col-span-2 pt-1 border-t border-slate-800 text-[11px] text-slate-400 italic">
+                                    "{app.message}"
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Actions & Status Control */}
+                            <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 items-end md:w-44">
+                              <div className="w-full">
+                                <label className="text-[10px] font-bold text-slate-400 block mb-1">Status</label>
+                                <select
+                                  value={app.status}
+                                  onChange={(e) => {
+                                    updateApplicationStatus(app.id, e.target.value as any);
+                                    showToast(`Candidate status updated to ${e.target.value}`);
+                                  }}
+                                  className="w-full px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 border border-slate-700 text-white focus:border-purple-500 cursor-pointer"
+                                >
+                                  <option value="Pending">🟡 Pending Review</option>
+                                  <option value="Reviewing">🔵 Reviewing</option>
+                                  <option value="Shortlisted">🟢 Shortlisted</option>
+                                  <option value="Rejected">🔴 Rejected</option>
+                                </select>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 w-full pt-1">
+                                {app.resumeDataUrl ? (
+                                  <a
+                                    href={app.resumeDataUrl}
+                                    download={app.resumeName || `CV_${app.fullName.replace(/\s+/g, '_')}.pdf`}
+                                    className="flex-1 py-1.5 px-2 rounded-xl text-xs font-bold bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 border border-purple-500/30 text-center flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                                    title="Download attached CV / Resume"
+                                  >
+                                    <Download className="w-3 h-3" />
+                                    <span>Download CV</span>
+                                  </a>
+                                ) : app.resumeName ? (
+                                  <span className="flex-1 py-1.5 px-2 rounded-xl text-[10px] font-mono text-slate-400 bg-slate-900 text-center truncate border border-slate-700">
+                                    {app.resumeName}
+                                  </span>
+                                ) : null}
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (window.confirm(`Delete application for ${app.fullName}?`)) {
+                                      deleteJobApplication(app.id);
+                                      showToast('Application record deleted');
+                                    }
+                                  }}
+                                  className="p-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold border border-rose-800/40 cursor-pointer transition-colors"
+                                  title="Delete Application"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           )}
 
