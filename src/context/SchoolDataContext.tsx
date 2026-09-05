@@ -1061,18 +1061,18 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (supabase) {
       try {
         await supabase.from('vacancies').update({
-          ...(vacancy.title && { title: vacancy.title }),
-          ...(vacancy.category && { category: vacancy.category }),
-          ...(vacancy.iconType && { icon_type: vacancy.iconType }),
-          ...(vacancy.type && { type: vacancy.type }),
-          ...(vacancy.description && { description: vacancy.description }),
-          ...(vacancy.qualification && { qualification: vacancy.qualification }),
-          ...(vacancy.experience && { experience: vacancy.experience }),
-          ...(vacancy.location && { location: vacancy.location }),
-          ...(vacancy.responsibilities && { responsibilities: vacancy.responsibilities }),
-          ...(vacancy.requirements && { requirements: vacancy.requirements }),
+          ...(vacancy.title !== undefined && { title: vacancy.title }),
+          ...(vacancy.category !== undefined && { category: vacancy.category }),
+          ...(vacancy.iconType !== undefined && { icon_type: vacancy.iconType }),
+          ...(vacancy.type !== undefined && { type: vacancy.type }),
+          ...(vacancy.description !== undefined && { description: vacancy.description }),
+          ...(vacancy.qualification !== undefined && { qualification: vacancy.qualification }),
+          ...(vacancy.experience !== undefined && { experience: vacancy.experience }),
+          ...(vacancy.location !== undefined && { location: vacancy.location }),
+          ...(vacancy.responsibilities !== undefined && { responsibilities: vacancy.responsibilities }),
+          ...(vacancy.requirements !== undefined && { requirements: vacancy.requirements }),
           ...(vacancy.isActive !== undefined && { is_active: vacancy.isActive }),
-          ...(vacancy.deadline && { deadline: vacancy.deadline })
+          ...(vacancy.deadline !== undefined && { deadline: vacancy.deadline })
         }).eq('id', id);
       } catch (e) {
         console.warn('Supabase vacancy update fallback:', e);

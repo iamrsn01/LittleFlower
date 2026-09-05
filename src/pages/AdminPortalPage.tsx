@@ -572,7 +572,22 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
   const [vacancyStatusFilter, setVacancyStatusFilter] = useState<'All' | 'Active' | 'Paused'>('All');
   const [vacancySearch, setVacancySearch] = useState('');
   const [isAddingVacancy, setIsAddingVacancy] = useState(false);
-  const [editingVacancy, setEditingVacancy] = useState<VacancyPosition | null>(null);
+  const [editingVacancy, setEditingVacancy] = useState<{
+    id: string;
+    title: string;
+    category: string;
+    iconType: 'computer' | 'english' | 'science' | 'math' | 'ecd' | 'admin';
+    type: string;
+    description: string;
+    qualification: string;
+    experience: string;
+    location: string;
+    responsibilitiesText: string;
+    requirementsText: string;
+    isActive: boolean;
+    deadline: string;
+  } | null>(null);
+
   const [newVacancyData, setNewVacancyData] = useState<{
     title: string;
     category: string;
@@ -592,14 +607,36 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     iconType: 'computer',
     type: 'Full Time',
     description: '',
-    qualification: "Bachelor's Degree in relevant discipline",
-    experience: '1+ Years Teaching Experience',
+    qualification: '',
+    experience: '',
     location: 'Birgunj, Parsa',
     responsibilities: '',
     requirements: '',
     isActive: true,
     deadline: 'Rolling Basis'
   });
+
+  const handleStartEditVacancy = (vac: VacancyPosition) => {
+    setEditingVacancy({
+      id: vac.id,
+      title: vac.title,
+      category: vac.category,
+      iconType: vac.iconType,
+      type: vac.type,
+      description: vac.description,
+      qualification: vac.qualification,
+      experience: vac.experience,
+      location: vac.location,
+      responsibilitiesText: Array.isArray(vac.responsibilities)
+        ? vac.responsibilities.join('\n')
+        : (vac.responsibilities || ''),
+      requirementsText: Array.isArray(vac.requirements)
+        ? vac.requirements.join('\n')
+        : (vac.requirements || ''),
+      isActive: vac.isActive !== false,
+      deadline: vac.deadline || 'Rolling Basis'
+    });
+  };
 
   const handleCreateVacancy = (e: React.FormEvent) => {
     e.preventDefault();
@@ -608,22 +645,22 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
       return;
     }
     addVacancy({
-      title: newVacancyData.title,
+      title: newVacancyData.title.trim(),
       category: newVacancyData.category,
       iconType: newVacancyData.iconType,
-      type: newVacancyData.type,
-      description: newVacancyData.description,
-      qualification: newVacancyData.qualification,
-      experience: newVacancyData.experience,
-      location: newVacancyData.location,
+      type: newVacancyData.type.trim() || 'Full Time',
+      description: newVacancyData.description.trim(),
+      qualification: newVacancyData.qualification.trim() || "Bachelor's Degree in relevant discipline",
+      experience: newVacancyData.experience.trim() || '1+ Years Teaching Experience',
+      location: newVacancyData.location.trim() || 'Birgunj, Parsa',
       responsibilities: newVacancyData.responsibilities
         ? newVacancyData.responsibilities.split('\n').map(s => s.trim()).filter(Boolean)
-        : ['Conduct regular interactive classroom teaching', 'Maintain student academic records and evaluations'],
+        : [],
       requirements: newVacancyData.requirements
         ? newVacancyData.requirements.split('\n').map(s => s.trim()).filter(Boolean)
-        : ['Relevant educational qualification', 'Strong interpersonal communication in English and Nepali'],
+        : (newVacancyData.qualification.trim() ? [newVacancyData.qualification.trim()] : []),
       isActive: newVacancyData.isActive,
-      deadline: newVacancyData.deadline || 'Rolling Basis'
+      deadline: newVacancyData.deadline?.trim() || 'Rolling Basis'
     });
     setNewVacancyData({
       title: '',
@@ -631,8 +668,8 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
       iconType: 'computer',
       type: 'Full Time',
       description: '',
-      qualification: "Bachelor's Degree in relevant discipline",
-      experience: '1+ Years Teaching Experience',
+      qualification: '',
+      experience: '',
       location: 'Birgunj, Parsa',
       responsibilities: '',
       requirements: '',
@@ -646,7 +683,24 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
   const handleSaveEditVacancy = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingVacancy) return;
-    updateVacancy(editingVacancy.id, editingVacancy);
+    updateVacancy(editingVacancy.id, {
+      title: editingVacancy.title.trim(),
+      category: editingVacancy.category,
+      iconType: editingVacancy.iconType,
+      type: editingVacancy.type.trim(),
+      description: editingVacancy.description.trim(),
+      qualification: editingVacancy.qualification.trim(),
+      experience: editingVacancy.experience.trim(),
+      location: editingVacancy.location.trim(),
+      responsibilities: editingVacancy.responsibilitiesText
+        ? editingVacancy.responsibilitiesText.split('\n').map(s => s.trim()).filter(Boolean)
+        : [],
+      requirements: editingVacancy.requirementsText
+        ? editingVacancy.requirementsText.split('\n').map(s => s.trim()).filter(Boolean)
+        : (editingVacancy.qualification.trim() ? [editingVacancy.qualification.trim()] : []),
+      isActive: editingVacancy.isActive,
+      deadline: editingVacancy.deadline?.trim() || 'Rolling Basis'
+    });
     setEditingVacancy(null);
     showToast('Job vacancy updated successfully!');
   };
@@ -2556,11 +2610,12 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                         <label className="text-xs font-bold text-slate-300 block mb-1">Key Responsibilities (One per line)</label>
                         <textarea
                           rows={3}
-                          value={(editingVacancy.responsibilities || []).join('\n')}
+                          value={editingVacancy.responsibilitiesText}
                           onChange={(e) => setEditingVacancy({
                             ...editingVacancy,
-                            responsibilities: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                            responsibilitiesText: e.target.value
                           })}
+                          placeholder="Teach classes 6-10 physics theory and practicals&#10;Maintain laboratory equipment"
                           className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
                         />
                       </div>
@@ -2569,11 +2624,12 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                         <label className="text-xs font-bold text-slate-300 block mb-1">Candidate Requirements (One per line)</label>
                         <textarea
                           rows={3}
-                          value={(editingVacancy.requirements || []).join('\n')}
+                          value={editingVacancy.requirementsText}
                           onChange={(e) => setEditingVacancy({
                             ...editingVacancy,
-                            requirements: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                            requirementsText: e.target.value
                           })}
+                          placeholder="M.Sc. or B.Sc. in Physics with minimum second division&#10;Strong communication skills"
                           className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
                         />
                       </div>
@@ -2666,7 +2722,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                           </button>
 
                           <button
-                            onClick={() => setEditingVacancy(vac)}
+                            onClick={() => handleStartEditVacancy(vac)}
                             className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                           >
                             <Edit3 className="w-3.5 h-3.5 text-amber-400" />
