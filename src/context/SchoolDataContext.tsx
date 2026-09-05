@@ -781,7 +781,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           safety_features: fc.safetyFeatures
         });
       }
-      // 6. Upload vacancies
+      // 6. Upload vacancies & clean up deleted ones
       for (const v of vacancies) {
         await supabase.from('vacancies').upsert({
           id: v.id,
@@ -799,6 +799,17 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           deadline: v.deadline || 'Rolling Basis'
         });
       }
+      try {
+        const { data: existingVacs } = await supabase.from('vacancies').select('id');
+        if (existingVacs && existingVacs.length > 0) {
+          const keepIds = new Set(vacancies.map(v => v.id));
+          for (const ev of existingVacs) {
+            if (!keepIds.has(ev.id)) {
+              await supabase.from('vacancies').delete().eq('id', ev.id);
+            }
+          }
+        }
+      } catch (_) {}
       return true;
     } catch (e) {
       console.error('Error syncing all to Supabase:', e);

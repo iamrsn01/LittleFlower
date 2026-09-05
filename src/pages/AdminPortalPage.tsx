@@ -1060,6 +1060,16 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
 
             <div className="flex items-center gap-3">
               <button
+                type="button"
+                onClick={handlePushAllToSupabase}
+                disabled={isSyncingSupabase}
+                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 border border-emerald-500 transition-all cursor-pointer disabled:opacity-50"
+                title="Push all local changes to Supabase Cloud"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>{isSyncingSupabase ? 'Syncing...' : 'Sync to Cloud'}</span>
+              </button>
+              <button
                 onClick={handleExportBackup}
                 className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-colors cursor-pointer"
                 title="Download JSON Backup"
@@ -2275,6 +2285,16 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                   <p className="text-xs text-slate-400">Post open teaching or administration positions, edit qualifications, and toggle hiring status.</p>
                 </div>
                 <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={handlePushAllToSupabase}
+                    disabled={isSyncingSupabase}
+                    className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-900/30 cursor-pointer transition-all disabled:opacity-50"
+                    title="Push current vacancies and school data to Supabase Cloud"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{isSyncingSupabase ? 'Syncing...' : 'Sync to Cloud'}</span>
+                  </button>
                   <button
                     onClick={() => setIsAddingVacancy(true)}
                     className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer transition-all"

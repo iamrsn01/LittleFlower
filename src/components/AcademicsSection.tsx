@@ -1,39 +1,104 @@
 import React, { useState } from 'react';
 import { 
-  GraduationCap, 
+  X,
   BookOpen, 
-  Compass, 
   Sparkles, 
-  Heart, 
   CheckCircle2, 
   Download, 
-  ArrowRight,
+  ArrowRight, 
   FlaskConical,
   Award,
-  Layers,
-  Flame
+  Flame,
+  ShieldCheck,
+  Layers
 } from 'lucide-react';
 import { academicLevels, AcademicLevel } from '../data/schoolData';
+import scienceLabImg from '../assets/science-lab-students.jpg';
 
 interface AcademicsSectionProps {
   onOpenAdmissions: () => void;
 }
 
 export const AcademicsSection: React.FC<AcademicsSectionProps> = ({ onOpenAdmissions }) => {
-  const [selectedLevelId, setSelectedLevelId] = useState<string>(academicLevels[0].id);
+  // 4 Academic program cards
+  const programCards = [
+    {
+      id: 'kindergarten',
+      title: 'Playgroup',
+      subtitle: '',
+      description: 'Nurturing young minds through play and care.',
+      icon: (
+        <svg className="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="5.5" r="3" />
+          <path d="M7 20a5 5 0 0 1 10 0" />
+          <path d="M12 11v4" />
+          <path d="M8.5 13.5l-2 2" />
+          <path d="M15.5 13.5l2 2" />
+          <path d="M18.8 6.8a1.6 1.6 0 0 1 2.2 2.2l-2.2 2.2-2.2-2.2a1.6 1.6 0 0 1 2.2-2.2z" strokeWidth="1.3" />
+        </svg>
+      )
+    },
+    {
+      id: 'primary-school',
+      title: 'Primary Level',
+      subtitle: '(1 - 5)',
+      description: 'Building strong basics for a lifelong learning.',
+      icon: (
+        <svg className="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3.5" y="4.5" width="17" height="13" rx="2" />
+          <path d="M7 8.5h10" />
+          <path d="M7 12h5.5" />
+          <circle cx="16" cy="12" r="1.3" />
+          <path d="M10 17.5v3" />
+          <path d="M14 17.5v3" />
+          <path d="M7 20.5h10" />
+        </svg>
+      )
+    },
+    {
+      id: 'lower-secondary',
+      title: 'Lower Secondary',
+      subtitle: '(6 - 8)',
+      description: 'Developing knowledge, skills and confidence.',
+      icon: (
+        <svg className="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 4.5h16" />
+          <path d="M5.5 4.5v15" />
+          <path d="M18.5 4.5v15" />
+          <path d="M3.5 19.5h17" />
+          <path d="M9.5 4.5v15" />
+          <path d="M14.5 4.5v15" />
+          <path d="M7.5 7.5h2" />
+          <path d="M7.5 11.5h2" />
+          <path d="M7.5 15.5h2" />
+        </svg>
+      )
+    },
+    {
+      id: 'secondary-school',
+      title: 'Secondary Level',
+      subtitle: '(9 - 10)',
+      description: 'Preparing students for SEE and beyond.',
+      icon: (
+        <svg className="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="7.5" r="4.5" />
+          <path d="M8 11.5L6.5 20l5.5-2.5 5.5 2.5-1.5-8.5" />
+          <circle cx="12" cy="7.5" r="1.8" />
+        </svg>
+      )
+    }
+  ];
+
+  const [selectedCardId, setSelectedCardId] = useState<string>('secondary-school');
+  const [isCurriculumModalOpen, setIsCurriculumModalOpen] = useState<boolean>(false);
   const [downloadedSyllabus, setDownloadedSyllabus] = useState<string | null>(null);
 
-  const currentLevel: AcademicLevel = academicLevels.find(l => l.id === selectedLevelId) || academicLevels[0];
+  const activeLevelData: AcademicLevel = 
+    academicLevels.find(l => l.id === selectedCardId) || academicLevels[0];
 
-  const getLevelIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'GraduationCap': return <GraduationCap className="w-5 h-5" />;
-      case 'BookOpen': return <BookOpen className="w-5 h-5" />;
-      case 'Compass': return <Compass className="w-5 h-5" />;
-      case 'Sparkles': return <Sparkles className="w-5 h-5" />;
-      case 'Heart': return <Heart className="w-5 h-5" />;
-      default: return <BookOpen className="w-5 h-5" />;
-    }
+  const handleCardClick = (levelId: string) => {
+    setSelectedCardId(levelId);
+    setIsCurriculumModalOpen(true);
   };
 
   const handleDownloadSyllabus = (levelName: string) => {
@@ -44,126 +109,197 @@ export const AcademicsSection: React.FC<AcademicsSectionProps> = ({ onOpenAdmiss
   };
 
   return (
-    <section id="academics" className="py-24 bg-slate-50 relative border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="academics" className="w-full bg-white relative overflow-hidden border-t border-slate-200/80">
+      
+      {/* 1. TOP HEADER: "Excellence from Kindergarten to SEE Board" */}
+      <div className="text-center max-w-4xl mx-auto px-4 pt-14 sm:pt-18 pb-8 sm:pb-12">
         
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-wider shadow-xs">
-            <Layers className="w-3.5 h-3.5 text-red-600" />
-            <span>Academic Programs</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight font-display">
-            Excellence from <span className="text-red-600">Kindergarten</span> to <span className="text-red-600">SEE Board</span>
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Structured national curriculum enriched with practical science labs, digital computer education, and comprehensive character building.
-          </p>
+        {/* Pill Badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 border border-red-200/80 text-red-600 text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
+          <Layers className="w-3.5 h-3.5 text-red-600" />
+          <span>ACADEMIC PROGRAMS</span>
         </div>
 
-        {/* Academic Level Selector Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 mb-12">
-          {academicLevels.map((lvl) => {
-            const isSelected = lvl.id === selectedLevelId;
-            return (
-              <button
-                key={lvl.id}
-                onClick={() => setSelectedLevelId(lvl.id)}
-                className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-3 cursor-pointer shadow-xs ${
-                  isSelected
-                    ? 'bg-red-600 text-white shadow-md shadow-red-500/25 border border-red-600 scale-[1.02]'
-                    : 'bg-white text-slate-700 hover:text-red-600 hover:bg-red-50/50 border border-slate-200'
-                }`}
-              >
-                <div className={`p-1.5 rounded-xl ${isSelected ? 'bg-white/20 text-white' : 'bg-red-50 text-red-600'}`}>
-                  {getLevelIcon(lvl.iconName)}
-                </div>
-                <div className="text-left">
-                  <div className="font-extrabold leading-tight">{lvl.name}</div>
-                  <div className={`text-[11px] font-semibold ${isSelected ? 'text-red-100' : 'text-slate-500'}`}>
-                    {lvl.gradeRange}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        {/* Primary Title */}
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15] font-display">
+          Excellence from <span className="text-red-600">Kindergarten</span> to <br className="hidden sm:inline" />
+          <span className="text-red-600">SEE Board</span>
+        </h2>
 
-        {/* Selected Academic Level Detailed Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-lg relative overflow-hidden">
+        {/* Header Subtitle */}
+        <p className="mt-3.5 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          Structured national curriculum enriched with practical science labs, digital computer education, and comprehensive character building.
+        </p>
+
+      </div>
+
+      {/* 2. FULL WIDTH SHOWCASE: Left cards + Right photo */}
+      <div className="w-full flex flex-col lg:flex-row items-stretch border-t border-slate-100/90">
+        
+        {/* LEFT COLUMN: Academic Programs Content with generous screen padding */}
+        <div className="w-full lg:w-[56%] xl:w-[58%] 2xl:w-[60%] py-10 sm:py-14 lg:py-16 xl:py-20 pl-4 sm:pl-8 lg:pl-12 xl:pl-16 2xl:pl-24 pr-4 sm:pr-8 lg:pr-8 xl:pr-12 flex flex-col justify-center z-10">
           
-          {/* Top Level Info */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-200">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
-                  {currentLevel.badge}
-                </span>
-                <span className="text-xs text-slate-500 font-bold">
-                  {currentLevel.gradeRange}
-                </span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">
-                {currentLevel.name}
-              </h3>
-              <p className="text-red-600 text-sm font-bold">
-                {currentLevel.tagline}
-              </p>
-              <p className="text-slate-600 text-sm max-w-3xl leading-relaxed pt-1 font-normal">
-                {currentLevel.description}
-              </p>
-            </div>
+          {/* Section Sub-heading */}
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-2.5 font-display">
+            A Strong Foundation for a <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-600 to-red-700">Bright Future</span>
+          </h3>
 
-            {/* Action CTAs */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 lg:flex-col lg:items-end shrink-0">
-              <button
-                onClick={onOpenAdmissions}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition-all shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Apply for this Level</span>
-              </button>
+          {/* Introductory Subtitle */}
+          <p className="text-slate-600 text-xs sm:text-sm lg:text-base leading-relaxed mb-6 sm:mb-8 max-w-2xl font-normal">
+            We offer a comprehensive curriculum from Playgroup to Grade 10 following the latest education standards.
+          </p>
 
-              <button
-                onClick={() => handleDownloadSyllabus(currentLevel.name)}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:text-red-600 bg-slate-50 hover:bg-red-50 border border-slate-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-              >
-                <Download className="w-3.5 h-3.5 text-red-600" />
-                <span>Download Curriculum PDF</span>
-              </button>
-            </div>
+          {/* 4 Cards in Horizontal Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-3.5 xl:gap-4 mb-6 sm:mb-8">
+            {programCards.map((card) => {
+              const isSelected = card.id === selectedCardId;
+              return (
+                <div
+                  key={card.id}
+                  onClick={() => handleCardClick(card.id)}
+                  className={`bg-white rounded-xl sm:rounded-2xl border p-3.5 sm:p-4 text-center flex flex-col items-center justify-between min-h-[165px] sm:min-h-[190px] transition-all duration-300 cursor-pointer group hover:-translate-y-1 ${
+                    isSelected
+                      ? 'border-red-600 shadow-md shadow-red-500/10 ring-1 ring-red-600/20'
+                      : 'border-slate-200/90 hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 shadow-xs'
+                  }`}
+                >
+                  {/* Centered Icon in Brand Red */}
+                  <div className="h-10 flex items-center justify-center">
+                    {card.icon}
+                  </div>
+
+                  {/* Program Title & Grade Specifier */}
+                  <div className="my-1.5 space-y-0.5">
+                    <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug group-hover:text-red-600 transition-colors font-display">
+                      {card.title}
+                    </h4>
+                    {card.subtitle && (
+                      <div className="text-[11px] sm:text-xs font-semibold text-slate-500">
+                        {card.subtitle}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Short Description */}
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-snug">
+                    {card.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Download Toast Notification */}
-          {downloadedSyllabus && (
-            <div className="my-4 p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-bounce">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Curriculum specification for <strong>{downloadedSyllabus}</strong> downloaded successfully!</span>
-            </div>
-          )}
+          {/* Brand Red Action CTA Button */}
+          <div>
+            <button
+              onClick={() => setIsCurriculumModalOpen(true)}
+              className="px-6 sm:px-8 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-red-600/25 hover:shadow-red-600/35 transition-all inline-flex items-center gap-2 cursor-pointer group"
+            >
+              <span>View Curriculum</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
 
-          {/* Core Structure Grid */}
-          <div className="grid lg:grid-cols-3 gap-8 pt-8">
-            
-            {/* Subjects & Credit Breakdown */}
-            <div className="lg:col-span-2 space-y-4">
+        </div>
+
+        {/* RIGHT COLUMN: Full-width science lab students photo extending to screen edge */}
+        <div className="w-full lg:w-[44%] xl:w-[42%] 2xl:w-[40%] relative min-h-[300px] sm:min-h-[380px] lg:min-h-[480px] xl:min-h-[520px] bg-slate-100 overflow-hidden">
+          <img
+            src={scienceLabImg}
+            alt="Little Flower Secondary School students conducting practical experiments in science laboratory"
+            className="w-full h-full object-cover object-center"
+          />
+
+          {/* Smooth left gradient overlay to blend photo seamlessly into section background */}
+          <div className="hidden lg:block absolute inset-y-0 left-0 w-28 xl:w-44 bg-gradient-to-r from-white via-white/60 to-transparent pointer-events-none" />
+          
+          {/* Top gradient on mobile */}
+          <div className="lg:hidden absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none" />
+        </div>
+
+      </div>
+
+      {/* DETAILED CURRICULUM MODAL */}
+      {isCurriculumModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsCurriculumModalOpen(false)}
+        >
+          <div 
+            className="bg-white border border-slate-200 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 uppercase tracking-wider mb-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Academic Curriculum & Coursework</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-display">
+                  {activeLevelData.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+                  {activeLevelData.gradeRange} • {activeLevelData.tagline}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsCurriculumModalOpen(false)}
+                className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Level Selector Tabs Inside Modal */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {programCards.map((c) => {
+                const isCurrent = c.id === selectedCardId;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCardId(c.id)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                      isCurrent
+                        ? 'bg-red-600 text-white shadow-md shadow-red-600/20'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {c.title} {c.subtitle}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Download Toast */}
+            {downloadedSyllabus && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-150">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Curriculum PDF for <strong>{downloadedSyllabus}</strong> downloaded successfully!</span>
+              </div>
+            )}
+
+            {/* Coursework & Subjects Grid */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-red-600" />
-                  Key Subjects & Coursework
+                  Key Subjects & Credit Hours
                 </h4>
-                <span className="text-[11px] text-slate-500 font-semibold">Standard Academic Session</span>
+                <span className="text-[11px] text-slate-500 font-medium">SEE & Curriculum Development Centre (CDC) Aligned</span>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-3">
-                {currentLevel.subjects.map((sub, idx) => (
-                  <div 
+              <div className="grid sm:grid-cols-2 gap-2.5">
+                {activeLevelData.subjects.map((sub, idx) => (
+                  <div
                     key={idx}
-                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-red-400 transition-all flex items-center justify-between gap-3 group hover:bg-white shadow-xs"
+                    className="p-3 rounded-xl bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-2 hover:border-red-300 transition-colors"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono font-bold text-red-600 bg-red-50/70 px-1.5 py-0.5 rounded border border-red-200">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] font-mono font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                           {sub.code}
                         </span>
                         {sub.isPractical && (
@@ -173,76 +309,89 @@ export const AcademicsSection: React.FC<AcademicsSectionProps> = ({ onOpenAdmiss
                           </span>
                         )}
                       </div>
-                      <p className="text-xs font-bold text-slate-800 group-hover:text-red-600 transition-colors">
+                      <p className="text-xs font-bold text-slate-800">
                         {sub.name}
                       </p>
                     </div>
 
-                    <div className="text-right shrink-0">
-                      <span className="text-[11px] font-mono text-slate-500 font-semibold">
-                        {sub.credits} Credits
-                      </span>
-                    </div>
+                    <span className="text-[11px] font-mono text-slate-500 shrink-0 font-medium">
+                      {sub.credits} Credits
+                    </span>
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Pedagogical Highlights */}
-              <div className="pt-4 space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  Distinctive Academic Highlights
-                </h4>
-                <div className="grid sm:grid-cols-2 gap-2.5">
-                  {currentLevel.keyHighlights.map((hl, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 font-medium">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{hl}</span>
-                    </div>
-                  ))}
-                </div>
+            {/* Distinctive Pedagogical Highlights */}
+            <div className="space-y-3 pt-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <Award className="w-4 h-4 text-amber-600" />
+                Distinctive Academic Highlights
+              </h4>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {activeLevelData.keyHighlights.map((hl, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{hl}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Admission & Eligibility Box */}
-            <div className="p-6 rounded-2xl bg-red-50/40 border border-red-200 space-y-5 flex flex-col justify-between shadow-xs">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                  <Award className="w-4 h-4 text-amber-600" />
-                  <span>Admission Criteria & Guidelines</span>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-700 font-medium">
-                  {currentLevel.admissionRequirements.map((req, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
-                      <span>{req}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="p-3.5 rounded-xl bg-white border border-red-200 text-[11px] text-slate-700 space-y-1 shadow-xs">
-                  <p className="font-bold text-red-600 flex items-center gap-1">
-                    <Flame className="w-3 h-3 text-amber-500 fill-current" />
-                    Merit Scholarship Policy:
-                  </p>
-                  <p>Students with outstanding scholastic merit and BLE scores receive tuition fee waivers.</p>
-                </div>
+            {/* Admission & Guidelines Box */}
+            <div className="p-4 rounded-2xl bg-red-50/40 border border-red-200/80 space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+                <ShieldCheck className="w-4 h-4 text-red-600" />
+                <span>Eligibility & Admission Criteria</span>
               </div>
+              <ul className="grid sm:grid-cols-2 gap-2 text-xs text-slate-600">
+                {activeLevelData.admissionRequirements.map((req, idx) => (
+                  <li key={idx} className="flex items-start gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1.5 shrink-0" />
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="p-2.5 rounded-xl bg-white border border-red-200 text-[11px] text-slate-700 flex items-center gap-1.5">
+                <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0 fill-current" />
+                <span>Merit scholarship waivers available for high-scoring students and BLE distinction holders.</span>
+              </div>
+            </div>
 
+            {/* Bottom Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100">
               <button
-                onClick={onOpenAdmissions}
-                className="w-full py-3 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition-all shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                onClick={() => handleDownloadSyllabus(activeLevelData.name)}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:text-red-600 bg-slate-100 hover:bg-red-50 border border-slate-200 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Register for {currentLevel.name}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5 text-red-600" />
+                <span>Download Curriculum PDF</span>
               </button>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => setIsCurriculumModalOpen(false)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setIsCurriculumModalOpen(false);
+                    onOpenAdmissions();
+                  }}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md shadow-red-600/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>Apply for Admission</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
           </div>
         </div>
+      )}
 
-      </div>
     </section>
   );
 };
