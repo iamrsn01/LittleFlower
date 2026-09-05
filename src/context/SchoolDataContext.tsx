@@ -516,7 +516,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         .select('*')
         .order('created_at', { ascending: true });
 
-      if (!facsErr && facs && facs.length > 0) {
+      if (!facsErr && Array.isArray(facs) && facs.length > 0) {
         setFacilities(facs.map(fc => ({
           id: fc.id,
           name: fc.name,
@@ -532,13 +532,13 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         })));
       }
 
-      // 6. Vacancies
+      // 6. Vacancies (Syncs directly with Supabase, including when all vacancies are deleted)
       const { data: vacs, error: vacsErr } = await supabase
         .from('vacancies')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!vacsErr && vacs && vacs.length > 0) {
+      if (!vacsErr && Array.isArray(vacs)) {
         setVacancies(vacs.map(v => ({
           id: v.id,
           title: v.title,
@@ -554,6 +554,8 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           isActive: v.is_active ?? true,
           deadline: v.deadline || 'Rolling Basis'
         })));
+      } else if (vacsErr) {
+        console.warn('Supabase vacancies table query notice:', vacsErr.message);
       }
 
       // 7. Job Applications
@@ -562,7 +564,7 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         .select('*')
         .order('applied_at', { ascending: false });
 
-      if (!appsErr && apps && apps.length > 0) {
+      if (!appsErr && Array.isArray(apps)) {
         setJobApplications(apps.map(a => ({
           id: a.id,
           refNumber: a.ref_number || a.id,
@@ -589,6 +591,39 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     if (supabaseConfig.isConfigured) {
       fetchCloudData();
+
+      // Automatically re-fetch latest cloud changes when user returns/focuses the tab
+      const handleFocus = () => {
+        fetchCloudData();
+      };
+      window.addEventListener('focus', handleFocus);
+
+      // Listen for real-time cloud database updates
+      let channel: any = null;
+      if (supabase) {
+        try {
+          channel = supabase
+            .channel('lfs_cloud_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'vacancies' }, () => {
+              fetchCloudData();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'job_applications' }, () => {
+              fetchCloudData();
+            })
+            .subscribe();
+        } catch (subErr) {
+          console.warn('Supabase Realtime not subscribed:', subErr);
+        }
+      }
+
+      return () => {
+        window.removeEventListener('focus', handleFocus);
+        if (channel && supabase) {
+          try {
+            supabase.removeChannel(channel);
+          } catch (_) {}
+        }
+      };
     }
   }, [supabaseConfig.isConfigured, fetchCloudData]);
 

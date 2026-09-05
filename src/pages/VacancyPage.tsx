@@ -276,8 +276,8 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
               Join Birgunj's premier secondary institution. We provide educators with state-of-the-art laboratories, supportive mentorship, academic freedom, and an inspiring student body.
             </p>
 
-            {/* 3 Quick Institutional Highlights */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-left">
+            {/* 3 Quick Institutional Highlights - Hidden on mobile, visible on tablet & PC */}
+            <div className="hidden md:grid md:grid-cols-3 gap-3 pt-1 text-left">
               <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
                   <GraduationCap className="w-4 h-4" />
@@ -309,8 +309,8 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
               </div>
             </div>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
+            {/* CTAs - Hidden on mobile, visible on tablet & PC */}
+            <div className="hidden md:flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
               <a
                 href="#openings"
                 className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-red-600/25 cursor-pointer transition-all hover:scale-103"
@@ -330,8 +330,8 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
 
           </div>
 
-          {/* Right Column: Campus Photographic Hero Card */}
-          <div className="lg:col-span-5 relative">
+          {/* Right Column: Campus Photographic Hero Card - Hidden on mobile, visible on PC */}
+          <div className="hidden lg:block lg:col-span-5 relative">
             {/* Decorative background accent ring */}
             <div className="absolute -inset-2 bg-gradient-to-tr from-red-600/20 via-amber-400/20 to-rose-600/20 rounded-3xl blur-lg -z-10" />
 
@@ -459,18 +459,35 @@ export const VacancyPage: React.FC<VacancyPageProps> = ({
           {filteredPositions.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center space-y-3">
               <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
-                <Search className="w-6 h-6" />
+                <Briefcase className="w-6 h-6" />
               </div>
-              <h4 className="text-base font-bold text-slate-800">No matching positions found</h4>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                We couldn't find any job matching "{searchQuery}". Try searching with another keyword or submit a general CV below.
-              </p>
-              <button
-                onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 transition-colors cursor-pointer"
-              >
-                Reset Filters
-              </button>
+              {activeVacancies.length === 0 ? (
+                <>
+                  <h4 className="text-base font-bold text-slate-800">No Current Openings Available</h4>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    There are currently no open job vacancies listed. However, passionate educators and administrative professionals are always welcome to submit their credentials via the General Application form below for upcoming opportunities!
+                  </p>
+                  <button
+                    onClick={() => handleOpenApplyModal('General Faculty / Staff Application')}
+                    className="px-5 py-2.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer shadow-sm shadow-red-600/20"
+                  >
+                    Submit General Application
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h4 className="text-base font-bold text-slate-800">No matching positions found</h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    We couldn't find any job matching "{searchQuery}". Try searching with another keyword or submit a general CV below.
+                  </p>
+                  <button
+                    onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 transition-colors cursor-pointer"
+                  >
+                    Reset Filters
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             filteredPositions.map((job) => (
