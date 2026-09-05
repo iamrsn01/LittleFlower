@@ -3,9 +3,11 @@ import {
   galleryItems as defaultGalleryItems, 
   schoolNotices as defaultSchoolNotices, 
   facultyMembers as defaultFacultyMembers, 
+  facilitiesList as defaultFacilitiesList,
   GalleryItem, 
   SchoolNotice, 
-  FacultyMember 
+  FacultyMember,
+  Facility
 } from '../data/schoolData';
 
 import coverImg from '../assets/slider/cover.jpg';
@@ -86,12 +88,171 @@ export const defaultHeroSlides: HeroSlide[] = [
   }
 ];
 
+export interface VacancyPosition {
+  id: string;
+  title: string;
+  category: string;
+  iconType: 'computer' | 'english' | 'science' | 'math' | 'ecd' | 'admin';
+  type: string;
+  description: string;
+  qualification: string;
+  experience: string;
+  location: string;
+  responsibilities: string[];
+  requirements: string[];
+  isActive?: boolean;
+  deadline?: string;
+}
+
+export const defaultVacancies: VacancyPosition[] = [
+  {
+    id: 'computer-teacher',
+    title: 'Computer Teacher',
+    category: 'Computer & AI',
+    iconType: 'computer',
+    type: 'Full Time',
+    description: 'We are seeking a skilled and enthusiastic Computer Teacher to teach classes 6–10 and contribute to our academic excellence.',
+    qualification: "Bachelor's in Computer Science or related field",
+    experience: '2+ Years Experience',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Conduct daily hands-on practical computer sessions in our 45-terminal lab',
+      'Teach foundational programming in Python, HTML/CSS, and QBasic',
+      'Guide student IT exhibition projects and digital safety literacy'
+    ],
+    requirements: [
+      'BCA, BIT, B.Sc. CSIT or equivalent computer degree',
+      'Strong practical coding ability and classroom management',
+      'Fluency in English medium instructional delivery'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  },
+  {
+    id: 'english-teacher',
+    title: 'English Teacher',
+    category: 'Languages',
+    iconType: 'english',
+    type: 'Full Time',
+    description: 'We are looking for a dedicated English Teacher to teach students from classes 6–10 with strong communication skills.',
+    qualification: "Bachelor's in English or related field",
+    experience: '1+ Years Experience',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Deliver engaging English grammar, literature, and comprehension lectures',
+      'Coach students in debate, elocution, essay writing, and public speaking',
+      'Cultivate an immersive, active English-speaking culture on campus'
+    ],
+    requirements: [
+      'B.A. or M.A. in English Literature or Linguistics',
+      'Excellent spoken pronunciation and written clarity',
+      'Enthusiastic and student-centered mentorship approach'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  },
+  {
+    id: 'science-teacher',
+    title: 'Science Teacher',
+    category: 'Science & STEM',
+    iconType: 'science',
+    type: 'Full Time',
+    description: 'We are seeking a Science Teacher who is passionate about teaching and inspiring students in the field of Science.',
+    qualification: "Bachelor's in Science / Education",
+    experience: '1+ Years Experience',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Teach General Science, Physics, and Chemistry for classes 6–10',
+      'Conduct interactive laboratory experiments and demonstrations',
+      'Prepare Grade 10 SEE candidates for distinction board results'
+    ],
+    requirements: [
+      'B.Sc. or M.Sc. in Physics, Chemistry, or General Science',
+      'Familiarity with NEB curriculum and science laboratory safety',
+      'Dedication to interactive, practical teaching'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  },
+  {
+    id: 'math-teacher',
+    title: 'Mathematics Teacher',
+    category: 'Mathematics',
+    iconType: 'math',
+    type: 'Full Time',
+    description: 'We are seeking an analytical and caring Mathematics Mentor for secondary classes with proven conceptual clarity.',
+    qualification: "Bachelor's / Master's in Mathematics",
+    experience: '2+ Years Experience',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Teach Compulsory and Optional Mathematics with high conceptual rigor',
+      'Train students in step-by-step theorem proofs, algebra, and trigonometry',
+      'Provide regular remedial support for students needing extra practice'
+    ],
+    requirements: [
+      'B.Sc. / M.Sc. in Mathematics or B.Ed. in Math',
+      'Track record of preparing high-scoring SEE Board students',
+      'Punctual, disciplined, and interactive teaching pedagogy'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  },
+  {
+    id: 'montessori-teacher',
+    title: 'Pre-Primary Montessori Teacher',
+    category: 'Pre-Primary',
+    iconType: 'ecd',
+    type: 'Full Time',
+    description: 'We are looking for a caring, energetic Pre-Primary Lead Educator for Nursery, LKG, and UKG toddlers.',
+    qualification: '+2 or Bachelor with Montessori Certification',
+    experience: '1+ Years Early Childcare',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Facilitate sensory learning, joyful phonics, and motor skill exercises',
+      'Ensure a caring, hygienic, safe, and happy classroom atmosphere',
+      'Maintain daily observation records of toddler progress'
+    ],
+    requirements: [
+      'Certified Montessori / Early Childhood Development (ECD) training',
+      'Warm, patient, and highly compassionate attitude with kids',
+      'Creative skills in singing, crafts, and storytelling'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  },
+  {
+    id: 'admissions-officer',
+    title: 'Front-Desk & Admissions Officer',
+    category: 'Administration',
+    iconType: 'admin',
+    type: 'Full Time',
+    description: 'We are seeking an articulate and organized administrative professional to coordinate visitor queries and student admissions.',
+    qualification: 'Bachelor in Business / Management / IT',
+    experience: '1+ Years Office Administration',
+    location: 'Birgunj, Parsa',
+    responsibilities: [
+      'Welcome parents, answer inquiries, and manage campus admission forms',
+      'Handle school telephone inquiries and official correspondence',
+      'Support administrative student documentation and recordkeeping'
+    ],
+    requirements: [
+      'Bachelor’s degree with proficiency in MS Office and typing',
+      'Courteous interpersonal communication in Nepali and English',
+      'Organized and professional front-desk demeanor'
+    ],
+    isActive: true,
+    deadline: 'Rolling Basis'
+  }
+];
+
 interface SchoolDataContextType {
   // Data
   heroSlides: HeroSlide[];
   galleryItems: GalleryItem[];
   schoolNotices: SchoolNotice[];
   facultyMembers: FacultyMember[];
+  facilities: Facility[];
+  vacancies: VacancyPosition[];
 
   // Cloud Status
   isSupabaseConnected: boolean;
@@ -121,6 +282,17 @@ interface SchoolDataContextType {
   addFacultyMember: (member: Omit<FacultyMember, 'id'>) => Promise<void>;
   updateFacultyMember: (id: string, member: Partial<FacultyMember>) => Promise<void>;
   deleteFacultyMember: (id: string) => Promise<void>;
+
+  // Facilities CRUD
+  addFacility: (facility: Omit<Facility, 'id'>) => Promise<void>;
+  updateFacility: (id: string, facility: Partial<Facility>) => Promise<void>;
+  deleteFacility: (id: string) => Promise<void>;
+
+  // Vacancies CRUD
+  addVacancy: (vacancy: Omit<VacancyPosition, 'id'>) => Promise<void>;
+  updateVacancy: (id: string, vacancy: Partial<VacancyPosition>) => Promise<void>;
+  deleteVacancy: (id: string) => Promise<void>;
+  toggleVacancyActive: (id: string) => Promise<void>;
 
   // Global Management
   resetToDefaults: () => void;
@@ -174,6 +346,26 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.error('Error loading faculty from storage:', e);
     }
     return defaultFacultyMembers;
+  });
+
+  const [facilities, setFacilities] = useState<Facility[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY + '_facilities');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading facilities from storage:', e);
+    }
+    return defaultFacilitiesList;
+  });
+
+  const [vacancies, setVacancies] = useState<VacancyPosition[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY + '_vacancies');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading vacancies from storage:', e);
+    }
+    return defaultVacancies;
   });
 
   // Fetch Cloud Data from Supabase if active
@@ -256,6 +448,53 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           achievements: Array.isArray(f.achievements) ? f.achievements : []
         })));
       }
+
+      // 5. Facilities
+      const { data: facs, error: facsErr } = await supabase
+        .from('facilities')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (!facsErr && facs && facs.length > 0) {
+        setFacilities(facs.map(fc => ({
+          id: fc.id,
+          name: fc.name,
+          category: fc.category,
+          description: fc.description,
+          imageUrl: fc.image_url,
+          highlights: Array.isArray(fc.highlights) ? fc.highlights : [],
+          capacity: fc.capacity,
+          block: fc.block,
+          floor: fc.floor,
+          equipment: Array.isArray(fc.equipment) ? fc.equipment : [],
+          safetyFeatures: Array.isArray(fc.safety_features) ? fc.safety_features : []
+        })));
+      }
+
+      // 6. Vacancies
+      const { data: vacs, error: vacsErr } = await supabase
+        .from('vacancies')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!vacsErr && vacs && vacs.length > 0) {
+        setVacancies(vacs.map(v => ({
+          id: v.id,
+          title: v.title,
+          category: v.category,
+          iconType: v.icon_type || 'computer',
+          type: v.type,
+          description: v.description,
+          qualification: v.qualification,
+          experience: v.experience,
+          location: v.location,
+          responsibilities: Array.isArray(v.responsibilities) ? v.responsibilities : [],
+          requirements: Array.isArray(v.requirements) ? v.requirements : [],
+          isActive: v.is_active ?? true,
+          deadline: v.deadline || 'Rolling Basis'
+        })));
+      }
+
       setIsSupabaseConnected(true);
     } catch (e) {
       console.warn('Supabase fetch failed, using local storage:', e);
@@ -300,6 +539,22 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.warn('Could not save faculty to localStorage:', e);
     }
   }, [facultyMembers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY + '_facilities', JSON.stringify(facilities));
+    } catch (e) {
+      console.warn('Could not save facilities to localStorage:', e);
+    }
+  }, [facilities]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY + '_vacancies', JSON.stringify(vacancies));
+    } catch (e) {
+      console.warn('Could not save vacancies to localStorage:', e);
+    }
+  }, [vacancies]);
 
   // Connect or disconnect Supabase dynamically from UI
   const connectSupabase = async (url: string, key: string): Promise<boolean> => {
@@ -380,6 +635,40 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           bio: f.bio,
           avatar_url: f.avatarUrl,
           achievements: f.achievements
+        });
+      }
+      // 5. Upload facilities
+      for (const fc of facilities) {
+        await supabase.from('facilities').upsert({
+          id: fc.id,
+          name: fc.name,
+          category: fc.category,
+          description: fc.description,
+          image_url: fc.imageUrl,
+          highlights: fc.highlights,
+          capacity: fc.capacity,
+          block: fc.block,
+          floor: fc.floor,
+          equipment: fc.equipment,
+          safety_features: fc.safetyFeatures
+        });
+      }
+      // 6. Upload vacancies
+      for (const v of vacancies) {
+        await supabase.from('vacancies').upsert({
+          id: v.id,
+          title: v.title,
+          category: v.category,
+          icon_type: v.iconType,
+          type: v.type,
+          description: v.description,
+          qualification: v.qualification,
+          experience: v.experience,
+          location: v.location,
+          responsibilities: v.responsibilities,
+          requirements: v.requirements,
+          is_active: v.isActive ?? true,
+          deadline: v.deadline || 'Rolling Basis'
         });
       }
       return true;
@@ -667,6 +956,150 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   // ==========================================
+  // FACILITIES METHODS
+  // ==========================================
+  const addFacility = async (facility: Omit<Facility, 'id'>) => {
+    const id = `fac-${Date.now()}`;
+    const newFacility: Facility = { ...facility, id };
+    setFacilities(prev => [...prev, newFacility]);
+
+    if (supabase) {
+      try {
+        await supabase.from('facilities').insert({
+          id,
+          name: facility.name,
+          category: facility.category,
+          description: facility.description,
+          image_url: facility.imageUrl,
+          highlights: facility.highlights || [],
+          capacity: facility.capacity,
+          block: facility.block,
+          floor: facility.floor,
+          equipment: facility.equipment || [],
+          safety_features: facility.safetyFeatures || []
+        });
+      } catch (e) {
+        console.warn('Supabase facility insert fallback:', e);
+      }
+    }
+  };
+
+  const updateFacility = async (id: string, facility: Partial<Facility>) => {
+    setFacilities(prev => prev.map(f => f.id === id ? { ...f, ...facility } : f));
+
+    if (supabase) {
+      try {
+        await supabase.from('facilities').update({
+          ...(facility.name && { name: facility.name }),
+          ...(facility.category && { category: facility.category }),
+          ...(facility.description && { description: facility.description }),
+          ...(facility.imageUrl && { image_url: facility.imageUrl }),
+          ...(facility.highlights && { highlights: facility.highlights }),
+          ...(facility.capacity && { capacity: facility.capacity }),
+          ...(facility.block !== undefined && { block: facility.block }),
+          ...(facility.floor !== undefined && { floor: facility.floor }),
+          ...(facility.equipment && { equipment: facility.equipment }),
+          ...(facility.safetyFeatures && { safety_features: facility.safetyFeatures })
+        }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase facility update fallback:', e);
+      }
+    }
+  };
+
+  const deleteFacility = async (id: string) => {
+    setFacilities(prev => prev.filter(f => f.id !== id));
+
+    if (supabase) {
+      try {
+        await supabase.from('facilities').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase facility delete fallback:', e);
+      }
+    }
+  };
+
+  // ==========================================
+  // VACANCIES METHODS
+  // ==========================================
+  const addVacancy = async (vacancy: Omit<VacancyPosition, 'id'>) => {
+    const id = `vac-${Date.now()}`;
+    const newVacancy: VacancyPosition = {
+      ...vacancy,
+      id,
+      isActive: vacancy.isActive ?? true,
+      deadline: vacancy.deadline || 'Rolling Basis'
+    };
+    setVacancies(prev => [newVacancy, ...prev]);
+
+    if (supabase) {
+      try {
+        await supabase.from('vacancies').insert({
+          id,
+          title: vacancy.title,
+          category: vacancy.category,
+          icon_type: vacancy.iconType,
+          type: vacancy.type,
+          description: vacancy.description,
+          qualification: vacancy.qualification,
+          experience: vacancy.experience,
+          location: vacancy.location,
+          responsibilities: vacancy.responsibilities || [],
+          requirements: vacancy.requirements || [],
+          is_active: vacancy.isActive ?? true,
+          deadline: vacancy.deadline || 'Rolling Basis'
+        });
+      } catch (e) {
+        console.warn('Supabase vacancy insert fallback:', e);
+      }
+    }
+  };
+
+  const updateVacancy = async (id: string, vacancy: Partial<VacancyPosition>) => {
+    setVacancies(prev => prev.map(v => v.id === id ? { ...v, ...vacancy } : v));
+
+    if (supabase) {
+      try {
+        await supabase.from('vacancies').update({
+          ...(vacancy.title && { title: vacancy.title }),
+          ...(vacancy.category && { category: vacancy.category }),
+          ...(vacancy.iconType && { icon_type: vacancy.iconType }),
+          ...(vacancy.type && { type: vacancy.type }),
+          ...(vacancy.description && { description: vacancy.description }),
+          ...(vacancy.qualification && { qualification: vacancy.qualification }),
+          ...(vacancy.experience && { experience: vacancy.experience }),
+          ...(vacancy.location && { location: vacancy.location }),
+          ...(vacancy.responsibilities && { responsibilities: vacancy.responsibilities }),
+          ...(vacancy.requirements && { requirements: vacancy.requirements }),
+          ...(vacancy.isActive !== undefined && { is_active: vacancy.isActive }),
+          ...(vacancy.deadline && { deadline: vacancy.deadline })
+        }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase vacancy update fallback:', e);
+      }
+    }
+  };
+
+  const deleteVacancy = async (id: string) => {
+    setVacancies(prev => prev.filter(v => v.id !== id));
+
+    if (supabase) {
+      try {
+        await supabase.from('vacancies').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase vacancy delete fallback:', e);
+      }
+    }
+  };
+
+  const toggleVacancyActive = async (id: string) => {
+    const target = vacancies.find(v => v.id === id);
+    if (!target) return;
+    const newStatus = !(target.isActive ?? true);
+    await updateVacancy(id, { isActive: newStatus });
+  };
+
+  // ==========================================
   // GLOBAL RESET & EXPORT/IMPORT
   // ==========================================
   const resetToDefaults = () => {
@@ -674,11 +1107,15 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setGalleryItems(defaultGalleryItems);
     setSchoolNotices(defaultSchoolNotices);
     setFacultyMembers(defaultFacultyMembers);
+    setFacilities(defaultFacilitiesList);
+    setVacancies(defaultVacancies);
     try {
       localStorage.removeItem(STORAGE_KEY + '_slides');
       localStorage.removeItem(STORAGE_KEY + '_gallery');
       localStorage.removeItem(STORAGE_KEY + '_notices');
       localStorage.removeItem(STORAGE_KEY + '_faculty');
+      localStorage.removeItem(STORAGE_KEY + '_facilities');
+      localStorage.removeItem(STORAGE_KEY + '_vacancies');
     } catch (e) {
       console.warn('Error clearing storage:', e);
     }
@@ -692,7 +1129,9 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       heroSlides,
       galleryItems,
       schoolNotices,
-      facultyMembers
+      facultyMembers,
+      facilities,
+      vacancies
     };
     return JSON.stringify(backup, null, 2);
   };
@@ -704,6 +1143,8 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (data.galleryItems && Array.isArray(data.galleryItems)) setGalleryItems(data.galleryItems);
       if (data.schoolNotices && Array.isArray(data.schoolNotices)) setSchoolNotices(data.schoolNotices);
       if (data.facultyMembers && Array.isArray(data.facultyMembers)) setFacultyMembers(data.facultyMembers);
+      if (data.facilities && Array.isArray(data.facilities)) setFacilities(data.facilities);
+      if (data.vacancies && Array.isArray(data.vacancies)) setVacancies(data.vacancies);
       return true;
     } catch (e) {
       console.error('Failed to parse imported JSON:', e);
@@ -718,6 +1159,8 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         galleryItems,
         schoolNotices,
         facultyMembers,
+        facilities,
+        vacancies,
         isSupabaseConnected,
         supabaseUrl: supabaseConfig.url,
         connectSupabase,
@@ -737,6 +1180,13 @@ export const SchoolDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         addFacultyMember,
         updateFacultyMember,
         deleteFacultyMember,
+        addFacility,
+        updateFacility,
+        deleteFacility,
+        addVacancy,
+        updateVacancy,
+        deleteVacancy,
+        toggleVacancyActive,
         resetToDefaults,
         exportDataJSON,
         importDataJSON

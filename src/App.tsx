@@ -17,11 +17,12 @@ import { QuickSearchModal } from './components/QuickSearchModal';
 import { AdminPortalPage } from './pages/AdminPortalPage';
 import { TeacherPortalPage } from './pages/TeacherPortalPage';
 import { StudentPortalPage } from './pages/StudentPortalPage';
+import { VacancyPage } from './pages/VacancyPage';
 
 // Central School Data Store
 import { SchoolDataProvider } from './context/SchoolDataContext';
 
-export type AppRoute = 'home' | 'admin' | 'teacher' | 'student';
+export type AppRoute = 'home' | 'admin' | 'teacher' | 'student' | 'vacancy';
 
 function AppContent() {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
@@ -36,6 +37,7 @@ function AppContent() {
     if (hash.includes('admin') || path.includes('/admin')) return 'admin';
     if (hash.includes('teacher') || path.includes('/teacher')) return 'teacher';
     if (hash.includes('student') || path.includes('/student')) return 'student';
+    if (hash.includes('vacancy') || path.includes('/vacancy')) return 'vacancy';
     return 'home';
   };
 
@@ -53,7 +55,7 @@ function AppContent() {
       window.scrollTo(0, 0);
       const hash = window.location.hash;
       // If there's an anchor like #academics in the URL, remove it cleanly so it never auto-scrolls down
-      if (hash && !hash.includes('admin') && !hash.includes('teacher') && !hash.includes('student')) {
+      if (hash && !hash.includes('admin') && !hash.includes('teacher') && !hash.includes('student') && !hash.includes('vacancy')) {
         window.history.replaceState(null, '', window.location.pathname + window.location.search);
         window.scrollTo(0, 0);
       }
@@ -167,7 +169,22 @@ function AppContent() {
   }
 
   // =========================================================================
-  // 4. MAIN SCHOOL WEBSITE LANDING PAGE
+  // 4. DEDICATED SEPARATE PAGE: CAREERS & VACANCY
+  // =========================================================================
+  if (currentRoute === 'vacancy') {
+    return (
+      <VacancyPage
+        onNavigateHome={() => navigateTo('home')}
+        onNavigatePortal={handleOpenPortal}
+        onOpenAdmissions={handleOpenAdmissions}
+        onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenVirtualTour={() => setIsVirtualTourOpen(true)}
+      />
+    );
+  }
+
+  // =========================================================================
+  // 5. MAIN SCHOOL WEBSITE LANDING PAGE
   // =========================================================================
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-500 selection:text-white flex flex-col font-sans">
@@ -178,6 +195,7 @@ function AppContent() {
         onOpenAdmissions={handleOpenAdmissions}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenVirtualTour={() => setIsVirtualTourOpen(true)}
+        onOpenVacancy={() => navigateTo('vacancy')}
       />
 
       {/* Main Page Sections */}
@@ -222,6 +240,7 @@ function AppContent() {
       <Footer
         onOpenPortal={() => handleOpenPortal('student')}
         onOpenAdmissions={handleOpenAdmissions}
+        onOpenVacancy={() => navigateTo('vacancy')}
       />
 
       {/* Interactive Modals */}

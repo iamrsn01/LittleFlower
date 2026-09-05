@@ -41,10 +41,12 @@ import {
   Phone,
   Save,
   GripVertical,
-  Loader2
+  Loader2,
+  Briefcase,
+  FlaskConical
 } from 'lucide-react';
-import { useSchoolData, HeroSlide } from '../context/SchoolDataContext';
-import { SchoolNotice, GalleryItem, FacultyMember } from '../data/schoolData';
+import { useSchoolData, HeroSlide, VacancyPosition } from '../context/SchoolDataContext';
+import { SchoolNotice, GalleryItem, FacultyMember, Facility } from '../data/schoolData';
 import logoImg from '../assets/logoBase64';
 import coverImg from '../assets/slider/cover.jpg';
 
@@ -64,6 +66,8 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     galleryItems,
     schoolNotices,
     facultyMembers,
+    facilities,
+    vacancies,
     addSlide,
     updateSlide,
     deleteSlide,
@@ -78,6 +82,13 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     addFacultyMember,
     updateFacultyMember,
     deleteFacultyMember,
+    addFacility,
+    updateFacility,
+    deleteFacility,
+    addVacancy,
+    updateVacancy,
+    deleteVacancy,
+    toggleVacancyActive,
     resetToDefaults,
     exportDataJSON,
     importDataJSON,
@@ -102,7 +113,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
   const [rememberMe, setRememberMe] = useState(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'overview' | 'slider' | 'gallery' | 'notices' | 'faculty' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'slider' | 'facilities' | 'vacancies' | 'gallery' | 'notices' | 'faculty' | 'settings'>('overview');
   
   // Toast notifications
   const [toastMsg, setToastMsg] = useState<{ text: string; type: 'success' | 'info' | 'error' } | null>(null);
@@ -479,6 +490,167 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
     showToast('Faculty profile updated successfully!');
   };
 
+  // =========================================================================
+  // 5. FACILITIES MANAGEMENT STATE & HANDLERS
+  // =========================================================================
+  const [facilitiesCategoryFilter, setFacilitiesCategoryFilter] = useState<string>('All');
+  const [facilitiesSearch, setFacilitiesSearch] = useState('');
+  const [isAddingFacility, setIsAddingFacility] = useState(false);
+  const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
+  const [newFacilityData, setNewFacilityData] = useState<{
+    name: string;
+    category: 'Laboratories' | 'Sports & Fitness' | 'Academics' | 'Arts & Culture' | 'Campus Life' | 'Services & Health';
+    description: string;
+    imageUrl: string;
+    highlights: string;
+    capacity: string;
+    block: string;
+    floor: string;
+    equipment: string;
+    safetyFeatures: string;
+  }>({
+    name: '',
+    category: 'Laboratories',
+    description: '',
+    imageUrl: '',
+    highlights: '',
+    capacity: '40 Students',
+    block: 'Block B: STEM Innovation Centre',
+    floor: 'Ground Floor',
+    equipment: '',
+    safetyFeatures: ''
+  });
+  const facilityFileInputRef = useRef<HTMLInputElement>(null);
+  const editFacilityFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCreateFacility = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newFacilityData.name.trim() || !newFacilityData.description.trim()) {
+      showToast('Facility name and description cannot be empty', 'error');
+      return;
+    }
+    addFacility({
+      name: newFacilityData.name,
+      category: newFacilityData.category,
+      description: newFacilityData.description,
+      imageUrl: newFacilityData.imageUrl || 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1000&q=80',
+      highlights: newFacilityData.highlights ? newFacilityData.highlights.split(',').map(s => s.trim()).filter(Boolean) : ['Modern equipment', 'Interactive demonstrations'],
+      capacity: newFacilityData.capacity || '40 Students',
+      block: newFacilityData.block || 'Academic Block',
+      floor: newFacilityData.floor || 'Ground Floor',
+      equipment: newFacilityData.equipment ? newFacilityData.equipment.split(',').map(s => s.trim()).filter(Boolean) : [],
+      safetyFeatures: newFacilityData.safetyFeatures ? newFacilityData.safetyFeatures.split(',').map(s => s.trim()).filter(Boolean) : []
+    });
+    setNewFacilityData({
+      name: '',
+      category: 'Laboratories',
+      description: '',
+      imageUrl: '',
+      highlights: '',
+      capacity: '40 Students',
+      block: 'Block B: STEM Innovation Centre',
+      floor: 'Ground Floor',
+      equipment: '',
+      safetyFeatures: ''
+    });
+    setIsAddingFacility(false);
+    showToast('Campus facility added successfully!');
+  };
+
+  const handleSaveEditFacility = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingFacility) return;
+    updateFacility(editingFacility.id, editingFacility);
+    setEditingFacility(null);
+    showToast('Campus facility updated successfully!');
+  };
+
+  // =========================================================================
+  // 6. VACANCIES MANAGEMENT STATE & HANDLERS
+  // =========================================================================
+  const [vacancyCategoryFilter, setVacancyCategoryFilter] = useState('All');
+  const [vacancyStatusFilter, setVacancyStatusFilter] = useState<'All' | 'Active' | 'Paused'>('All');
+  const [vacancySearch, setVacancySearch] = useState('');
+  const [isAddingVacancy, setIsAddingVacancy] = useState(false);
+  const [editingVacancy, setEditingVacancy] = useState<VacancyPosition | null>(null);
+  const [newVacancyData, setNewVacancyData] = useState<{
+    title: string;
+    category: string;
+    iconType: 'computer' | 'english' | 'science' | 'math' | 'ecd' | 'admin';
+    type: string;
+    description: string;
+    qualification: string;
+    experience: string;
+    location: string;
+    responsibilities: string;
+    requirements: string;
+    isActive: boolean;
+    deadline: string;
+  }>({
+    title: '',
+    category: 'Computer & AI',
+    iconType: 'computer',
+    type: 'Full Time',
+    description: '',
+    qualification: "Bachelor's Degree in relevant discipline",
+    experience: '1+ Years Teaching Experience',
+    location: 'Birgunj, Parsa',
+    responsibilities: '',
+    requirements: '',
+    isActive: true,
+    deadline: 'Rolling Basis'
+  });
+
+  const handleCreateVacancy = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newVacancyData.title.trim() || !newVacancyData.description.trim()) {
+      showToast('Position title and description are required', 'error');
+      return;
+    }
+    addVacancy({
+      title: newVacancyData.title,
+      category: newVacancyData.category,
+      iconType: newVacancyData.iconType,
+      type: newVacancyData.type,
+      description: newVacancyData.description,
+      qualification: newVacancyData.qualification,
+      experience: newVacancyData.experience,
+      location: newVacancyData.location,
+      responsibilities: newVacancyData.responsibilities
+        ? newVacancyData.responsibilities.split('\n').map(s => s.trim()).filter(Boolean)
+        : ['Conduct regular interactive classroom teaching', 'Maintain student academic records and evaluations'],
+      requirements: newVacancyData.requirements
+        ? newVacancyData.requirements.split('\n').map(s => s.trim()).filter(Boolean)
+        : ['Relevant educational qualification', 'Strong interpersonal communication in English and Nepali'],
+      isActive: newVacancyData.isActive,
+      deadline: newVacancyData.deadline || 'Rolling Basis'
+    });
+    setNewVacancyData({
+      title: '',
+      category: 'Computer & AI',
+      iconType: 'computer',
+      type: 'Full Time',
+      description: '',
+      qualification: "Bachelor's Degree in relevant discipline",
+      experience: '1+ Years Teaching Experience',
+      location: 'Birgunj, Parsa',
+      responsibilities: '',
+      requirements: '',
+      isActive: true,
+      deadline: 'Rolling Basis'
+    });
+    setIsAddingVacancy(false);
+    showToast('New job vacancy published to careers portal!');
+  };
+
+  const handleSaveEditVacancy = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingVacancy) return;
+    updateVacancy(editingVacancy.id, editingVacancy);
+    setEditingVacancy(null);
+    showToast('Job vacancy updated successfully!');
+  };
+
   // Backup & Restore
   const handleExportBackup = () => {
     const jsonStr = exportDataJSON();
@@ -821,6 +993,8 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
             {[
               { key: 'overview', label: 'Overview', icon: Building2, count: null },
               { key: 'slider', label: 'Hero Slider', icon: ImageIcon, count: heroSlides.length },
+              { key: 'facilities', label: 'Facilities & Labs', icon: FlaskConical, count: facilities.length },
+              { key: 'vacancies', label: 'Careers & Vacancy', icon: Briefcase, count: vacancies.length },
               { key: 'gallery', label: 'Photo Gallery', icon: Camera, count: galleryItems.length },
               { key: 'notices', label: 'Notices & Circulars', icon: Bell, count: schoolNotices.length },
               { key: 'faculty', label: 'Faculty & Staff', icon: Users, count: facultyMembers.length },
@@ -858,53 +1032,79 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Metric Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div 
                   onClick={() => setActiveTab('slider')}
-                  className="p-5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
                 >
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-[10px] uppercase font-bold tracking-wider">Hero Slider</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Slider</span>
                     <ImageIcon className="w-4 h-4 text-red-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <p className="text-3xl font-black text-white">{heroSlides.length}</p>
-                  <span className="text-[10px] text-emerald-400 font-bold">Active Campus Slides</span>
+                  <p className="text-2xl font-black text-white">{heroSlides.length}</p>
+                  <span className="text-[10px] text-emerald-400 font-bold block truncate">Active Slides</span>
+                </div>
+
+                <div 
+                  onClick={() => setActiveTab('facilities')}
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                >
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Facilities</span>
+                    <FlaskConical className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                  </div>
+                  <p className="text-2xl font-black text-white">{facilities.length}</p>
+                  <span className="text-[10px] text-cyan-400 font-bold block truncate">Labs &amp; Campus</span>
+                </div>
+
+                <div 
+                  onClick={() => setActiveTab('vacancies')}
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                >
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Vacancies</span>
+                    <Briefcase className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
+                  </div>
+                  <p className="text-2xl font-black text-white">{vacancies.length}</p>
+                  <span className="text-[10px] text-purple-400 font-bold block truncate">
+                    {vacancies.filter(v => v.isActive !== false).length} Active Hiring
+                  </span>
                 </div>
 
                 <div 
                   onClick={() => setActiveTab('gallery')}
-                  className="p-5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
                 >
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-[10px] uppercase font-bold tracking-wider">Gallery Photos</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Gallery</span>
                     <Camera className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <p className="text-3xl font-black text-white">{galleryItems.length}</p>
-                  <span className="text-[10px] text-amber-400 font-bold">Across 5 Categories</span>
+                  <p className="text-2xl font-black text-white">{galleryItems.length}</p>
+                  <span className="text-[10px] text-amber-400 font-bold block truncate">Photos</span>
                 </div>
 
                 <div 
                   onClick={() => setActiveTab('notices')}
-                  className="p-5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
                 >
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-[10px] uppercase font-bold tracking-wider">Notice Board</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Notices</span>
                     <Bell className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <p className="text-3xl font-black text-white">{schoolNotices.length}</p>
-                  <span className="text-[10px] text-rose-400 font-bold">Broadcasted Circulars</span>
+                  <p className="text-2xl font-black text-white">{schoolNotices.length}</p>
+                  <span className="text-[10px] text-rose-400 font-bold block truncate">Circulars</span>
                 </div>
 
                 <div 
                   onClick={() => setActiveTab('faculty')}
-                  className="p-5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
+                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 space-y-1 shadow-md cursor-pointer transition-all group"
                 >
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-[10px] uppercase font-bold tracking-wider">Staff &amp; Faculty</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Faculty</span>
                     <Users className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <p className="text-3xl font-black text-white">{facultyMembers.length}</p>
-                  <span className="text-[10px] text-blue-400 font-bold">Registered Teachers &amp; HODs</span>
+                  <p className="text-2xl font-black text-white">{facultyMembers.length}</p>
+                  <span className="text-[10px] text-blue-400 font-bold block truncate">Staff Team</span>
                 </div>
               </div>
 
@@ -914,41 +1114,59 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   <span>Quick Content Actions</span>
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                   <button
                     onClick={() => { setActiveTab('slider'); setIsAddingSlide(true); }}
-                    className="p-4 rounded-xl bg-slate-900/80 hover:bg-red-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-red-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 text-red-400 group-hover:text-white mb-2" />
-                    <p className="text-xs font-bold text-white group-hover:text-white">Add Slider Slide</p>
-                    <p className="text-[10px] text-slate-400 group-hover:text-red-100">Upload hero banner</p>
+                    <Plus className="w-4 h-4 text-red-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Slider Slide</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-red-100">Hero banner</p>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('facilities'); setIsAddingFacility(true); }}
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-cyan-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 text-cyan-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Add Facility</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-cyan-100">Lab or campus area</p>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('vacancies'); setIsAddingVacancy(true); }}
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-purple-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 text-purple-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Post Vacancy</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-purple-100">Career opening</p>
                   </button>
 
                   <button
                     onClick={() => { setActiveTab('gallery'); setIsAddingGallery(true); }}
-                    className="p-4 rounded-xl bg-slate-900/80 hover:bg-amber-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-amber-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 text-amber-400 group-hover:text-white mb-2" />
-                    <p className="text-xs font-bold text-white group-hover:text-white">Add Gallery Photo</p>
-                    <p className="text-[10px] text-slate-400 group-hover:text-amber-100">Upload campus media</p>
+                    <Plus className="w-4 h-4 text-amber-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Gallery Photo</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-amber-100">Campus media</p>
                   </button>
 
                   <button
                     onClick={() => { setActiveTab('notices'); setIsAddingNotice(true); }}
-                    className="p-4 rounded-xl bg-slate-900/80 hover:bg-rose-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-rose-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 text-rose-400 group-hover:text-white mb-2" />
-                    <p className="text-xs font-bold text-white group-hover:text-white">Broadcast Notice</p>
-                    <p className="text-[10px] text-slate-400 group-hover:text-rose-100">Publish urgent notice</p>
+                    <Plus className="w-4 h-4 text-rose-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Notice</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-rose-100">Circular release</p>
                   </button>
 
                   <button
                     onClick={() => { setActiveTab('faculty'); setIsAddingFaculty(true); }}
-                    className="p-4 rounded-xl bg-slate-900/80 hover:bg-blue-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
+                    className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-blue-600 hover:text-white border border-slate-700 transition-all text-left group cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 text-blue-400 group-hover:text-white mb-2" />
-                    <p className="text-xs font-bold text-white group-hover:text-white">Add Faculty Staff</p>
-                    <p className="text-[10px] text-slate-400 group-hover:text-blue-100">New teacher profile</p>
+                    <Plus className="w-4 h-4 text-blue-400 group-hover:text-white mb-1.5" />
+                    <p className="text-xs font-bold text-white group-hover:text-white">Faculty Staff</p>
+                    <p className="text-[10px] text-slate-400 group-hover:text-blue-100">Teacher profile</p>
                   </button>
                 </div>
               </div>
@@ -1462,7 +1680,1021 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 3: PHOTO GALLERY MANAGER */}
+          {/* TAB 3: FACILITIES & LABS MANAGER */}
+          {/* ========================================================================= */}
+          {activeTab === 'facilities' && (
+            <div className="space-y-6">
+              
+              {/* Header with Search and Add Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-black text-white flex items-center gap-2">
+                    <FlaskConical className="w-5 h-5 text-cyan-400" />
+                    <span>Campus Facilities &amp; Infrastructure Manager</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">Manage science laboratories, computer ICT suites, library, sports grounds, and academic infrastructure.</p>
+                </div>
+                <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                  <button
+                    onClick={() => setIsAddingFacility(true)}
+                    className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-cyan-600/30 cursor-pointer transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Facility</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Filters Bar: Search & Category Chips */}
+              <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={facilitiesSearch}
+                      onChange={(e) => setFacilitiesSearch(e.target.value)}
+                      placeholder="Search facility by name, block, or equipment..."
+                      className="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  {['All', 'Laboratories', 'Academics', 'Sports & Fitness', 'Arts & Culture', 'Campus Life', 'Services & Health'].map((cat) => {
+                    const count = cat === 'All'
+                      ? facilities.length
+                      : facilities.filter(f => f.category === cat).length;
+                    const isActive = facilitiesCategoryFilter === cat;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setFacilitiesCategoryFilter(cat)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                          isActive
+                            ? 'bg-cyan-600 text-white shadow-sm'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-700/60'
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                          isActive ? 'bg-cyan-800 text-white' : 'bg-slate-800 text-slate-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Add Facility Modal */}
+              {isAddingFacility && (
+                <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                  <form onSubmit={handleCreateFacility} className="max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl my-8">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Plus className="w-4 h-4 text-cyan-400" />
+                        <span>Add New Campus Facility</span>
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingFacility(false)}
+                        className="text-slate-400 hover:text-white p-1 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto pr-1">
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Facility Name *</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.name}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, name: e.target.value })}
+                          placeholder="e.g. Advanced Optics & Physics Research Lab"
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Category *</label>
+                        <select
+                          value={newFacilityData.category}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, category: e.target.value as any })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-bold"
+                        >
+                          <option value="Laboratories">Laboratories</option>
+                          <option value="Academics">Academics</option>
+                          <option value="Sports & Fitness">Sports &amp; Fitness</option>
+                          <option value="Arts & Culture">Arts &amp; Culture</option>
+                          <option value="Campus Life">Campus Life</option>
+                          <option value="Services & Health">Services &amp; Health</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Student Capacity</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.capacity}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, capacity: e.target.value })}
+                          placeholder="e.g. 45 Students"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Campus Block</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.block}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, block: e.target.value })}
+                          placeholder="e.g. Block B: STEM Innovation Centre"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Floor / Level</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.floor}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, floor: e.target.value })}
+                          placeholder="e.g. 2nd Floor (West Wing)"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Photo Image URL or File</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newFacilityData.imageUrl}
+                            onChange={(e) => setNewFacilityData({ ...newFacilityData, imageUrl: e.target.value })}
+                            placeholder="https://images.unsplash.com/... or upload"
+                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-mono"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => facilityFileInputRef.current?.click()}
+                            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold cursor-pointer"
+                          >
+                            Upload File
+                          </button>
+                          <input
+                            type="file"
+                            ref={facilityFileInputRef}
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, (base64) => setNewFacilityData({ ...newFacilityData, imageUrl: base64 }));
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Detailed Description *</label>
+                        <textarea
+                          rows={3}
+                          value={newFacilityData.description}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, description: e.target.value })}
+                          placeholder="Describe the facility equipment, pedagogical usage, and benefits for students..."
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Key Highlights (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.highlights}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, highlights: e.target.value })}
+                          placeholder="e.g. High-speed LAN, 40+ Workstations, Interactive Projector"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Equipment List (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.equipment}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, equipment: e.target.value })}
+                          placeholder="e.g. Binocular Microscopes, Optics Benches, Chemical Fume Extraction"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Safety Features (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={newFacilityData.safetyFeatures}
+                          onChange={(e) => setNewFacilityData({ ...newFacilityData, safetyFeatures: e.target.value })}
+                          placeholder="e.g. Eye-wash stations, Class-B Fire Extinguisher, First Aid Kit"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingFacility(false)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-md cursor-pointer"
+                      >
+                        Add Facility
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Edit Facility Modal */}
+              {editingFacility && (
+                <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                  <form onSubmit={handleSaveEditFacility} className="max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl my-8">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-cyan-400" />
+                        <span>Edit Facility: {editingFacility.name}</span>
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setEditingFacility(null)}
+                        className="text-slate-400 hover:text-white p-1 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto pr-1">
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Facility Name *</label>
+                        <input
+                          type="text"
+                          value={editingFacility.name}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, name: e.target.value })}
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Category *</label>
+                        <select
+                          value={editingFacility.category}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, category: e.target.value as any })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-bold"
+                        >
+                          <option value="Laboratories">Laboratories</option>
+                          <option value="Academics">Academics</option>
+                          <option value="Sports & Fitness">Sports &amp; Fitness</option>
+                          <option value="Arts & Culture">Arts &amp; Culture</option>
+                          <option value="Campus Life">Campus Life</option>
+                          <option value="Services & Health">Services &amp; Health</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Student Capacity</label>
+                        <input
+                          type="text"
+                          value={editingFacility.capacity}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, capacity: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Campus Block</label>
+                        <input
+                          type="text"
+                          value={editingFacility.block || ''}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, block: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Floor / Level</label>
+                        <input
+                          type="text"
+                          value={editingFacility.floor || ''}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, floor: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Image URL or File</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={editingFacility.imageUrl}
+                            onChange={(e) => setEditingFacility({ ...editingFacility, imageUrl: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500 font-mono"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => editFacilityFileInputRef.current?.click()}
+                            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold cursor-pointer"
+                          >
+                            Upload
+                          </button>
+                          <input
+                            type="file"
+                            ref={editFacilityFileInputRef}
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, (base64) => setEditingFacility({ ...editingFacility, imageUrl: base64 }));
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Detailed Description *</label>
+                        <textarea
+                          rows={3}
+                          value={editingFacility.description}
+                          onChange={(e) => setEditingFacility({ ...editingFacility, description: e.target.value })}
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Highlights (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={(editingFacility.highlights || []).join(', ')}
+                          onChange={(e) => setEditingFacility({
+                            ...editingFacility,
+                            highlights: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Equipment (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={(editingFacility.equipment || []).join(', ')}
+                          onChange={(e) => setEditingFacility({
+                            ...editingFacility,
+                            equipment: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Safety Features (Comma separated)</label>
+                        <input
+                          type="text"
+                          value={(editingFacility.safetyFeatures || []).join(', ')}
+                          onChange={(e) => setEditingFacility({
+                            ...editingFacility,
+                            safetyFeatures: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-cyan-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingFacility(null)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-md cursor-pointer"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Facilities List Grid */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {facilities
+                  .filter(f => {
+                    const matchesCat = facilitiesCategoryFilter === 'All' || f.category === facilitiesCategoryFilter;
+                    const q = facilitiesSearch.toLowerCase().trim();
+                    const matchesQ = !q || 
+                      f.name.toLowerCase().includes(q) ||
+                      f.description.toLowerCase().includes(q) ||
+                      (f.block && f.block.toLowerCase().includes(q)) ||
+                      (f.equipment && f.equipment.some(e => e.toLowerCase().includes(q)));
+                    return matchesCat && matchesQ;
+                  })
+                  .map((fac) => (
+                    <div key={fac.id} className="p-4 rounded-2xl bg-slate-800/90 border border-slate-700/80 flex flex-col justify-between gap-3 shadow-md hover:border-slate-600 transition-all">
+                      <div className="flex gap-3">
+                        <img
+                          src={fac.imageUrl}
+                          alt={fac.name}
+                          className="w-20 h-20 rounded-xl object-cover border border-slate-700 shrink-0"
+                        />
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-600/20 text-cyan-300 border border-cyan-500/30">
+                              {fac.category}
+                            </span>
+                            {fac.capacity && (
+                              <span className="text-[10px] text-slate-400 font-medium">{fac.capacity}</span>
+                            )}
+                          </div>
+                          <h4 className="text-sm font-bold text-white leading-snug">{fac.name}</h4>
+                          <p className="text-xs text-slate-400 line-clamp-2">{fac.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-slate-400 truncate max-w-[200px]">
+                          {fac.block || 'Main Campus'} {fac.floor ? `• ${fac.floor}` : ''}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setEditingFacility(fac)}
+                            className="px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete facility "${fac.name}"?`)) {
+                                deleteFacility(fac.id);
+                                showToast('Facility removed');
+                              }
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold flex items-center gap-1 border border-rose-800/40 cursor-pointer transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 4: CAREERS & VACANCIES MANAGER */}
+          {/* ========================================================================= */}
+          {activeTab === 'vacancies' && (
+            <div className="space-y-6">
+              
+              {/* Header with Post Vacancy Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-black text-white flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-purple-400" />
+                    <span>Careers &amp; Vacancy Portal Manager</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">Post open teaching or administration positions, edit qualifications, and toggle hiring status.</p>
+                </div>
+                <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                  <button
+                    onClick={() => setIsAddingVacancy(true)}
+                    className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Post New Vacancy</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Filters Bar: Status Tabs, Category Chips, Search */}
+              <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={vacancySearch}
+                      onChange={(e) => setVacancySearch(e.target.value)}
+                      placeholder="Search vacancies by title, subject, or qualification..."
+                      className="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  {/* Status Filter */}
+                  <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-700 shrink-0">
+                    {(['All', 'Active', 'Paused'] as const).map((st) => (
+                      <button
+                        key={st}
+                        onClick={() => setVacancyStatusFilter(st)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                          vacancyStatusFilter === st
+                            ? 'bg-purple-600 text-white shadow-xs'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {st}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  {['All', 'Computer & AI', 'Languages', 'Science & STEM', 'Mathematics', 'Pre-Primary', 'Administration'].map((cat) => {
+                    const count = cat === 'All'
+                      ? vacancies.length
+                      : vacancies.filter(v => v.category === cat).length;
+                    const isActive = vacancyCategoryFilter === cat;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setVacancyCategoryFilter(cat)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                          isActive
+                            ? 'bg-purple-600 text-white shadow-sm'
+                            : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-700/60'
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                          isActive ? 'bg-purple-800 text-white' : 'bg-slate-800 text-slate-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Add Vacancy Modal */}
+              {isAddingVacancy && (
+                <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                  <form onSubmit={handleCreateVacancy} className="max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl my-8">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Plus className="w-4 h-4 text-purple-400" />
+                        <span>Post New Career Opening</span>
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingVacancy(false)}
+                        className="text-slate-400 hover:text-white p-1 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto pr-1">
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Position Title *</label>
+                        <input
+                          type="text"
+                          value={newVacancyData.title}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, title: e.target.value })}
+                          placeholder="e.g. Senior Secondary Physics Teacher"
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Department / Category *</label>
+                        <select
+                          value={newVacancyData.category}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, category: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        >
+                          <option value="Computer & AI">Computer &amp; AI</option>
+                          <option value="Languages">Languages (English / Nepali)</option>
+                          <option value="Science & STEM">Science &amp; STEM</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Pre-Primary">Pre-Primary (Montessori / ECD)</option>
+                          <option value="Administration">Administration &amp; Front-Desk</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Employment Type *</label>
+                        <select
+                          value={newVacancyData.type}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, type: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        >
+                          <option value="Full Time">Full Time</option>
+                          <option value="Part Time">Part Time</option>
+                          <option value="Contract Basis">Contract Basis</option>
+                          <option value="Visiting Lecturer">Visiting Lecturer</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Icon Category Type</label>
+                        <select
+                          value={newVacancyData.iconType}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, iconType: e.target.value as any })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        >
+                          <option value="computer">Computer / IT</option>
+                          <option value="science">Science &amp; STEM</option>
+                          <option value="math">Mathematics</option>
+                          <option value="english">Languages / English</option>
+                          <option value="ecd">Pre-Primary / ECD</option>
+                          <option value="admin">Administration</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Experience Required</label>
+                        <input
+                          type="text"
+                          value={newVacancyData.experience}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, experience: e.target.value })}
+                          placeholder="e.g. 2+ Years Experience"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Minimum Qualification</label>
+                        <input
+                          type="text"
+                          value={newVacancyData.qualification}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, qualification: e.target.value })}
+                          placeholder="e.g. Master's in Physics or B.Sc."
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Campus Location</label>
+                        <input
+                          type="text"
+                          value={newVacancyData.location}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, location: e.target.value })}
+                          placeholder="Birgunj, Parsa"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Application Deadline</label>
+                        <input
+                          type="text"
+                          value={newVacancyData.deadline}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, deadline: e.target.value })}
+                          placeholder="e.g. Rolling Basis or 30 Chaitra 2081"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-6">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={newVacancyData.isActive}
+                            onChange={(e) => setNewVacancyData({ ...newVacancyData, isActive: e.target.checked })}
+                            className="rounded border-slate-700 text-purple-600 focus:ring-purple-500"
+                          />
+                          <span className="text-xs font-bold text-white">Active &amp; Actively Hiring</span>
+                        </label>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Role Description *</label>
+                        <textarea
+                          rows={3}
+                          value={newVacancyData.description}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, description: e.target.value })}
+                          placeholder="Provide an overview of the role, expected responsibilities, and department context..."
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Key Responsibilities (One per line)</label>
+                        <textarea
+                          rows={3}
+                          value={newVacancyData.responsibilities}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, responsibilities: e.target.value })}
+                          placeholder="Teach classes 6-10 physics theory and practicals&#10;Maintain laboratory equipment and student safety&#10;Evaluate homework and terminal exam answer scripts"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Candidate Requirements (One per line)</label>
+                        <textarea
+                          rows={3}
+                          value={newVacancyData.requirements}
+                          onChange={(e) => setNewVacancyData({ ...newVacancyData, requirements: e.target.value })}
+                          placeholder="M.Sc. or B.Sc. in Physics with minimum second division&#10;Strong English medium communication skills&#10;Punctual and committed to student mentoring"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingVacancy(false)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md cursor-pointer"
+                      >
+                        Publish Opening
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Edit Vacancy Modal */}
+              {editingVacancy && (
+                <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                  <form onSubmit={handleSaveEditVacancy} className="max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl my-8">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-purple-400" />
+                        <span>Edit Vacancy: {editingVacancy.title}</span>
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setEditingVacancy(null)}
+                        className="text-slate-400 hover:text-white p-1 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto pr-1">
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Position Title *</label>
+                        <input
+                          type="text"
+                          value={editingVacancy.title}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, title: e.target.value })}
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Department / Category *</label>
+                        <select
+                          value={editingVacancy.category}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, category: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        >
+                          <option value="Computer & AI">Computer &amp; AI</option>
+                          <option value="Languages">Languages (English / Nepali)</option>
+                          <option value="Science & STEM">Science &amp; STEM</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Pre-Primary">Pre-Primary (Montessori / ECD)</option>
+                          <option value="Administration">Administration &amp; Front-Desk</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Employment Type *</label>
+                        <input
+                          type="text"
+                          value={editingVacancy.type}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, type: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Experience Required</label>
+                        <input
+                          type="text"
+                          value={editingVacancy.experience}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, experience: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Minimum Qualification</label>
+                        <input
+                          type="text"
+                          value={editingVacancy.qualification}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, qualification: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Application Deadline</label>
+                        <input
+                          type="text"
+                          value={editingVacancy.deadline || ''}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, deadline: e.target.value })}
+                          placeholder="e.g. Rolling Basis"
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-6">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={editingVacancy.isActive !== false}
+                            onChange={(e) => setEditingVacancy({ ...editingVacancy, isActive: e.target.checked })}
+                            className="rounded border-slate-700 text-purple-600 focus:ring-purple-500"
+                          />
+                          <span className="text-xs font-bold text-white">Active Listing (Hiring)</span>
+                        </label>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Role Description *</label>
+                        <textarea
+                          rows={3}
+                          value={editingVacancy.description}
+                          onChange={(e) => setEditingVacancy({ ...editingVacancy, description: e.target.value })}
+                          required
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Key Responsibilities (One per line)</label>
+                        <textarea
+                          rows={3}
+                          value={(editingVacancy.responsibilities || []).join('\n')}
+                          onChange={(e) => setEditingVacancy({
+                            ...editingVacancy,
+                            responsibilities: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                          })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-bold text-slate-300 block mb-1">Candidate Requirements (One per line)</label>
+                        <textarea
+                          rows={3}
+                          value={(editingVacancy.requirements || []).join('\n')}
+                          onChange={(e) => setEditingVacancy({
+                            ...editingVacancy,
+                            requirements: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)
+                          })}
+                          className="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-700 text-white focus:border-purple-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setEditingVacancy(null)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md cursor-pointer"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Vacancies List Table / Cards */}
+              <div className="space-y-3">
+                {vacancies
+                  .filter(v => {
+                    const matchesCat = vacancyCategoryFilter === 'All' || v.category === vacancyCategoryFilter;
+                    const matchesStatus = vacancyStatusFilter === 'All' ||
+                      (vacancyStatusFilter === 'Active' && v.isActive !== false) ||
+                      (vacancyStatusFilter === 'Paused' && v.isActive === false);
+                    const q = vacancySearch.toLowerCase().trim();
+                    const matchesQ = !q ||
+                      v.title.toLowerCase().includes(q) ||
+                      v.description.toLowerCase().includes(q) ||
+                      v.qualification.toLowerCase().includes(q);
+                    return matchesCat && matchesStatus && matchesQ;
+                  })
+                  .map((vac) => {
+                    const isLive = vac.isActive !== false;
+                    return (
+                      <div key={vac.id} className="p-4 rounded-2xl bg-slate-800/90 border border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md hover:border-slate-600 transition-all">
+                        <div className="space-y-1.5 min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-600/20 text-purple-300 border border-purple-500/30">
+                              {vac.category}
+                            </span>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-700 text-slate-200">
+                              {vac.type}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                              isLive 
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                                : 'bg-slate-700 text-slate-400'
+                            }`}>
+                              {isLive ? '● Active Hiring' : 'Paused'}
+                            </span>
+                          </div>
+
+                          <h4 className="text-base font-bold text-white leading-snug">{vac.title}</h4>
+                          
+                          <p className="text-xs text-slate-400 line-clamp-2">{vac.description}</p>
+                          
+                          <div className="flex items-center gap-3 text-[11px] text-slate-400 pt-1">
+                            <span><strong>Qual:</strong> {vac.qualification}</span>
+                            <span>•</span>
+                            <span><strong>Exp:</strong> {vac.experience}</span>
+                            <span>•</span>
+                            <span><strong>Deadline:</strong> {vac.deadline || 'Rolling Basis'}</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons & Status Toggle */}
+                        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              toggleVacancyActive(vac.id);
+                              showToast(`Vacancy marked as ${!isLive ? 'Active' : 'Paused'}`);
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                              isLive
+                                ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
+                                : 'bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 border border-emerald-500/30'
+                            }`}
+                            title="Toggle between active and paused status"
+                          >
+                            {isLive ? 'Pause' : 'Activate'}
+                          </button>
+
+                          <button
+                            onClick={() => setEditingVacancy(vac)}
+                            className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Edit</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete vacancy position "${vac.title}"?`)) {
+                                deleteVacancy(vac.id);
+                                showToast('Vacancy opening removed');
+                              }
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold flex items-center gap-1 border border-rose-800/40 cursor-pointer transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 5: PHOTO GALLERY MANAGER */}
           {/* ========================================================================= */}
           {activeTab === 'gallery' && (
             <div className="space-y-6">

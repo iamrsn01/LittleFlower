@@ -17,9 +17,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { facilitiesList, Facility } from '../data/schoolData';
+import { Facility } from '../data/schoolData';
+import { useSchoolData } from '../context/SchoolDataContext';
 
 export const FacilitiesSection: React.FC = () => {
+  const { facilities } = useSchoolData();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedFacilityModal, setSelectedFacilityModal] = useState<Facility | null>(null);
@@ -39,9 +41,9 @@ export const FacilitiesSection: React.FC = () => {
   // Filter facilities by active category
   const filteredFacilities = useMemo(() => {
     return activeCategory === 'All'
-      ? facilitiesList
-      : facilitiesList.filter(f => f.category === activeCategory);
-  }, [activeCategory]);
+      ? facilities
+      : facilities.filter(f => f.category === activeCategory);
+  }, [activeCategory, facilities]);
 
   // Reset current index when category changes
   const handleCategoryChange = (cat: string) => {
@@ -61,7 +63,7 @@ export const FacilitiesSection: React.FC = () => {
     setCurrentIndex((prev) => (prev === filteredFacilities.length - 1 ? 0 : prev + 1));
   };
 
-  const currentItem: Facility = filteredFacilities[currentIndex] || filteredFacilities[0] || facilitiesList[0];
+  const currentItem: Facility = filteredFacilities[currentIndex] || filteredFacilities[0] || facilities[0];
 
   const isInitialMount = useRef(true);
 
@@ -195,8 +197,8 @@ export const FacilitiesSection: React.FC = () => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.label;
             const count = cat.label === 'All' 
-              ? facilitiesList.length 
-              : facilitiesList.filter(f => f.category === cat.label).length;
+              ? facilities.length 
+              : facilities.filter(f => f.category === cat.label).length;
 
             return (
               <button

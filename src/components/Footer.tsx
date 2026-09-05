@@ -19,9 +19,16 @@ import logoImg from '../assets/logoBase64';
 interface FooterProps {
   onOpenPortal: (role?: 'admin' | 'teacher' | 'student' | 'teachers' | 'students') => void;
   onOpenAdmissions: () => void;
+  onNavigateHome?: () => void;
+  onOpenVacancy?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }) => {
+export const Footer: React.FC<FooterProps> = ({ 
+  onOpenPortal, 
+  onOpenAdmissions, 
+  onNavigateHome,
+  onOpenVacancy 
+}) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -38,6 +45,27 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSectionLink = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    const el = document.getElementById(targetId);
+    if (el) {
+      e.preventDefault();
+      const navOffset = 76;
+      const pos = el.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top: Math.max(0, pos - navOffset), behavior: 'smooth' });
+    } else if (onNavigateHome) {
+      e.preventDefault();
+      onNavigateHome();
+      setTimeout(() => {
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          const navOffset = 76;
+          const pos = targetEl.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({ top: Math.max(0, pos - navOffset), behavior: 'smooth' });
+        }
+      }, 150);
+    }
   };
 
   return (
@@ -294,22 +322,22 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
 
               {/* Multi-column structured links */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2.5 text-xs">
-                <a href="#hero" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#hero" onClick={(e) => handleSectionLink(e, 'hero')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> School Overview
                 </a>
-                <a href="#academics" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#academics" onClick={(e) => handleSectionLink(e, 'academics')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Academic Levels (SEE)
                 </a>
-                <a href="#facilities" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#facilities" onClick={(e) => handleSectionLink(e, 'facilities')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Science &amp; IT Labs
                 </a>
-                <a href="#faculty" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#faculty" onClick={(e) => handleSectionLink(e, 'faculty')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Faculty Directory
                 </a>
-                <a href="#notices" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#notices" onClick={(e) => handleSectionLink(e, 'notices')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Notice Circulars
                 </a>
-                <a href="#transport" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#transport" onClick={(e) => handleSectionLink(e, 'transport')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Bus Transport Routes
                 </a>
                 <button 
@@ -330,9 +358,24 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPortal, onOpenAdmissions }
                 >
                   <span className="text-red-500">›</span> Student Portal
                 </button>
-                <a href="#admissions" className="hover:text-red-400 transition-colors flex items-center gap-1.5">
+                <a href="#admissions" onClick={(e) => handleSectionLink(e, 'admissions')} className="hover:text-red-400 transition-colors flex items-center gap-1.5">
                   <span className="text-red-500">›</span> Online Admissions
                 </a>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (onOpenVacancy) {
+                      onOpenVacancy();
+                    } else {
+                      window.location.hash = '#/vacancy';
+                    }
+                  }}
+                  className="hover:text-red-400 transition-colors flex items-center gap-1.5 text-left cursor-pointer group"
+                >
+                  <span className="text-red-500">›</span>
+                  <span className="group-hover:underline">Vacancy</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider bg-red-950/80 text-red-300 border border-red-800/80 px-1.5 py-0.5 rounded leading-none">Hiring</span>
+                </button>
               </div>
             </div>
 

@@ -20,7 +20,8 @@ import {
   Layers, 
   Users, 
   Compass, 
-  MessageSquareQuote 
+  MessageSquareQuote,
+  Briefcase
 } from 'lucide-react';
 import logoImg from '../assets/logoBase64';
 
@@ -29,13 +30,17 @@ interface NavbarProps {
   onOpenAdmissions: () => void;
   onOpenSearch: () => void;
   onOpenVirtualTour: () => void;
+  onOpenVacancy?: () => void;
+  onNavigateHome?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenPortal,
   onOpenAdmissions,
   onOpenSearch,
-  onOpenVirtualTour
+  onOpenVirtualTour,
+  onOpenVacancy,
+  onNavigateHome
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -90,6 +95,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         top: Math.max(0, elementPosition - navOffset),
         behavior: 'smooth'
       });
+    } else if (onNavigateHome) {
+      onNavigateHome();
+      setTimeout(() => {
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          const navOffset = 76;
+          const pos = targetEl.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({ top: Math.max(0, pos - navOffset), behavior: 'smooth' });
+        }
+      }, 150);
     }
     setOpenDropdown(null);
     setMobileMenuOpen(false);
@@ -106,6 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { title: 'Bus Routes & Transport', subtitle: 'School bus transit network in Birgunj & Parsa', href: '#transport', icon: Bus },
     { title: 'Campus Photo Gallery', subtitle: 'Snapshots of campus life & celebrations', href: '#gallery', icon: Camera },
     { title: 'Campus Facilities & Labs', subtitle: 'Science, IT Labs & Sports Ground', href: '#facilities', icon: Building2 },
+    { title: 'Careers & Vacancy', subtitle: 'Teaching & staff opportunities at Little Flower', onClick: onOpenVacancy, icon: Briefcase },
     { title: 'Testimonials & FAQs', subtitle: 'Parent reviews and common inquiries', href: '#testimonials', icon: MessageSquareQuote },
     { title: '360° Virtual Campus Tour', subtitle: 'Interactive exploration of campus facilities', onClick: onOpenVirtualTour, icon: Compass }
   ];
@@ -153,7 +169,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-2 sm:gap-4">
             
             {/* School Logo & Brand Name */}
-            <a href="#hero" className="flex items-center gap-2 sm:gap-3 group cursor-pointer min-w-0 shrink">
+            <a 
+              href="#hero" 
+              onClick={(e) => scrollToSection(e, 'hero')}
+              className="flex items-center gap-2 sm:gap-3 group cursor-pointer min-w-0 shrink"
+            >
               {/* Logo with Simple Elegant Slow-Spinning Border */}
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] animate-spin-gentle pointer-events-none" viewBox="0 0 100 100">
@@ -616,6 +636,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <MessageSquareQuote className="w-3.5 h-3.5 text-red-600" />
                     <span>FAQs &amp; Reviews</span>
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenVacancy?.();
+                    }}
+                    className="px-3 py-2 rounded-none text-xs font-bold text-slate-700 hover:bg-red-50 flex items-center gap-1.5 text-left cursor-pointer"
+                  >
+                    <Briefcase className="w-3.5 h-3.5 text-red-600" />
+                    <span>Careers &amp; Vacancy</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
